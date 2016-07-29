@@ -1,12 +1,13 @@
 ### Quick start
 
 1. Install npm dependencies:
-  `git submodule init && git submodule update && npm install`
+  `npm install`
 2. Build:
-  `npm run build` (optionally watch for updates with `npm run watch`)
+  * dev: `npm run watch`
+  * production: `npm run build` 
 3. Run:
-  dev: `npm run dev-server`
-  production `npm run server`
+  * dev: `npm run dev-server`
+  * production `npm run start`
 
 ### Configuring your dev envirnoment
 
@@ -19,15 +20,12 @@ of `npm run`.
 ```sh
 #!/bin/bash
 GOOGLE_ANALYTICS_ID='UA-XXXXXX-1' \
-LIVERELOAD=true \
 DEBUG_LEVEL='info' \
 OAUTH_CLIENT_ID=XXXXXXXXX \
 SECRET_OAUTH_CLIENT_ID=XXXXXXXXX \
 OAUTH_SECRET=XXXXXXXXX \
 PROCESSES=2 \
 API_PASS_THROUGH_HEADERS='accept-language' \
-LOGIN_PATH="/login" \
-MINIFY_ASSETS="false" \
 STATSD_DEBUG="true" \
 npm run dev-server
 ```
