@@ -145,7 +145,7 @@ class BasePage extends BaseComponent {
       this.props.app.emit('pageload', data);
 
       // pageview fires when we should track a pageview
-      this.setState((oldState) => {
+      this.setState(oldState => {
         if (oldState.finished === false && this.track) {
           this.props.app.emit('pageview', data);
         }
