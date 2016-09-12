@@ -27,8 +27,9 @@ class BasePage extends BaseComponent {
       data: {},
       meta: {},
       loaded: !!props.dataCache,
-      finished: false,
     };
+
+    this.finished = false;
 
     const state = this.state;
 
@@ -145,12 +146,10 @@ class BasePage extends BaseComponent {
       this.props.app.emit('pageload', data);
 
       // pageview fires when we should track a pageview
-      this.setState(oldState => {
-        if (oldState.finished === false && this.track) {
-          this.props.app.emit('pageview', data);
-        }
-        return { finished: true };
-      });
+      if (this.finished === false && this.track) {
+        this.finished = true;
+        this.props.app.emit('pageview', data);
+      }
     }
   }
 
