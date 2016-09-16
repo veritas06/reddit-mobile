@@ -1,7 +1,3 @@
-cache:
-  mount:
-    - node_modules
-
 build:
   image: reddit/reddit-nodejs:latest
   pull: true
