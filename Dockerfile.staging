@@ -4,6 +4,7 @@ FROM quay.io/reddit/reddit-nodejs:latest
 
 ADD . /src/
 WORKDIR /src
+RUN npm install
 
 EXPOSE 4444
 # start the server
