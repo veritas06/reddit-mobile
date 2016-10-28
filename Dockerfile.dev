@@ -2,6 +2,7 @@ FROM quay.io/reddit/reddit-nodejs:latest
 
 VOLUME ["/src"]
 WORKDIR /src
+RUN npm install
 
 EXPOSE 4444
 ENTRYPOINT ["npm", "start"]
