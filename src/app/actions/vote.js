@@ -22,8 +22,7 @@ export const failure = direction => {
 };
 
 export const vote = (id, direction) => async (dispatch, getState) => {
-  alksndlaskdn
-  const state = getState();
+  const state = getState().foo.bar;
   if (!state.session.isValid) {
     dispatch(platformActions.setPage(LOGGEDOUT_REDIRECT));
     return;
