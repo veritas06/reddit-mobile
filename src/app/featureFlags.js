@@ -81,7 +81,6 @@ const config = {
     }],
   },
   [VARIANT_XPROMO_BASE]: {
-    url: 'xpromobase',
     and: [{
       loggedin: false,
     }, {
@@ -91,11 +90,11 @@ const config = {
     }, {
       allowedPages: ['index'],
     }, {
+      url: 'xpromobase',
       variant: 'mweb_xpromo_interstitial:base',
     }],
   },
   [VARIANT_XPROMO_LIST]: {
-    url: 'xpromolist',
     and: [{
       loggedin: false,
     }, {
@@ -105,11 +104,11 @@ const config = {
     }, {
       allowedPages: ['index'],
     }, {
+      url: 'xpromolist',
       variant: 'mweb_xpromo_interstitial:list',
     }],
   },
   [VARIANT_XPROMO_RATING]: {
-    url: 'xpromorating',
     and: [{
       loggedin: false,
     }, {
@@ -119,6 +118,7 @@ const config = {
     }, {
       allowedPages: ['index'],
     }, {
+      url: 'xpromorating',
       variant: 'mweb_xpromo_interstitial:rating',
     }],
   },
