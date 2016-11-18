@@ -7,8 +7,6 @@ import features from 'app/featureFlags';
 
 const TWO_WEEKS = 2 * 7 * 24 * 60 * 60 * 1000;
 
-const ALLOWED_DEVICES = IOS_DEVICES.concat(ANDROID);
-
 const { USE_BRANCH } = constants.flags;
 
 export function getBranchLink(state, payload={}) {
@@ -48,9 +46,6 @@ export function getBranchLink(state, payload={}) {
 
 export function getDeepLink(state) {
   const device = getDevice(state);
-  if (!ALLOWED_DEVICES.includes(device)) {
-    return null;
-  }
 
   // See if we should use a Branch link
   const feature = features.withContext({ state });
@@ -70,23 +65,19 @@ export function getDeepLink(state) {
   }
 }
 
-export function shouldShowBanner(state) {
-  // Lots of options we have to consider.
-  // 1) Easiest. Make sure local storage exists
+export function shouldShowBanner() {
+  // Most of the decision for showing a cross-promo component will happen in
+  // the featureFlags component, but we have a couple of things to consider
+  // here.
+
+  // Make sure local storage exists
   if (!localStorageAvailable()) { return false; }
 
-  // 2) Check if it's been dismissed recently
+  // Check if it's been dismissed recently
   const lastClosedStr = localStorage.getItem('bannerLastClosed');
   const lastClosed = lastClosedStr ? new Date(lastClosedStr).getTime() : 0;
   const lastClosedLimit = lastClosed + TWO_WEEKS;
   if (lastClosedLimit > Date.now()) {
-    return false;
-  }
-
-  const device = getDevice(state);
-
-  // 3) Check the user agent
-  if (!ALLOWED_DEVICES.includes(device)) {
     return false;
   }
 

@@ -35,6 +35,12 @@ class SmartBanner extends React.Component {
     const { url, onClose } = this.props;
     const { isShowing } = this.state;
 
+    // Just in case we were unable to generate a URL for some reason, we should
+    // not show a nonfunctional promo banner.
+    if (!url) {
+      return null;
+    }
+
     const startStyles = isShowing
       ? { bottom: -HEIGHT, opacity: 0 }
       : { bottom: 0, opacity: 1 };

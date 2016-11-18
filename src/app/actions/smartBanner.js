@@ -11,9 +11,8 @@ export const close = () => async (dispatch) => {
   dispatch(hide());
 };
 
-export const checkAndSet = () => async (dispatch, getState) => {
-  const state = getState();
-  if (shouldShowBanner(state)) {
+export const checkAndSet = () => async (dispatch) => {
+  if (shouldShowBanner()) {
     dispatch(show());
   }
 };

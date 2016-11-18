@@ -6,6 +6,7 @@ import getSubreddit from 'lib/getSubredditFromState';
 import getRouteMetaFromState from 'lib/getRouteMetaFromState';
 import url from 'url';
 import { getEventTracker } from 'lib/eventTracker';
+import { getDevice, IOS_DEVICES, ANDROID } from 'lib/getDeviceFromState';
 
 import { flags as flagConstants } from './constants';
 
@@ -26,9 +27,9 @@ const {
 const config = {
   [BETA]: true,
   [SMARTBANNER]: {
-    allowedPages: [
-      'index',
-      'listing',
+    and: [
+      { allowedPages: ['index', 'listing'] },
+      { allowedDevices: IOS_DEVICES.concat(ANDROID) },
     ],
   },
   [USE_BRANCH]: true,
@@ -81,46 +82,61 @@ const config = {
     }],
   },
   [VARIANT_XPROMO_BASE]: {
-    and: [{
-      loggedin: false,
-    }, {
-      minLoidAge: 24 * 60 * 60 * 1000, // 1 day in ms
-    }, {
-      directVisit: true,
-    }, {
-      allowedPages: ['index'],
-    }, {
-      url: 'xpromobase',
-      variant: 'mweb_xpromo_interstitial:base',
-    }],
+    and: [
+      { loggedin: false },
+      { minLoidAge: 24 * 60 * 60 * 1000 }, // 1 day in ms
+      { directVisit: true },
+      { allowedPages: ['index'] },
+      { or: [
+        { url: 'xpromobase' },
+        { and: [
+          { allowedDevices: [ANDROID] },
+          { variant: 'mweb_xpromo_interstitial_android:base' },
+        ] },
+        { and: [
+          { allowedDevices: IOS_DEVICES },
+          { variant: 'mweb_xpromo_interstitial_ios:base' },
+        ] },
+      ] },
+    ],
   },
   [VARIANT_XPROMO_LIST]: {
-    and: [{
-      loggedin: false,
-    }, {
-      minLoidAge: 24 * 60 * 60 * 1000, // 1 day in ms
-    }, {
-      directVisit: true,
-    }, {
-      allowedPages: ['index'],
-    }, {
-      url: 'xpromolist',
-      variant: 'mweb_xpromo_interstitial:list',
-    }],
+    and: [
+      { loggedin: false },
+      { minLoidAge: 24 * 60 * 60 * 1000 }, // 1 day in ms
+      { directVisit: true },
+      { allowedPages: ['index'] },
+      { or: [
+        { url: 'xpromolist' },
+        { and: [
+          { allowedDevices: [ANDROID] },
+          { variant: 'mweb_xpromo_interstitial_android:list' },
+        ] },
+        { and: [
+          { allowedDevices: IOS_DEVICES },
+          { variant: 'mweb_xpromo_interstitial_ios:list' },
+        ] },
+      ] },
+    ],
   },
   [VARIANT_XPROMO_RATING]: {
-    and: [{
-      loggedin: false,
-    }, {
-      minLoidAge: 24 * 60 * 60 * 1000, // 1 day in ms
-    }, {
-      directVisit: true,
-    }, {
-      allowedPages: ['index'],
-    }, {
-      url: 'xpromorating',
-      variant: 'mweb_xpromo_interstitial:rating',
-    }],
+    and: [
+      { loggedin: false },
+      { minLoidAge: 24 * 60 * 60 * 1000 }, // 1 day in ms
+      { directVisit: true },
+      { allowedPages: ['index'] },
+      { or: [
+        { url: 'xpromorating' },
+        { and: [
+          { allowedDevices: [ANDROID] },
+          { variant: 'mweb_xpromo_interstitial_android:rating' },
+        ] },
+        { and: [
+          { allowedDevices: IOS_DEVICES },
+          { variant: 'mweb_xpromo_interstitial_ios:rating' },
+        ] },
+      ] },
+    ],
   },
 };
 
@@ -258,6 +274,13 @@ flags.addRule('minLoidAge', function (minAge) {
   if (age < minAge) { return false; }
 
   return true;
+});
+
+flags.addRule('allowedDevices', function (allowed) {
+  const device = getDevice(this.state);
+  // If we don't know what device we're on, then we should not match any list
+  // of allowed devices.
+  return (!!device) && allowed.includes(device);
 });
 
 export default flags;
