@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
+import { some } from 'lodash/collection';
 
 import { UrlSwitch, Page, Case } from '@r/platform/url';
 
@@ -14,6 +15,7 @@ import { UserActivityPage } from './UserActivity';
 import { UserProfilePage } from './UserProfile';
 import { WikiPage } from './WikiPage';
 
+import { flags as flagConstants } from 'app/constants';
 
 import DirectMessage from 'app/components/DirectMessage';
 import DropdownCover from 'app/components/DropdownCover';
@@ -27,10 +29,20 @@ import PostSubmitCommunityModal from 'app/components/PostSubmitCommunityModal';
 import PostSubmitModal from 'app/components/PostSubmitModal';
 import Register from 'app/components/Register';
 import SmartBanner from 'app/components/SmartBanner';
+import InterstitialPromo from 'app/components/InterstitialPromo';
 import Toaster from 'app/components/Toaster';
 import TopNav from 'app/components/TopNav';
 
+import { featuresSelector } from 'app/selectors/features';
+
 const SORTS = SUPPORTED_SORTS.join('|');
+
+const {
+  SMARTBANNER,
+  VARIANT_XPROMO_BASE,
+  VARIANT_XPROMO_LIST,
+  VARIANT_XPROMO_RATING,
+} = flagConstants;
 
 const AppMain = props => {
 
@@ -42,6 +54,7 @@ const AppMain = props => {
     isModalOpen,
     showDropdownCover,
     showSmartBanner,
+    showInterstitial,
   } = props;
 
   if (statusCode !== 200) {
@@ -78,6 +91,7 @@ const AppMain = props => {
           // routes in r/platform. Both of these will be investigated
           return (
             <div>
+              { showInterstitial ? <InterstitialPromo /> : null }
               <TopNav />
               <div className='BelowTopNav'>
                 <EUCookieNotice />
@@ -147,6 +161,7 @@ const AppMain = props => {
 };
 
 const selector = createSelector(
+  featuresSelector,
   state => state.platform.currentPage,
   state => state.toaster.isOpen,
   state => !!state.widgets.tooltip.id,
@@ -154,21 +169,33 @@ const selector = createSelector(
   state => !!state.modal.type,
   state => state.smartBanner.showBanner,
   (
+    features,
     currentPage,
     isToasterOpen,
     isTooltipOpen,
     isCaptchaOpen,
     isModalOpen,
-    showSmartBanner
-  ) => ({
-    isModalOpen,
-    isToasterOpen,
-    showSmartBanner,
-    showDropdownCover: isTooltipOpen || isCaptchaOpen || isModalOpen,
-    url: currentPage.url,
-    referrer: currentPage.referrer,
-    statusCode: currentPage.status,
-  })
+    showBanner
+  ) => {
+    const showInterstitial = showBanner &&
+      some([
+        VARIANT_XPROMO_BASE,
+        VARIANT_XPROMO_LIST,
+        VARIANT_XPROMO_RATING,
+      ], variant => features.enabled(variant));
+    const showSmartBanner = !showInterstitial && showBanner && features.enabled(SMARTBANNER);
+
+    return {
+      isModalOpen,
+      isToasterOpen,
+      showSmartBanner: showSmartBanner && !showInterstitial,
+      showInterstitial,
+      showDropdownCover: isTooltipOpen || isCaptchaOpen || isModalOpen,
+      url: currentPage.url,
+      referrer: currentPage.referrer,
+      statusCode: currentPage.status,
+    };
+  }
 );
 
 export default connect(selector)(AppMain);

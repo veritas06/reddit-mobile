@@ -7,6 +7,8 @@ import { Motion, spring } from 'react-motion';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 
+import { getDeepLink } from 'lib/smartBannerState';
+
 import * as smartBannerActions from 'app/actions/smartBanner';
 import SnooIcon from '../SnooIcon';
 
@@ -77,7 +79,7 @@ SmartBanner.propTypes = {
 };
 
 const selector = createSelector(
-  state => state.smartBanner.clickUrl,
+  state => getDeepLink(state),
   url => ({ url })
 );
 
