@@ -25,7 +25,7 @@ const {
 // String constants
 const TITLE = 'Just a tap away';
 const SUBTITLE = `Why are you still using the browser?
-The Reddit app is the easiest way to browser Reddit when you're on the go.`;
+The Reddit app is the easiest way to browse Reddit when you're on the go.`;
 const CTA = 'Tap to get Reddit';
 
 
