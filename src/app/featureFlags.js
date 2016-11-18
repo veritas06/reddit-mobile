@@ -84,7 +84,6 @@ const config = {
   [VARIANT_XPROMO_BASE]: {
     and: [
       { loggedin: false },
-      { minLoidAge: 24 * 60 * 60 * 1000 }, // 1 day in ms
       { directVisit: true },
       { allowedPages: ['index'] },
       { or: [
@@ -106,7 +105,6 @@ const config = {
   [VARIANT_XPROMO_LIST]: {
     and: [
       { loggedin: false },
-      { minLoidAge: 24 * 60 * 60 * 1000 }, // 1 day in ms
       { directVisit: true },
       { allowedPages: ['index'] },
       { or: [
@@ -128,7 +126,6 @@ const config = {
   [VARIANT_XPROMO_RATING]: {
     and: [
       { loggedin: false },
-      { minLoidAge: 24 * 60 * 60 * 1000 }, // 1 day in ms
       { directVisit: true },
       { allowedPages: ['index'] },
       { or: [
