@@ -24,8 +24,15 @@ const {
   VARIANT_XPROMO_BASE,
   VARIANT_XPROMO_LIST,
   VARIANT_XPROMO_RATING,
-  VARIANT_XPROMO_LISTING,
   VARIANT_XPROMO_SUBREDDIT,
+  VARIANT_XPROMO_LISTING,
+  VARIANT_XPROMO_FP_GIF,
+  VARIANT_XPROMO_FP_STATIC,
+  VARIANT_XPROMO_FP_SPEED,
+  VARIANT_XPROMO_FP_TRANSPARENT,
+  VARIANT_XPROMO_SUBREDDIT_TRANSPARENT,
+  VARIANT_XPROMO_SUBREDDIT_EMBEDDED_APP,
+  VARIANT_XPROMO_SUBREDDIT_LISTING,
   VARIANT_XPROMO_CLICK,
   VARIANT_TITLE_EXPANDO,
   VARIANT_MIXED_VIEW,
@@ -155,13 +162,83 @@ const config = {
       ] },
     ],
   },
+  [VARIANT_XPROMO_FP_GIF]: {
+    and: [
+      { allowedDevices: IOS_DEVICES.concat(ANDROID) },
+      { allowedPages: ['index'] },
+      { or: [
+        { url: 'xpromofpgif' },
+        { variant: 'mweb_xpromo_interstitial_fp_v2:gif' },
+      ] },
+    ],
+  },
+  [VARIANT_XPROMO_FP_TRANSPARENT]: {
+    and: [
+      { allowedDevices: IOS_DEVICES.concat(ANDROID) },
+      { allowedPages: ['index'] },
+      { or: [
+        { url: 'xpromofptransparent' },
+        { variant: 'mweb_xpromo_interstitial_fp_v2:embedded' },
+      ] },
+    ],
+  },
+  [VARIANT_XPROMO_FP_STATIC]: {
+    and: [
+      { allowedDevices: IOS_DEVICES.concat(ANDROID) },
+      { allowedPages: ['index'] },
+      { or: [
+        { url: 'xpromofpstatic' },
+        { variant: 'mweb_xpromo_interstitial_fp_v2:static' },
+      ] },
+    ],
+  },
+  [VARIANT_XPROMO_FP_SPEED]: {
+    and: [
+      { allowedDevices: IOS_DEVICES.concat(ANDROID) },
+      { allowedPages: ['index'] },
+      { or: [
+        { url: 'xpromofpspeed' },
+        { variant: 'mweb_xpromo_interstitial_fp_v2:speed' },
+      ] },
+    ],
+  },
+  [VARIANT_XPROMO_SUBREDDIT_TRANSPARENT]: {
+    and: [
+      { allowedDevices: IOS_DEVICES.concat(ANDROID) },
+      { allowedPages: ['listing'] },
+      { or: [
+        { url: 'xpromosubredditfade' },
+        { variant: 'mweb_xpromo_interstitial_listing_v2:transparent' },
+      ] },
+    ],
+  },
+  [VARIANT_XPROMO_SUBREDDIT_EMBEDDED_APP]: {
+    and: [
+      { allowedDevices: IOS_DEVICES.concat(ANDROID) },
+      { allowedPages: ['listing'] },
+      { or: [
+        { url: 'xpromosubredditembedded' },
+        { variant: 'mweb_xpromo_interstitial_listing_v2:embedded' },
+      ] },
+    ],
+  },
+  [VARIANT_XPROMO_SUBREDDIT_LISTING]: {
+    and: [
+      { allowedDevices: IOS_DEVICES.concat(ANDROID) },
+      { allowedPages: ['listing'] },
+      { or: [
+        { url: 'xpromosubredditlisting' },
+        { variant: 'mweb_xpromo_interstitial_listing_v2:listing' },
+      ] },
+    ],
+  },
   [VARIANT_XPROMO_CLICK]: false,
   [VARIANT_TITLE_EXPANDO]: {
     and: [
       { compact: true},
       { or: [
-          { variant: 'mweb_post_title_expando:active' },
           { url: 'titleexpando' },
+          { variant: 'mweb_post_title_expando:active' },
       ] },
     ],
   },
