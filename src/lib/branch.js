@@ -6,12 +6,6 @@ import { show } from 'app/actions/smartBanner';
 // our mobile app. With each link generated we also attach meta data.
 // This meta data can then be used to analyze download patterns of our users.
 
-export const STATIC_BRANCH_FIELDS = {
-  channel: 'mweb_branch',
-  feature: 'smartbanner',
-  campaign: 'xpromo_banner',
-}
-
 
 // Get loid values either from the account state or the cookies.
 function getLoidValues(accounts) {
@@ -37,14 +31,13 @@ export function generateBranchLink(state, payload={}) {
     host: 'reddit.app.link',
     pathname: '/',
     query: {
-      ...STATIC_BRANCH_FIELDS,
-      ...generateDynamicFields(state),
+      ...generateBranchFields(state),
       ...payload,
     },
   });
 }
 
-export function generateDynamicFields(state) {
+function generateBranchFields(state) {
   const { user, accounts } = state;
   const { loid, loidCreated } = getLoidValues(accounts);
 
@@ -58,6 +51,10 @@ export function generateDynamicFields(state) {
   }
 
   return {
+    channel: 'mweb_branch',
+    feature: 'smartbanner',
+    campaign: 'xpromo_banner',
+
     // Pass in data you want to appear and pipe in the app,
     // including user token or anything else!
     '$og_redirect': window.location.href,

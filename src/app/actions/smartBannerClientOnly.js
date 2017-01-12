@@ -16,10 +16,6 @@ export const checkAndSet = () => async (dispatch, getState) => {
   if (!shouldShowBanner() || await hasMobileApp()) {
     return;
   }
-  if (state.smartBanner.clickUrl) {
-    dispatch(show(state.smartBanner.clickUrl));
-  }
-
   const link = generateBranchLink(state);
   dispatch(show(link));
 };

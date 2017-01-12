@@ -47,7 +47,6 @@ createTest({ reducers: { smartBanner }, routes }, ({ getStore, expect }) => {
         store.dispatch(smartBannerActions.show());
         store.dispatch(smartBannerActions.recordShown(url));
         const { smartBanner } = store.getState();
-        console.log('smartBanner', smartBanner);
         expect(smartBanner).to.eql({
           showBanner: true,
           haveShownXPromo: true,
