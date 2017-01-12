@@ -6,7 +6,7 @@ import { show } from 'app/actions/smartBanner';
 // our mobile app. With each link generated we also attach meta data.
 // This meta data can then be used to analyze download patterns of our users.
 
-const STATIC_BRANCH_FIELDS = {
+export const STATIC_BRANCH_FIELDS = {
   channel: 'mweb_branch',
   feature: 'smartbanner',
   campaign: 'xpromo_banner',

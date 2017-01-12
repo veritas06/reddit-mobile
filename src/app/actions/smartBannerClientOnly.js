@@ -1,8 +1,7 @@
 import branch from 'branch-sdk';
 
-import config from 'config';
-
-import { generateBranchLink } from 'lib/branchClientOnly';
+import { generateStaticBranchLink } from 'lib/branch';
+import { hasMobileApp } from 'lib/branchClientOnly';
 import { shouldShowBanner } from 'lib/smartBannerState';
 import { show } from 'app/actions/smartBanner';
 
@@ -14,13 +13,13 @@ import { show } from 'app/actions/smartBanner';
 // action code, so we can confine branch-sdk to the client.
 export const checkAndSet = () => async (dispatch, getState) => {
   const state = getState();
-  if (!shouldShowBanner()) {
+  if (!shouldShowBanner() || await hasMobileApp()) {
     return;
   }
   if (state.smartBanner.clickUrl) {
     dispatch(show(state.smartBanner.clickUrl));
   }
 
-  const link = await generateBranchLink(getState);
+  const link = generateStaticBranchLink(state);
   dispatch(show(link));
 };
