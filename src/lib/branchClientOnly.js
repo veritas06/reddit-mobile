@@ -28,7 +28,7 @@ export function generateBranchLink(getState) {
         // we prefer to have the branch server make these links for us.
         // if something bad happens, we can still make our own.
         if (err) {
-          resolve(generateStaticBranchLink(getState()));
+          resolve(generateBranchLink(getState()));
         }
         resolve(link);
       }

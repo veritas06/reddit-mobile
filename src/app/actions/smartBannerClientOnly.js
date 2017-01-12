@@ -1,6 +1,6 @@
 import branch from 'branch-sdk';
 
-import { generateStaticBranchLink } from 'lib/branch';
+import { generateBranchLink } from 'lib/branch';
 import { hasMobileApp } from 'lib/branchClientOnly';
 import { shouldShowBanner } from 'lib/smartBannerState';
 import { show } from 'app/actions/smartBanner';
@@ -20,6 +20,6 @@ export const checkAndSet = () => async (dispatch, getState) => {
     dispatch(show(state.smartBanner.clickUrl));
   }
 
-  const link = generateStaticBranchLink(state);
+  const link = generateBranchLink(state);
   dispatch(show(link));
 };

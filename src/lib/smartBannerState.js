@@ -2,12 +2,12 @@ import localStorageAvailable from './localStorageAvailable';
 import { getDevice, IOS_DEVICES, ANDROID } from 'lib/getDeviceFromState';
 import * as constants from 'app/constants';
 import features from 'app/featureFlags';
-import { generateStaticBranchLink } from 'lib/branch';
+import { generateBranchLink } from 'lib/branch';
 
 const TWO_WEEKS = 2 * 7 * 24 * 60 * 60 * 1000;
 
 export function getDeepLink(state) {
-  return generateStaticBranchLink(state);
+  return generateBranchLink(state);
 }
 
 export function shouldShowBanner() {

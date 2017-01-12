@@ -12,7 +12,7 @@ import { markBannerClosed } from 'lib/smartBannerState';
 import { flags } from 'app/constants';
 import featureFlags from 'app/featureFlags';
 import { getDevice } from 'lib/getDeviceFromState';
-import { generateStaticBranchLink } from 'lib/branch';
+import { generateBranchLink } from 'lib/branch';
 
 import { featuresSelector} from 'app/selectors/features';
 import * as smartBannerActions from 'app/actions/smartBanner';
@@ -131,14 +131,14 @@ function getUrls(state) {
     : 'xpromo_interstitial';
 
   return [
-    generateStaticBranchLink(state, {
+    generateBranchLink(state, {
       feature: 'interstitial',
       campaign,
       utm_medium: 'interstitial',
       utm_name: campaign,
       utm_content: 'element_1',
     }),
-    generateStaticBranchLink(state, {
+    generateBranchLink(state, {
       feature: 'interstitial',
       campaign,
       utm_medium: 'interstitial',

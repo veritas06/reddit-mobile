@@ -31,7 +31,7 @@ function getLoidValues(accounts) {
   };
 }
 
-export function generateStaticBranchLink(state, payload={}) {
+export function generateBranchLink(state, payload={}) {
   return url.format({
     protocol: 'https',
     host: 'reddit.app.link',
