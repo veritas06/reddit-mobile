@@ -1,5 +1,3 @@
-import branch from 'branch-sdk';
-
 import { generateBranchLink } from 'lib/branch';
 import { hasMobileApp } from 'lib/branchClientOnly';
 import { shouldShowBanner } from 'lib/smartBannerState';

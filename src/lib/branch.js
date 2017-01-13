@@ -1,6 +1,5 @@
 import cookies from 'js-cookie';
 import url from 'url';
-import { show } from 'app/actions/smartBanner';
 
 // Branch is the api we use to generate "deep links". These are links to
 // our mobile app. With each link generated we also attach meta data.
@@ -66,5 +65,5 @@ function generateBranchFields(state) {
     utm_name: 'xpromo_banner',
     mweb_user_id36: userId,
     mweb_user_name: userName,
-  }
+  };
 }

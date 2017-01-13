@@ -1,7 +1,6 @@
 import branch from 'branch-sdk';
 
 import config from 'config';
-import { STATIC_BRANCH_FIELDS, generateDynamicFields } from 'lib/branch';
 
 export async function hasMobileApp() {
   return new Promise((resolve) => {
@@ -11,6 +10,6 @@ export async function hasMobileApp() {
         resolve(false);
       }
       resolve(data.has_app);
-    })
-  })
+    });
+  });
 }
