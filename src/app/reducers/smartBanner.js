@@ -2,6 +2,8 @@ import merge from '@r/platform/merge';
 import * as platformActions from '@r/platform/actions';
 
 import * as xpromoActions from 'app/actions/xpromo';
+import * as loginActions from 'app/actions/login';
+import { markBannerClosed } from 'lib/smartBannerState';
 
 export const DEFAULT = {
   showBanner: false,
@@ -27,6 +29,20 @@ export default function(state=DEFAULT, action={}) {
         haveShownXPromo: true,
         xPromoShownUrl: action.url,
       });
+    }
+
+    case loginActions.LOGGED_IN: {
+      if (state.haveShownXPromo) {
+        // NOTE: we should really only be doing this
+        // in the case that we are running a "login required"
+        // variant. Since we don't have access to the full state
+        // here, that's difficult to find out.
+        markBannerClosed();
+        return merge(state, {
+          showBanner: false,
+        });
+      }
+      return state;
     }
 
     case platformActions.NAVIGATE_TO_URL: {
