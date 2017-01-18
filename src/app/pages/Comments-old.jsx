@@ -10,14 +10,14 @@ import * as replyActions from 'app/actions/reply';
 import crawlerRequestSelector from 'app/selectors/crawlerRequestSelector';
 
 import RelevantContent from 'app/components/RelevantContent';
-import CommentTree from 'app/components/CommentTree';
+import CommentsList from 'app/components/CommentsList';
 import CommentsPageTools from 'app/components/CommentsPage/CommentsPageTools';
+import GoogleCarouselMetadata from 'app/components/GoogleCarouselMetadata';
 import Post from 'app/components/Post';
 import Loading from 'app/components/Loading';
 import RecommendedPosts from 'app/components/RecommendedPosts';
 import RecommendedSubreddits from 'app/components/RecommendedSubreddits';
 import SubNav from 'app/components/SubNav';
-import getSubreddit from 'lib/getSubredditFromState';
 
 import CommentsPageHandler from 'app/router/handlers/CommentsPage';
 import { paramsToCommentsPageId } from 'app/models/CommentsPage';
@@ -28,16 +28,17 @@ const T = React.PropTypes;
 function CommentsPage(props) {
   const {
     pageParams,
-    commentsPageId,
+    commentsPage,
     post,
     isReplying,
+    topLevelComments,
     currentPage,
     preferences,
     isCrawlerRequest,
+    op,
     postLoaded,
     onSortChange,
     onToggleReply,
-    spoilersEnabled,
   } = props;
 
   if (!postLoaded) {
@@ -51,12 +52,7 @@ function CommentsPage(props) {
   return (
     <div className='CommentsPage'>
       <SubNav />
-      <Post
-        postId={ pageParams.id }
-        single={ true }
-        subredditShowSpoilers={ spoilersEnabled }
-        key='post'
-      />
+      <Post postId={ pageParams.id } single={ true } key='post' />
       <RecommendedPosts
         postId={ pageParams.id }
         postLoaded={ postLoaded }
@@ -78,24 +74,41 @@ function CommentsPage(props) {
       />
 
       <RelevantContent postId={ pageParams.id } />
-      <CommentTree
-        pageId={ commentsPageId }
-        pageUrl={ currentPage.url }
-        post={ post }
-        isCrawlerRequest={ isCrawlerRequest }
-      />
+
+      { !commentsPage || commentsPage.loading
+        ? <Loading />
+        : <CommentsList
+            commentRecords={ topLevelComments }
+            className='CommentsList__topLevel'
+            op={ op }
+            nestingLevel={ 0 }
+            votingDisabled={ post.archived }
+          />
+      }
+
+      { isCrawlerRequest && commentsPage && topLevelComments.length ?
+        <GoogleCarouselMetadata
+          postId={ pageParams.id }
+          commentRecords={ topLevelComments }
+          pageUrl={ currentPage.url }
+        />
+        : null
+      }
+
     </div>
   );
 }
 
 CommentsPage.propTypes = {
-  commentsPageId: T.string.isRequired,
+  commentsPage: T.object,
   post: T.object,
   isReplying: T.bool.isRequired,
   pageParams: T.object.isRequired,
+  topLevelComments: T.arrayOf(T.object).isRequired,
   currentPage: T.object.isRequired,
   preferences: T.object.isRequired,
   isCrawlerRequest: T.bool.isRequired,
+  op: T.string.isRequired,
   postLoaded: T.bool.isRequired,
   onSortChange: T.func.isRequired,
   onToggleReply: T.func.isRequired,
@@ -105,7 +118,8 @@ CommentsPage.propTypes = {
 const stateProps = createSelector(
   (state, props) => {
     const pageParams = CommentsPageHandler.pageParamsToCommentsPageParams(props);
-    return paramsToCommentsPageId(pageParams);
+    const commentsPageId = paramsToCommentsPageId(pageParams);
+    return state.commentsPages[commentsPageId];
   },
   (state, props) => {
     const pageParams = CommentsPageHandler.pageParamsToCommentsPageParams(props);
@@ -115,26 +129,22 @@ const stateProps = createSelector(
     const pageParams = CommentsPageHandler.pageParamsToCommentsPageParams(props);
     return !!state.replying[pageParams.id];
   },
-  state => {
-    const subredditName = getSubreddit(state);
-    const subreddit = state.subreddits[subredditName];
-    return subreddit ? subreddit.spoilersEnabled : false;
-  },
   state => state.platform.currentPage,
   state => state.preferences,
   crawlerRequestSelector,
-  (commentsPageId, post, isReplying, spoilersEnabled, currentPage, preferences, isCrawlerRequest) => {
+  (commentsPage, post, isReplying, currentPage, preferences, isCrawlerRequest) => {
     const postLoaded = !!post;
 
     return {
-      commentsPageId,
+      commentsPage,
       post,
       isReplying,
+      topLevelComments: (!commentsPage || commentsPage.loading) ? [] : commentsPage.results,
       currentPage,
       preferences,
       isCrawlerRequest,
       postLoaded,
-      spoilersEnabled,
+      op: postLoaded ? post.author : '',
     };
   },
 );

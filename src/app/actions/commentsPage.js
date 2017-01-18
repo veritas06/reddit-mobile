@@ -20,22 +20,28 @@ const {
 export const FETCHING_COMMENTS_PAGE = 'FETCHING_COMMENTS_PAGE';
 export const fetching = (commentsPageId, commentsPageParams) => ({
   type: FETCHING_COMMENTS_PAGE,
-  commentsPageId,
-  commentsPageParams,
+  payload: {
+    commentsPageId,
+    commentsPageParams,
+  },
 });
 
 export const RECEIVED_COMMENTS_PAGE = 'RECEIVED_COMMENTS_PAGE';
 export const received = (commentsPageId, apiResponse) => ({
   type: RECEIVED_COMMENTS_PAGE,
-  commentsPageId,
-  apiResponse,
+  payload: {
+    pageId: commentsPageId,
+    ...apiResponse,
+  },
 });
 
 export const FAILED = 'FAILED_COMMENTS_PAGE';
 export const failed = (commentsPageId, error) => ({
   type: FAILED,
-  commentsPageId,
-  error,
+  payload: {
+    commentsPageId,
+    error,
+  },
 });
 
 export const VISITED_COMMENTS_PAGE = 'VISITED_COMMENTS_PAGE';
@@ -60,6 +66,7 @@ export const fetchCommentsPage = commentsPageParams => async (dispatch, getState
   try {
     const apiOptions = apiOptionsFromState(state);
     const apiResponse = await CommentsEndpoint.get(apiOptions, commentsPageParams);
+    // turn comments into the flat list here now.
     dispatch(received(commentsPageId, apiResponse));
   } catch (e) {
     if (e instanceof ResponseError) {
@@ -106,3 +113,17 @@ export const fetchRelevantContent = () => {
     });
   };
 };
+
+/**
+ *  * Action creator for expanding a comment tree on a comments page
+ *  * @function
+ *  * @param   {string} pageId - Id of the page in which we're expanding the
+ *  *                   comment tree
+ *  * @returns {object} Action
+ *  */
+export const EXPAND_COMMENT_TREE = 'COMMENTS_PAGE__EXPAND_COMMENT_TREE';
+export const expandCommentTree = pageId => ({
+  type: EXPAND_COMMENT_TREE,
+  payload: { pageId },
+});
+

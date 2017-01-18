@@ -29,7 +29,7 @@ export const vote = (id, direction) => async (dispatch, getState) => {
   }
 
   const type = models.ModelTypes.thingType(id);
-  const thing = state[`${type}s`][id];
+  const thing = type === 'comment' ? state.comments.data[id] : state.posts[id];
 
   const stub = thing._vote(apiOptionsFromState(state), direction);
   dispatch(pending(id, stub));
