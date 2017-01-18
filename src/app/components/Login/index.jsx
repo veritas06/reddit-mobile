@@ -179,6 +179,10 @@ class Login extends React.Component {
               : this.renderEye()
             }
           </LoginInput>
+          <LoginInput
+              name='redirectTo'
+              type='hidden'
+              value={ backDest } />
           <div className='Login__submit'>
             <SquareButton text='LOG IN' type='submit'/>
           </div>
