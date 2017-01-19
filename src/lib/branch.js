@@ -1,5 +1,7 @@
 import cookies from 'js-cookie';
+import pick from 'lodash/pick';
 import url from 'url';
+
 
 // Branch is the api we use to generate "deep links". These are links to
 // our mobile app. With each link generated we also attach meta data.
@@ -9,18 +11,12 @@ import url from 'url';
 // Get loid values either from the account state or the cookies.
 function getLoidValues(accounts) {
   if (accounts.me) {
-    return {
-      loid: accounts.me.loid,
-      loidCreated: accounts.me.loidCreated,
-    };
+    return pick(accounts.me, ['loid', 'loidCreated']);
   }
 
-  const loid = cookies.get('loid');
-  const loidCreated = cookies.get('loidcreated');
-
   return {
-    loid,
-    loidCreated,
+    loid: cookies.get('loid'),
+    loidCreated: cookies.get('loidCreated'),
   };
 }
 
