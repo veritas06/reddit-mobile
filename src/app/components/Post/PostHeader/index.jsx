@@ -183,14 +183,13 @@ function renderPostFlair(post, single) {
 
   const showingGilded = gilded && single;
 
-  if (!(stickied || showingGilded || locked || distinguished === 'admin' || isNSFW || promoted || spoiler)) {
+  if (!(stickied || showingGilded || distinguished === 'admin' || locked || isNSFW || promoted || spoiler)) {
     return null;
   }
 
   return (
     <span>
       { stickied ? STICKY_FLAIR : null }
-      { locked ? LOCKED_FLAIR : null }
       { showingGilded ? GILDED_FLAIR : null }
       { showingGilded && gilded !== 1 ? gilded : null }
       { distinguished === 'admin' ? ADMIN_FLAIR : null }
@@ -201,21 +200,23 @@ function renderPostFlair(post, single) {
   );
 }
 
-function renderApprovalStatusFlair(post) {
+function renderModStatusFlair(post) {
   const {
     approved,
     removed,
     spam,
-    distinguished,
+	distinguished,
+    locked,
   } = post;
-  
-  if (!(approved || removed || spam || distinguished !== '')) {
+
+  if (!(approved || removed || spam || locked || distinguished !== '')) {
     return null;
   }
 
   return (
     <span className='PostHeader__approval-status-flair'>
       { distinguished === 'moderator' ? MOD_FLAIR : null }
+      { locked ? LOCKED_FLAIR : null }
       { approved ? APPROVED_FLAIR : null }
       { removed ? REMOVED_FLAIR : null }
       { spam ? SPAM_FLAIR : null }
@@ -279,7 +280,7 @@ function renderPostDescriptor(
     authorOrNil,
     !hideSubredditLabel && flairOrNil,
   ]);
-  const approvalStatusFlair = renderApprovalStatusFlair(post);
+  const modStatusFlair = renderModStatusFlair(post);
 
   return (
     <div className='PostHeader__metadata-container'>
@@ -294,7 +295,7 @@ function renderPostDescriptor(
         </div>
       </div>
       <div className='PostHeader__metadata'>
-        { approvalStatusFlair }
+        { modStatusFlair }
       </div>
     </div>
   );
