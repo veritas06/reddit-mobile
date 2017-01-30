@@ -3,6 +3,7 @@ import React from 'react';
 import { models } from '@r/api-client';
 
 import { DropdownModal, DropdownRow, DropdownLinkRow } from 'app/components/Dropdown';
+import { ModalBanner } from 'app/components/ModalBanner';
 import ModeratorModal from 'app/components/ModeratorModal';
 
 const { ModelTypes } = models;
@@ -36,7 +37,8 @@ export default function CommentDropdown(props) {
   const userIsAuthor = commentAuthor === username;
 
   const modalContent = [
-    userIsAuthor 
+    <ModalBanner />,
+    userIsAuthor
     ? <DropdownRow icon='post_edit' text='Edit Comment' onClick={ onEdit }/>
     : null,
     userIsAuthor

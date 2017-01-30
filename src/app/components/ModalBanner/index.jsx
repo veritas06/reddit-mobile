@@ -10,33 +10,41 @@ const statusText = {
   approved: 'Approved',
 };
 
-export function ApprovalStatusBanner(props) {
+export function ModalBanner(props) {
   const {
     status,
     statusBy,
     pageName,
+    showX,
   } = props;
 
-  const bannerText = `${statusText[status]} by ${statusBy}`;
+  if ((!status || !statusBy) && !showX) { return null; }
 
-  if (!status || !statusBy) { return null; }
+  let bannerText;
+  if (statusText && statusBy){
+    bannerText = `${statusText[status]} by ${statusBy}`;
+  }
 
   return (
-    <div className={ `ApprovalStatusBanner m-${status} ${pageName}` }>
+    <div className={ `ModalBanner m-${status} ${pageName}` }>
       <DropdownRow
         text={ bannerText }
+        icon='x'
       />
     </div>
   );
 }
 
-ApprovalStatusBanner.propTypes = {
+ModalBanner.propTypes = {
   status: T.oneOf(Object.keys(statusText)),
   statusBy: T.string,
   pageName: T.string,
+  showX: T.bool,
 };
 
-ApprovalStatusBanner.defaultProps = {
+ModalBanner.defaultProps = {
   status: null,
+  statusBy: null,
   pageName: null,
+  showX: true,
 };

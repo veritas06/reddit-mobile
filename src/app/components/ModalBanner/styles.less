@@ -1,7 +1,8 @@
 @import (reference) '~app/less/variables.less';
 
-.ApprovalStatusBanner {
+.ModalBanner {
   font-weight: bold;
+  text-align: right; // for x-icon
 
   &.moderatorModal {
     &.m-spam {
@@ -44,6 +45,7 @@
 
     &__text {
       display: inline;
+      float: left;
     }
   }
 }
