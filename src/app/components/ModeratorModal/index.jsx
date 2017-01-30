@@ -48,6 +48,15 @@ export class ModeratorModal extends React.Component {
           />
           <div onClick={ this.props.onClick }>
             <div className='ModeratorModalRowWrapper'>
+              { this.props.targetType === ModelTypes.POST
+                ? <DropdownRow
+                    icon='nsfw'
+                    text={ this.props.isNSFW ? 'Unmark NSFW' : 'Mark NSFW' }
+                    onClick={ this.props.toggleNSFW }
+                    isSelected={ this.props.isNSFW }
+                  />
+                : null
+              }
               { this.props.isMine
                 ? <DropdownRow
                     icon='distinguish'
@@ -57,26 +66,24 @@ export class ModeratorModal extends React.Component {
                   />
                 : null
               }
-              <div className='m-nonToggleActions'>
-                <DropdownRow
-                  icon='delete_remove'
-                  text='Remove'
-                  onClick={ this.props.onRemove }
-                  isSelected={ this.props.isRemoved }
-                />
-                <DropdownRow
-                  icon='spam'
-                  text='Spam'
-                  onClick={ this.props.onSpam }
-                  isSelected={ this.props.isSpam }
-                />
-                <DropdownRow
-                  icon='check-circled'
-                  text='Approve'
-                  onClick={ this.props.onApprove }
-                  isSelected={ this.props.isApproved }
-                />
-              </div>
+              <DropdownRow
+                icon='delete_remove'
+                text='Remove'
+                onClick={ this.props.onRemove }
+                isSelected={ this.props.isRemoved }
+              />
+              <DropdownRow
+                icon='spam'
+                text='Spam'
+                onClick={ this.props.onSpam }
+                isSelected={ this.props.isSpam }
+              />
+              <DropdownRow
+                icon='check-circled'
+                text='Approve'
+                onClick={ this.props.onApprove }
+                isSelected={ this.props.isApproved }
+              />
             </div>
           </div>
         </Modal>
@@ -92,6 +99,7 @@ ModeratorModal.propTypes = {
   onSpam: T.func.isRequired,
   onApprove: T.func.isRequired,
   onRemove: T.func.isRequired,
+  toggleNSFW: T.func.isRequired,
   isApproved: T.bool.isRequired,
   isRemoved: T.bool.isRequired,
   isSpam: T.bool.isRequired,
@@ -106,6 +114,7 @@ const mapDispatchToProps = (dispatch, { id }) => ({
   onSpam: () => dispatch(modActions.remove(id, true)),
   onApprove: () => dispatch(modActions.approve(id)),
   onRemove: () => dispatch(modActions.remove(id, false)),
+  toggleNSFW: () => dispatch(modActions.toggleNSFW(id)),
   onDistinguish: (distinguishType) => dispatch(modActions.distinguish(id, distinguishType)),
 });
 
