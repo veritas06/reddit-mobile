@@ -3,11 +3,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { endpoints } from '@r/api-client';
 import { Modal } from '@r/widgets/modal';
+import { models } from '@r/api-client';
 import { ApprovalStatusBanner } from 'app/components/ApprovalStatusBanner';
 import { DropdownRow } from 'app/components/Dropdown';
 import { getStatusBy, getApprovalStatus } from 'lib/modToolHelpers.js';
 
 import * as modActions from 'app/actions/modTools';
+const { ModelTypes } = models;
 
 const { Modtools } = endpoints;
 const DISTINGUISH_TYPES = Modtools.DISTINGUISH_TYPES;
@@ -97,6 +99,7 @@ ModeratorModal.propTypes = {
   approvedBy: T.string,
   distinguishType: T.string,
   isMine: T.bool,
+  targetType: T.oneOf([ModelTypes.COMMENT, ModelTypes.POST]),
 };
 
 const mapDispatchToProps = (dispatch, { id }) => ({

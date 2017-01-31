@@ -1,8 +1,11 @@
 import React from 'react';
 
+import { models } from '@r/api-client';
+
 import { DropdownModal, DropdownRow, DropdownLinkRow } from 'app/components/Dropdown';
 import ModeratorModal from 'app/components/ModeratorModal';
 
+const { ModelTypes } = models;
 const T = React.PropTypes;
 
 const renderSubredditDropdownLinkRow = subreddit => (
@@ -64,6 +67,7 @@ export default function PostDropdown(props) {
         removedBy={ removedBy }
         isMine={ isMine }
         distinguishType={ distinguishType }
+        targetType={ ModelTypes.POST }
       >
       </ModeratorModal>
     );
