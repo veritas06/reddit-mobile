@@ -75,7 +75,7 @@ export default function(state=DEFAULT, action={}) {
       if (thing.type === POST) {
         return mergeUpdatedModel(
           state,
-          { 
+          {
             model: thing.set({
               approved: true,
               removed: false,
@@ -95,7 +95,7 @@ export default function(state=DEFAULT, action={}) {
       if (thing.type === POST) {
         return mergeUpdatedModel(
           state,
-          { 
+          {
             model: thing.set({
               approved: false,
               removed: !spam,
@@ -136,6 +136,19 @@ export default function(state=DEFAULT, action={}) {
         );
       }
     }
+
+    case modToolActions.MODTOOLS_TOGGLE_SPOILER_SUCCESS: {
+      const { thing } = action;
+
+      if (thing.type === POST) {
+        return mergeUpdatedModel(
+          state,
+          { model: thing.set({ spoiler: !thing.spoiler }), },
+        );
+      }
+
+    }
+
     // Posts from the comments page api don't always have the same previews
     // as that same post from the listings api. Preserve the previews so things
     // don't disappear unexpectedly
