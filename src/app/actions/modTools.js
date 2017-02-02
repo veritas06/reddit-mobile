@@ -134,6 +134,12 @@ export const distinguish = (id, distinguishType) => async (dispatch, getState) =
 
 export const fetchModeratingSubreddits = () => async (dispatch, getState) => {
   const state = getState();
+
+  if (state.user.loggedOut) { return; }
+  if (state.accounts[state.user.name] && !state.accounts[state.user.name].isMod) {
+    return;
+  }
+
   const apiOptions = apiOptionsFromState(state);
 
   const subredditsAlreadyFetched = (
