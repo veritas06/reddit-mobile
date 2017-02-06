@@ -2,6 +2,7 @@ import { requestUtils } from '@r/api-client';
 import { errors } from '@r/api-client';
 
 import { apiOptionsFromState } from 'lib/apiOptionsFromState';
+import modelFromThingId from 'app/reducers/helpers/modelFromThingId';
 
 const { apiRequest } = requestUtils;
 const { ResponseError } = errors;
@@ -23,14 +24,25 @@ export const FAILURE = 'REPORT_FAILURE';
 export const submit = (thingId, reason) => async (dispatch, getState) => {
   dispatch({ type: SUBMIT });
 
-  const apiOptions = apiOptionsFromState(getState());
+  const state = getState();
+  const apiOptions = apiOptionsFromState(state);
+  const username = state.user.name;
+
   try {
     await apiRequest(apiOptions, 'POST', 'api/report', {
       type: 'form',
       body: { reason, thing_id: thingId, api_type: 'json' },
     });
 
-    dispatch({ type: SUCCESS, message: 'Thanks for letting us know!' });
+    const model = modelFromThingId(thingId, state);
+
+    dispatch({
+      type: SUCCESS,
+      message: 'Thanks for letting us know!',
+      model,
+      reason,
+      username,
+    });
 
   } catch (e) {
     dispatch({ type: FAILURE });

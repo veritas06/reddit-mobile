@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import { endpoints, models } from '@r/api-client';
-import { Modal } from '@r/widgets/modal';
+import { Modal, ModalTarget } from '@r/widgets/modal';
 import { ModalBanner } from 'app/components/ModalBanner';
 import { DropdownRow } from 'app/components/Dropdown';
 import modelFromThingId from 'app/reducers/helpers/modelFromThingId';
@@ -16,7 +16,6 @@ const { ModelTypes } = models;
 const T = React.PropTypes;
 
 export class ModeratorModal extends React.Component {
-
   onDistinguish(distinguishType) {
     const type = (distinguishType === DISTINGUISH_TYPES.NONE
                           ? DISTINGUISH_TYPES.MODERATOR
@@ -26,6 +25,10 @@ export class ModeratorModal extends React.Component {
 
   showDistinguish(distinguishType) {
     return !(distinguishType === DISTINGUISH_TYPES.NONE);
+  }
+
+  preventModalClose(e) {
+    e.stopPropagation();
   }
 
   render() {
@@ -84,6 +87,20 @@ export class ModeratorModal extends React.Component {
                   />,
                 ]
                 : null
+              }
+              { 
+                (this.props.userReports.length > 0 || this.props.modReports.length > 0) &&
+                <div onClick={ (e) => this.preventModalClose(e) }>
+                  <ModalTarget
+                    id={ this.props.reportModalId }
+                  >
+                    <DropdownRow
+                      icon='flag'
+                      text='Reports'
+                      isSelected={ true }
+                    />
+                  </ModalTarget>
+                </div>
               }
               { this.props.isMine
                 ? <DropdownRow
@@ -148,13 +165,17 @@ ModeratorModal.propTypes = {
   removedBy: T.string,
   approvedBy: T.string,
   distinguishType: T.string,
+  modReports: T.arrayOf(T.arrayOf(T.string)),
   isMine: T.bool,
   target: T.object,
   targetType: T.oneOf([ModelTypes.COMMENT, ModelTypes.POST]).isRequired,
+  userReports: T.arrayOf(T.arrayOf(T.string)),
 };
 
 ModeratorModal.defaultProps = {
   target: null,
+  modReports: [],
+  userReports: [],
 };
 
 const selector = createSelector(

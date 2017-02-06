@@ -8,6 +8,8 @@ import {
   DropdownLinkRow,
 } from 'app/components/Dropdown';
 
+import { ReportsModal } from 'app/components/ReportsModal';
+
 const { ModelTypes } = models;
 const T = React.PropTypes;
 
@@ -35,28 +37,46 @@ export default function PostDropdown(props) {
     modModalId,
     distinguishType,
     isMine,
+    userReports,
+    modReports,
+    reportModalId,
   } = props;
 
   if (showModModal && isSubredditModerator) {
     return (
-      <ModeratorModal
-        id={ id }
-        modModalId={ modModalId }
-        onClick={ onToggleModal }
-        isSticky={ isSticky }
-        isRemoved={ isRemoved }
-        isApproved={ isApproved }
-        isSpam={ isSpam }
-        isLocked={ isLocked }
-        isNSFW={ isNSFW }
-        isSpoiler={ isSpoiler }
-        approvedBy={ approvedBy }
-        removedBy={ removedBy }
-        isMine={ isMine }
-        distinguishType={ distinguishType }
-        targetType={ ModelTypes.POST }
-      >
-      </ModeratorModal>
+      <div>
+        <ModeratorModal
+          id={ id }
+          modModalId={ modModalId }
+          onClick={ onToggleModal }
+          isSticky={ isSticky }
+          isRemoved={ isRemoved }
+          isApproved={ isApproved }
+          isSpam={ isSpam }
+          isLocked={ isLocked }
+          isNSFW={ isNSFW }
+          isSpoiler={ isSpoiler }
+          approvedBy={ approvedBy }
+          removedBy={ removedBy }
+          isMine={ isMine }
+          distinguishType={ distinguishType }
+          targetType={ ModelTypes.POST }
+          userReports={ userReports }
+          modReports={ modReports }
+          reportModalId={ reportModalId }
+        />
+        <ReportsModal
+          reportModalId={ reportModalId }
+          isRemoved={ isRemoved }
+          isApproved={ isApproved }
+          isSpam={ isSpam }
+          approvedBy={ approvedBy }
+          removedBy={ removedBy }
+          userReports={ userReports }
+          modReports={ modReports }
+          onClick={ onToggleModal }
+        />
+      </div>
     );
   }
 
@@ -142,6 +162,8 @@ PostDropdown.propTypes = {
   removedBy: T.string,
   modModalId: T.string,
   showModModal: T.bool,
+  userReports: T.arrayOf(T.arrayOf(T.oneOf(T.string, T.number))),
+  modReports: T.arrayOf(T.arrayOf(T.oneOf(T.string, T.number))),
 };
 
 PostDropdown.defaultProps = {
@@ -150,10 +172,12 @@ PostDropdown.defaultProps = {
   isSaved: false,
   isLoggedIn: false,
   isHidden: false,
+  modModalId: null,
+  modReports: [],
   onToggleSave: () => {},
   onToggleHide: () => {},
   onToggleEdit: () => {},
   onToggleModal: () => {},
-  modModalId: null,
   showModModal: false,
+  userReports: [],
 };

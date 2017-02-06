@@ -15,6 +15,7 @@ import * as searchActions from 'app/actions/search';
 import * as voteActions from 'app/actions/vote';
 import * as mailActions from 'app/actions/mail';
 import * as modToolActions from 'app/actions/modTools';
+import * as reportingActions from 'app/actions/reporting';
 import * as similarPostsActions from 'app/actions/similarPosts';
 import * as subredditsToPostsByPostActions from 'app/actions/subredditsToPostsByPost';
 
@@ -34,6 +35,25 @@ const preservePostContentPreviews = (state, post) => {
     selfTextMD: currentPost.selfTextMD,
     selfTextHTML: currentPost.selfTextHTML,
   });
+};
+
+const getNewModReports = (username, modReports, reason) => {
+  let reportReplaced;
+
+  // if mod has already reported post, update reason
+  modReports.forEach(function(report) {
+    if (report[1] === username) {
+      reportReplaced = true;
+      report[0] = reason;
+    }
+  });
+
+  // if mod hasn't reported post yet, add report
+  if (!reportReplaced) {
+    modReports.push([reason, username]);
+  }
+
+  return modReports;
 };
 
 export default function(state=DEFAULT, action={}) {
@@ -67,6 +87,24 @@ export default function(state=DEFAULT, action={}) {
     case voteActions.SUCCESS:
     case postActions.UPDATED_SELF_TEXT: {
       return mergeUpdatedModel(state, action, { restrictType: POST });
+    }
+
+    case reportingActions.SUCCESS: {
+      const { model, reason, username } = action;
+
+      if (model.type === POST) {
+        const modReports = state[model.name].modReports;
+        return mergeUpdatedModel(
+          state,
+          {
+            model: model.set({
+              modReports: getNewModReports(username, modReports, reason),
+            }),
+          }
+        );
+      }
+
+      return state;
     }
 
     case modToolActions.MODTOOLS_APPROVAL_SUCCESS: {

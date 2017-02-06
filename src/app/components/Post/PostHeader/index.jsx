@@ -169,6 +169,12 @@ function renderAuthorAndTimeStamp(post, single, hideWhen, className) {
   );
 }
 
+function sumReportsCount(userReports, modReports) {
+  let reportCounts = userReports.map(r => r[1]);
+  reportCounts.push(modReports.length);
+  return reportCounts.reduce((a, b) => a + b, 0);
+}
+
 function renderPostFlair(post, single) {
   const isNSFW = isPostNSFW(post);
 
@@ -206,23 +212,34 @@ function renderModStatusFlair(post) {
     approved,
     removed,
     spam,
-	distinguished,
+    distinguished,
     locked,
     stickied,
+    userReports,
+    modReports,
   } = post;
 
-  if (!(approved || removed || spam || locked || distinguished !== '' || stickied)) {
+  const reportCounts = sumReportsCount(userReports, modReports);
+  const REPORT_FLAIR = ([
+    <span className={ `icon icon-flag ${ approved ? '' : 'warning-yellow' }` }/>,
+    <span className={ `m-report-count ${ approved ? '' : 'warning-yellow' }` }> { reportCounts } </span>,
+  ]);
+
+
+  if (!(approved || removed || spam || locked || distinguished !== ''
+       || stickied || reportCounts)) {
     return null;
   }
 
   return (
-    <span className='PostHeader__approval-status-flair'>
+    <span className='PostHeader__mod-status-flair'>
       { stickied ? STICKY_FLAIR : null }
       { distinguished === 'moderator' ? MOD_FLAIR : null }
       { locked ? LOCKED_FLAIR : null }
       { approved ? APPROVED_FLAIR : null }
       { removed ? REMOVED_FLAIR : null }
       { spam ? SPAM_FLAIR : null }
+      { reportCounts ? REPORT_FLAIR : null }
     </span>
   );
 }
