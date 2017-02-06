@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { models } from '@r/api-client';
-import { DropdownModal, DropdownRow, DropdownLinkRow } from 'app/components/Dropdown';
 import { ModalBanner } from 'app/components/ModalBanner';
 import ModeratorModal from 'app/components/ModeratorModal';
 import {
@@ -39,18 +38,6 @@ export default function PostDropdown(props) {
     isMine,
   } = props;
 
-  const modalContent = [
-    <ModalBanner/>,
-    canModify && <DropdownRow icon='post_edit' text='Edit Post' onClick={ onToggleEdit } />,
-    <DropdownLinkRow href={ permalink } icon='link' text='Permalink'/>,
-    subreddit && renderSubredditDropdownLinkRow(subreddit),
-    <DropdownLinkRow href={ `/user/${author}` } icon='user-account' text={ `${author}'s profile` }/>,
-    isLoggedIn ? <DropdownRow icon='save' text={ isSaved ? 'Saved' : 'Save' } onClick={ onToggleSave } isSelected={ isSaved }/> : null,
-    isLoggedIn ? <DropdownRow icon='hide' text='Hide' onClick={ onToggleHide }/> : null,
-    isLoggedIn ? <DropdownRow onClick={ onReportPost } icon='flag' text='Report'/> : null,
-  ];
-
-  let modal;
   if (showModModal && isSubredditModerator) {
     return (
       <ModeratorModal
@@ -76,6 +63,7 @@ export default function PostDropdown(props) {
 
   return (
     <DropdownModal id={ id } onClick={ onToggleModal }>
+      <ModalBanner/>
       { canModify ?
         <DropdownRow
           icon='post_edit'
