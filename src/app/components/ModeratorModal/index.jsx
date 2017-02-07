@@ -43,6 +43,12 @@ export class ModeratorModal extends React.Component {
           id={ this.props.modModalId }
           className='DropdownModal ModeratorModal'
         >
+          <div className='DropdownClose'>
+            <DropdownRow
+              icon='x'
+              onClick={ this.props.onClick }
+            />
+          </div>
           <div onClick={ this.props.onClick }>
             <ModalBanner
               status={ getApprovalStatus(this.props.isApproved,

@@ -13,22 +13,20 @@ const statusText = {
 export function ModalBanner(props) {
   const {
     pageName,
-    showX,
     status,
     statusBy,
   } = props;
 
-  console.log(showX, status, statusBy)
-  // if (!(showX || status && statusBy)) { return null; }
-  if ((!status || !statusBy) && !showX) { return null; }
-
-  let bannerText = `${statusText[status]} by ${statusBy}`;
+  let bannerText = (
+    status && statusBy
+    ? `${statusText[status]} by ${statusBy}`
+    : null
+  );
 
   return (
     <div className={ `ModalBanner m-${status} ${pageName}` }>
       <DropdownRow
-        text={ '' }
-        icon='x'
+        text={ bannerText }
       />
     </div>
   );
@@ -36,14 +34,12 @@ export function ModalBanner(props) {
 
 ModalBanner.propTypes = {
   pageName: T.string,
-  showX: T.bool,
   status: T.oneOf(Object.keys(statusText)),
   statusBy: T.string,
 };
 
 ModalBanner.defaultProps = {
   pageName: null,
-  showX: true,
   status: null,
   statusBy: null,
 };
