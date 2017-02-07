@@ -18,7 +18,7 @@
     "test:watch": "npm run test -- -w"
   },
   "dependencies": {
-    "@r/api-client": "git://github.com/curioussavage/node-api-client.git#101621f20b9e93d9149471ef0578f3ff0f676765",
+    "@r/api-client": "git://github.com/curioussavage/node-api-client.git#8e9dbf92d9dc666f2502303d6f2bcde16a5ab215",
     "@r/build": "~0.14.0",
     "@r/flags": "^1.5.0",
     "@r/middleware": "~0.8.1",
