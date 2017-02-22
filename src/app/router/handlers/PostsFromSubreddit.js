@@ -9,7 +9,7 @@ import isFakeSubreddit from 'lib/isFakeSubreddit';
 import { cleanObject } from 'lib/cleanObject';
 import { listingTime } from 'lib/listingTime';
 import { fetchUserBasedData } from './handlerCommon';
-import { convertId, getListingName, trackPageEvents, buildSubredditData } from 'lib/eventUtils';
+import { convertId, getListingName, trackPageEvents } from 'lib/eventUtils';
 
 import { setTitle } from 'app/actions/pageMetadata';
 
