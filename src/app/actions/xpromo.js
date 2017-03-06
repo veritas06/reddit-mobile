@@ -1,10 +1,9 @@
 import { redirect } from 'platform/actions';
-import { markBannerClosed, shouldNotShowBanner } from 'lib/smartBannerState';
+import { markBannerClosed } from 'lib/smartBannerState';
 import {
   trackPreferenceEvent,
   XPROMO_APP_STORE_VISIT,
   XPROMO_DISMISS } from 'lib/eventUtils';
-
 
 export const SHOW = 'XPROMO__SHOW';
 export const show = () => ({ type: SHOW });
@@ -55,12 +54,6 @@ export const close = () => async (dispatch, getState) => {
     },
   });
 
-};
-
-export const checkAndSet = () => async (dispatch) => {
-  if (!shouldNotShowBanner()) {
-    dispatch(show());
-  }
 };
 
 export const logAppStoreNavigation = visitType => async (dispatch) => {
