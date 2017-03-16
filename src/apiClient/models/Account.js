@@ -54,6 +54,6 @@ export default class Account extends RedditModel {
   }
 
   makeUUID(data) {
-    return data.name;
+    return data.name.toLowerCase();
   }
 }

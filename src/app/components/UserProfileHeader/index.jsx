@@ -20,13 +20,17 @@ UserProfileHeader.propTypes = {
   userName: T.string.isRequired,
   currentActivity: T.string,
   isMyUser: T.bool,
+  isVerified: T.bool,
 };
 
 const UserProfileBanner = props => {
-  const { userName } = props;
+  const { userName, isVerified } = props;
   return (
     <div className='UserProfileHeader__banner'>
-      <h3 className='UserProfileHeader__banner-user-name'>{ userName }</h3>
+      <h3 className='UserProfileHeader__banner-user-name'>
+        { userName }
+      </h3>
+      { isVerified && <div className='UserProfileHeader__verified icon icon-verified lime'></div> }
     </div>
   );
 };

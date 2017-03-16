@@ -22,6 +22,7 @@ import {
 } from 'app/router/handlers/CommentsPage';
 
 import isFakeSubreddit from 'lib/isFakeSubreddit';
+import isUserContributor from 'lib/isUserContributor';
 import { getEventTracker } from 'lib/eventTracker';
 import * as gtm from 'lib/gtm';
 import { hasAdblock } from 'lib/adblock';
@@ -87,7 +88,7 @@ export function buildProfileData(state, extraPayload) {
     target_fullname: `t2_${user.id}`,
     target_type: 'account',
     target_id: convertId(user.id),
-    is_contributor: !!state.subreddits[`u_${user.name.toLowerCase()}`],
+    is_contributor: isUserContributor(user, state.subreddits),
     ...extraPayload,
   };
 }
@@ -106,7 +107,7 @@ export function getUserInfoOrLoid(state) {
   if (userInfo && !user.loggedOut) {
     return {
       'user_id': convertId(userInfo.id),
-      'user_name': user.name,
+      'user_name': userInfo.name,
     };
   }
 

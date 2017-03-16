@@ -4,6 +4,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 
+import isUserContributor from 'lib/isUserContributor';
+
 import { Anchor } from 'platform/components';
 import { UserProfileHeader } from 'app/components/UserProfileHeader';
 import { UserProfileSummary } from 'app/components/UserProfileSummary';
@@ -14,13 +16,22 @@ const GILD_URL_RE = /u\/.*\/gild$/;
 
 const mapStateToProps = createSelector(
   userAccountSelector,
-  (state, props) => state.accounts[props.urlParams.userName],
+  (state, props) => state.accounts[props.urlParams.userName.toLowerCase()],
   (state, props) => state.accountRequests[props.urlParams.userName],
-  (myUser, queriedUser, queriedUserRequest) => ({ myUser, queriedUser, queriedUserRequest }),
+  state => state.subreddits,
+  (myUser, queriedUser, queriedUserRequest, subreddits) => {
+    const isContributor = queriedUser && isUserContributor(queriedUser, subreddits);
+    return {
+      myUser,
+      queriedUser,
+      queriedUserRequest,
+      isContributor,
+    };
+  },
 );
 
 export const UserProfilePage = connect(mapStateToProps)(props => {
-  const { myUser, queriedUser, queriedUserRequest, urlParams, url } = props;
+  const { myUser, queriedUser, queriedUserRequest, urlParams, url, isContributor } = props;
   const isGildPage = GILD_URL_RE.test(url);
   const { userName: queriedUserName } = urlParams;
   const isMyUser = !!myUser && myUser.name === queriedUserName;
@@ -28,7 +39,11 @@ export const UserProfilePage = connect(mapStateToProps)(props => {
   return (
     <div className='UserProfilePage'>
       <Section>
-        <UserProfileHeader userName={ queriedUserName } isMyUser={ isMyUser } />
+        <UserProfileHeader
+          userName={ queriedUserName }
+          isMyUser={ isMyUser }
+          isVerified={ isContributor }
+        />
       </Section>
       { isGildPage ? <GildPageContent />
         : queriedUser ? <UserProfileContent user={ queriedUser } isMyUser={ isMyUser } />
