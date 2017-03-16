@@ -59,7 +59,7 @@ export const CommunityOverlayMenu = (props) => {
       <CommunitySearchRow />
       <LinkRow
         key='front-page-row'
-        text='Front Page'
+        text='Home'
         href='/'
         icon='icon-snoo-circled icon-xl orangered'
       />
@@ -72,12 +72,6 @@ export const CommunityOverlayMenu = (props) => {
           />
         : ''
       }
-      <LinkRow
-        key='all-link'
-        text='All'
-        href='/r/all'
-        icon='icon-bar-chart orangered-circled-xl'
-      />
       { renderSubscriptions(subscriptions, subscriptionsLoading, theme) }
     </OverlayMenu>
   );
