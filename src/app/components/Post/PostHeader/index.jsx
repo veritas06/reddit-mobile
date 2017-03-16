@@ -109,6 +109,7 @@ function subredditLabelIfNeeded(sr_detail, subreddit, hideSubredditLabel, interc
     }
   }
 
+  const profilePost = sr_detail && (sr_detail.subreddit_type === 'user');
   const url = sr_detail ? sr_detail.url : `/r/${subreddit}`;
   const displayLabel = sr_detail ? sr_detail.display_name_prefixed : `r/${subreddit}`;
 
@@ -120,6 +121,7 @@ function subredditLabelIfNeeded(sr_detail, subreddit, hideSubredditLabel, interc
       onClick={ e => interceptListingClick(e, LISTING_CLICK_TYPES.SUBREDDIT) }
     >
       { displayLabel }
+      { profilePost && <span className="icon icon-verified lime"></span> }
     </Anchor>
   );
 }
@@ -140,9 +142,12 @@ function renderAuthorAndTimeStamp(post, interceptListingClick, single, hideWhen,
   const {
     author,
     createdUTC,
+    subredditDetail,
   } = post;
 
-  const authorLink = (
+  const profilePost = subredditDetail && (subredditDetail.subreddit_type === 'user');
+
+  const authorLink = profilePost ? null : (
     <Anchor
       className={ `PostHeader__author-link ${className}` }
       href={ `/user/${author}` }
@@ -156,11 +161,19 @@ function renderAuthorAndTimeStamp(post, interceptListingClick, single, hideWhen,
     return authorLink;
   }
 
-  if (single) {
+  if (single && !profilePost) {
     return (
       <span>
         { authorLink }
         { SEPERATOR }
+        { short(createdUTC) }
+      </span>
+    );
+  }
+
+  if (profilePost) {
+    return (
+      <span>
         { short(createdUTC) }
       </span>
     );
