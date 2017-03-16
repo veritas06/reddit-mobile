@@ -4,8 +4,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 
-import isUserContributor from 'lib/isUserContributor';
-
 import { Anchor } from 'platform/components';
 import { UserProfileHeader } from 'app/components/UserProfileHeader';
 import { UserProfileSummary } from 'app/components/UserProfileSummary';
@@ -18,20 +16,19 @@ const mapStateToProps = createSelector(
   userAccountSelector,
   (state, props) => state.accounts[props.urlParams.userName.toLowerCase()],
   (state, props) => state.accountRequests[props.urlParams.userName],
-  state => state.subreddits,
-  (myUser, queriedUser, queriedUserRequest, subreddits) => {
-    const isContributor = queriedUser && isUserContributor(queriedUser, subreddits);
+  (myUser, queriedUser, queriedUserRequest) => {
+    const isVerified = queriedUser && queriedUser.verified;
     return {
       myUser,
       queriedUser,
       queriedUserRequest,
-      isContributor,
+      isVerified,
     };
   },
 );
 
 export const UserProfilePage = connect(mapStateToProps)(props => {
-  const { myUser, queriedUser, queriedUserRequest, urlParams, url, isContributor } = props;
+  const { myUser, queriedUser, queriedUserRequest, urlParams, url, isVerified } = props;
   const isGildPage = GILD_URL_RE.test(url);
   const { userName: queriedUserName } = urlParams;
   const isMyUser = !!myUser && myUser.name === queriedUserName;
@@ -42,7 +39,7 @@ export const UserProfilePage = connect(mapStateToProps)(props => {
         <UserProfileHeader
           userName={ queriedUserName }
           isMyUser={ isMyUser }
-          isVerified={ isContributor }
+          isVerified={ isVerified }
         />
       </Section>
       { isGildPage ? <GildPageContent />

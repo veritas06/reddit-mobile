@@ -30,6 +30,7 @@ export default class Account extends RedditModel {
     oauthClientId: T.string,
     over18: T.bool,
     suspensionExpirationUTC: T.number,
+    verified: T.bool,
   }
 
   static API_ALIASES = {
