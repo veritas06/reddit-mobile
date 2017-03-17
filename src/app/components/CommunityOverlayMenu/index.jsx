@@ -72,6 +72,12 @@ export const CommunityOverlayMenu = (props) => {
           />
         : ''
       }
+      <LinkRow
+        key='all-link'
+        text='All'
+        href='/r/all'
+        icon='icon-bar-chart orangered-circled-xl'
+      />
       { renderSubscriptions(subscriptions, subscriptionsLoading, theme) }
     </OverlayMenu>
   );
