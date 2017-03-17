@@ -35,7 +35,7 @@ export const apiOptionsFromState = state => {
   // grab loids if we have them, and set the cookie if on the server
   const {
     apiRequestHeaders,
-    loid: { loidCookie, loidCreatedCookie },
+    loid: { loidCookie, loidCreatedCookie, edgeBucket },
     meta,
   } = state;
 
@@ -48,6 +48,10 @@ export const apiOptionsFromState = state => {
 
     if (loidCreatedCookie) {
       cookieHeaders.push(`loidcreated=${loidCreatedCookie}`);
+    }
+
+    if (edgeBucket) {
+      cookieHeaders.push(`edgebucket=${edgeBucket}`);
     }
 
     return merge(options, {

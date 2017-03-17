@@ -8,6 +8,7 @@ export const DEFAULT = {
   loidCreated: '',
   loidCookie: '',
   loidCreatedCookie: '',
+  edgeBucket: '',
 };
 
 export default (state=DEFAULT, action={}) => {
@@ -16,7 +17,7 @@ export default (state=DEFAULT, action={}) => {
       const { loid, loidCookie, loidCreated, loidCreatedCookie } = action;
 
       if (!loid) { return DEFAULT; }
-      return { loid, loidCookie, loidCreated, loidCreatedCookie };
+      return { ...state, loid, loidCookie, loidCreated, loidCreatedCookie };
     }
     case accountActions.RECEIVED_ACCOUNT: {
       const { apiResponse } = action;
@@ -48,6 +49,13 @@ export default (state=DEFAULT, action={}) => {
       }
 
       return state;
+    }
+
+    case loidActions.SET_EDGE_BUCKET: {
+      const { edgeBucket } = action;
+
+      if (!edgeBucket) { return DEFAULT; }
+      return { ...state, edgeBucket };
     }
 
     default: return state;

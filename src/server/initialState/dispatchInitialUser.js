@@ -8,6 +8,7 @@ export const dispatchInitialUser = async (ctx, dispatch, getState) => {
   // the lack of camel casing on the 'loidcreated' cookie name is intentional.
   const loidCookie = ctx.cookies.get('loid');
   const loidCreatedCookie = ctx.cookies.get('loidcreated');
+  const edgeBucket = ctx.cookies.get('edgebucket');
 
   if (loidCookie && loidCookie.includes('.')) {
     // If there's a `.`, we have the new format of loids,
@@ -25,6 +26,12 @@ export const dispatchInitialUser = async (ctx, dispatch, getState) => {
       loidCookie,
       loidCreated: loidCreatedCookie,
       loidCreatedCookie,
+    }));
+  }
+
+  if (edgeBucket) {
+    dispatch(loidActions.setEdgeBucket({
+      edgeBucket,
     }));
   }
 

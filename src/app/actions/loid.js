@@ -7,3 +7,10 @@ export const setLOID = ({ loid, loidCookie, loidCreated, loidCreatedCookie }) =>
   loidCreated,
   loidCreatedCookie,
 });
+
+export const SET_EDGE_BUCKET = 'SET_EDGE_BUCKET';
+
+export const setEdgeBucket = ({ edgeBucket }) => ({
+  type: SET_EDGE_BUCKET,
+  edgeBucket,
+});
