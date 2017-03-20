@@ -57,9 +57,17 @@ const mapDispatchToProps = dispatch => {
       // while the Promise dispatch is awaiting
       if (!preventExtraClick) {
         preventExtraClick = true;
-        await dispatch(logAppStoreNavigation(visitTrigger));
+        // iOS has different deep-linking behavior that depends on a combination of
+        // 1) did you start nagivgating to a universal link in call-stack of the click event,
+        // 2) are you on a local dev url (localhost, ip address, <machine-name>) or prod
+        // In prod, deep-linking of universal-links only works reliably if you
+        // navigate in the click-handlers originating call-stack. In local dev,
+        // it appears to work fine if you don't, but in prod with the app installed
+        // you'll instead be navigated to the app-store.
+        const trackingPromise = dispatch(logAppStoreNavigation(visitTrigger));
         dispatch(promoClicked());
-        dispatch(navigateToAppStore(url));
+        navigateToAppStore(url);
+        await trackingPromise;
         preventExtraClick = false;
       }
     }),

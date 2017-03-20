@@ -218,8 +218,11 @@ const mapDispatchToProps = dispatch => {
       // while the Promise dispatch is awaiting
       if (!preventExtraClick) {
         preventExtraClick = true;
-        await dispatch(xpromoActions.logAppStoreNavigation('login_screen_button'));
-        dispatch(xpromoActions.navigateToAppStore(url));
+        // We should not call `await` until the app-store navigation is in progress.
+        // see actions/xpromo.navigateToAppStore for more info.
+        const trackingPromise = dispatch(xpromoActions.logAppStoreNavigation('login_screen_button'));
+        xpromoActions.navigateToAppStore(url);
+        await trackingPromise;
         preventExtraClick = false;
       }
     }),
