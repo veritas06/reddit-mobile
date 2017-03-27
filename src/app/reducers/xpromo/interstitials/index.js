@@ -32,13 +32,6 @@ export default function(state=DEFAULT, action={}) {
       return DEFAULT;
     }
 
-    case xpromoActions.RECORD_SHOWN: {
-      return merge(state, {
-        haveShownXPromo: true,
-        xPromoShownUrl: action.url,
-      });
-    }
-
     case xpromoActions.PROMO_SCROLLSTART: {
       return merge(state, {
         scrolledStart: true,
