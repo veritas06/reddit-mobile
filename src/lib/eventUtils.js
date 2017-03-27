@@ -25,7 +25,7 @@ import isFakeSubreddit from 'lib/isFakeSubreddit';
 import { getEventTracker } from 'lib/eventTracker';
 import * as gtm from 'lib/gtm';
 import { hasAdblock } from 'lib/adblock';
-import { shouldNotShowBanner } from 'lib/smartBannerState';
+import { shouldNotShowBanner } from 'lib/xpromoState';
 
 export const XPROMO_VIEW = 'cs.xpromo_view';
 export const XPROMO_INELIGIBLE = 'cs.xpromo_ineligible';
@@ -185,7 +185,7 @@ export function trackXPromoEvent(state, eventType, additionalEventData) {
 
 function getXPromoExperimentPayload(state) {
   let experimentPayload = {};
-  if (state.smartBanner.showingListingClickInterstitial) {
+  if (state.xpromo.listingClick.showingListingClickInterstitial) {
     // If we're showing a listing click interstitial, then we should using
     const experimentData = listingClickExperimentData(state);
     if (experimentData) {

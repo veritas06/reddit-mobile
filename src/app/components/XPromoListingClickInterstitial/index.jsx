@@ -10,7 +10,7 @@ import cx from 'lib/classNames';
 const CLASS = 'XPromoListingClickInterstitial';
 
 const selector = createStructuredSelector({
-  showing: state => state.smartBanner.showingListingClickInterstitial,
+  showing: state => state.xpromo.listingClick.showingListingClickInterstitial,
 });
 
 const dispatcher = dispatch => ({

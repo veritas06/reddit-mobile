@@ -13,7 +13,7 @@ import * as sessionActions from 'app/actions/session';
 import * as xpromoActions from 'app/actions/xpromo';
 
 import goBackDest from 'lib/goBackDest';
-import { markBannerClosed } from 'lib/smartBannerState';
+import { markBannerClosed } from 'lib/xpromoState';
 
 import SnooIcon from 'app/components/SnooIcon';
 import LoginInput from 'app/components/LoginRegistrationForm/Input';

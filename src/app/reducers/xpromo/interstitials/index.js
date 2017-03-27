@@ -1,18 +1,22 @@
+/**
+ * @module {function} interstitials
+ * @memberof app/reducers/xpromo
+ *
+ * This reducer manages all of the xpromo interstitials state.
+ */
+
 import merge from 'platform/merge';
 
 import * as xpromoActions from 'app/actions/xpromo';
 import * as loginActions from 'app/actions/login';
-import { markBannerClosed } from 'lib/smartBannerState';
+import { markBannerClosed } from 'lib/xpromoState';
+
 
 export const DEFAULT = {
-  showBanner: false,
-  canListingClick: false,
-  showingListingClickInterstitial: false,
-  haveShownXPromo: false,
-  xPromoShownUrl: null,
-  loginRequired: false,
-  scrolledPast: false,
-  scrolledStart: false,
+  showBanner: false, // is this browsing session currently eligible to be x-promoted
+  loginRequired: false, // is this the login-required variant
+  scrolledPast: false, // have we scrolled past the interstitial / banner
+  scrolledStart: false, // have we started to scroll past the interstitial / banner
 };
 
 export default function(state=DEFAULT, action={}) {
@@ -66,30 +70,6 @@ export default function(state=DEFAULT, action={}) {
       });
     }
 
-    case xpromoActions.CAN_LISTING_CLICK: {
-      return merge(state, {
-        canListingClick: true,
-      });
-    }
-
-    case xpromoActions.XPROMO_LISTING_CLICKED: {
-      return merge(state, {
-        showingListingClickInterstitial: true,
-      });
-    }
-
-    case xpromoActions.XPROMO_HIDE_LISTING_CLICK_INTERSTITIAL: {
-      return merge(state, {
-        showingListingClickInterstitial: false,
-      });
-    }
-
-    case xpromoActions.MARK_LISTING_CLICK_TIMESTAMP: {
-      return merge(state, {
-        canListingClick: false,
-      });
-    }
-
     case loginActions.LOGGED_IN: {
       if (state.loginRequired) {
         markBannerClosed();
@@ -101,7 +81,6 @@ export default function(state=DEFAULT, action={}) {
       return state;
     }
 
-    default:
-      return state;
+    default: return state;
   }
 }

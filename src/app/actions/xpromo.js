@@ -4,7 +4,7 @@ import {
   markListingClickTimestampLocalStorage,
   shouldNotShowBanner,
   shouldNotListingClick,
-} from 'lib/smartBannerState';
+} from 'lib/xpromoState';
 import {
   trackPreferenceEvent,
   XPROMO_APP_STORE_VISIT,
@@ -82,18 +82,12 @@ export const XPROMO_HIDE_LISTING_CLICK_INTERSTITIAL = 'XPROMO__HIDE_LISTING_CLIC
 export const hideListingClickInterstitialIfNeeded = () => async (dispatch, getState) => {
   const state = getState();
 
-  if (!state.smartBanner.showingListingClickInterstitial) {
+  if (!state.xpromo.listingClick.showingListingClickInterstitial) {
     return;
   }
 
   dispatch({ type: XPROMO_HIDE_LISTING_CLICK_INTERSTITIAL });
 };
-
-export const RECORD_SHOWN = 'XPROMO__RECORD_SHOWN';
-export const recordShown = url => ({
-  type: RECORD_SHOWN,
-  url,
-});
 
 export const TRACK_XPROMO_EVENT = 'XPROMO__TRACK_EVENT';
 export const trackXPromoEvent = (eventType, data) => ({
@@ -137,7 +131,7 @@ export const checkAndSet = () => async (dispatch, getState) => {
 let _listingIntersitialHideTimer = null;
 
 export const performListingClick = (postId, listingClickType) => async (dispatch, getState) => {
-  if (getState().smartBanner.showingListingClickInterstitial) {
+  if (getState().xpromo.listingClick.showingListingClickInterstitial) {
     return;
   }
 

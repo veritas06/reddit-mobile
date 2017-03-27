@@ -38,7 +38,6 @@ import searchRequests from './searchRequests';
 import session from './session';
 import sessionRefresing from './sessionRefreshing';
 import scrollPositions from './scrollPositions';
-import smartBanner from './smartBanner';
 import subredditRequests from './subredditRequests';
 import subredditRules from './subredditRules';
 import subredditRulesRequests from './subredditRulesRequests';
@@ -55,6 +54,7 @@ import user from './user';
 import visitedPosts from './visitedPosts';
 import wikiRequests from './wikiRequests';
 import wikis from './wikis';
+import xpromo from './xpromo';
 
 export default {
   accounts,
@@ -95,7 +95,6 @@ export default {
   session,
   sessionRefresing,
   scrollPositions,
-  smartBanner,
   subredditRules,
   subredditRulesRequests,
   subreddits,
@@ -113,4 +112,5 @@ export default {
   widgets,
   wikis,
   wikiRequests,
+  xpromo,
 };

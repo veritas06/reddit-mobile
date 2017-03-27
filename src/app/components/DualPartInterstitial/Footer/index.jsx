@@ -9,7 +9,7 @@ import { redirect } from 'platform/actions';
 import * as xpromoActions from 'app/actions/xpromo';
 import { XPROMO_DISMISS } from 'lib/eventUtils';
 import getSubreddit from 'lib/getSubredditFromState';
-import { getXPromoLinkforCurrentPage } from 'lib/smartBannerState';
+import { getXPromoLinkforCurrentPage } from 'lib/xpromoState';
 import {
   loginRequiredEnabled as requireXPromoLogin,
 } from 'app/selectors/xpromo';

@@ -8,7 +8,7 @@ export default function xpromoEventTracker() {
 
     if (action.type === xpromoActions.TRACK_XPROMO_EVENT) {
       return trackXPromoEvent(state, action.eventType, action.data);
-    } else if (action.type === loginActions.LOGGED_IN && state.smartBanner.loginRequired) {
+    } else if (action.type === loginActions.LOGGED_IN && state.xpromo.interstitials.loginRequired) {
       return trackXPromoEvent(state, XPROMO_DISMISS, { dismiss_type: 'logged_in' });
     }
 

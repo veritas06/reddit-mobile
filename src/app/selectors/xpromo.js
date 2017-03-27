@@ -12,7 +12,7 @@ import getRouteMetaFromState from 'lib/getRouteMetaFromState';
 import { getExperimentData } from 'lib/experiments';
 import { getDevice, IPHONE, ANDROID } from 'lib/getDeviceFromState';
 
-import { shouldNotListingClick } from 'lib/smartBannerState';
+import { shouldNotListingClick } from 'lib/xpromoState';
 import { trackXPromoIneligibleEvent } from 'lib/eventUtils';
 
 const { DAYMODE } = themes;
@@ -196,7 +196,7 @@ export function listingClickEnabled(state, postId) {
     every_time: everyTime,
   };
 
-  if (!state.smartBanner.canListingClick) {
+  if (!state.xpromo.listingClick.canListingClick) {
     trackXPromoIneligibleEvent(state, eventData, shouldNotListingClick());
     return false;
   }
@@ -250,22 +250,22 @@ export function currentExperimentData(state) {
 }
 
 export function scrollPastState(state) {
-  return state.smartBanner.scrolledPast;
+  return state.xpromo.interstitials.scrolledPast;
 }
 
 export function scrollStartState(state) {
-  return state.smartBanner.scrolledStart;
+  return state.xpromo.interstitials.scrolledStart;
 }
 
 export function shouldShowXPromo(state) {
-  return state.smartBanner.showBanner &&
+  return state.xpromo.interstitials.showBanner &&
     xpromoIsEnabledOnPage(state) &&
     xpromoIsEnabledOnDevice(state);
 }
 
 export function interstitialType(state) {
   if (isEligibleListingPage(state)) {
-    if (state.smartBanner.showingListingClickInterstitial) {
+    if (state.xpromo.listingClick.showingListingClickInterstitial) {
       return XPROMO_LISTING_CLICK_EVENTS_NAME;
     }
 
