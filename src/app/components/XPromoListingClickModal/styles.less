@@ -1,0 +1,99 @@
+@import (reference) '~app/less/variables';
+@import (reference) '~app/less/mixins/importAll';
+@import (reference) '~app/less/themes/themeify';
+
+
+.backgroundImage() {
+  background-image: url('/img/listing-click-pattern.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.promoImage() {
+  background-image: url('/img/tutorial-vote.png');
+  background-size: 100%;
+  background-position: center;
+}
+
+.XPromoListingClickModal {
+  .ModalWrapper();
+  .themeify({
+    background-color: @theme-overlay-color;
+  });
+
+  &__modalBox {
+    .Modal();
+    .backgroundImage();
+    .themeify({
+      // this has to be in themeify becase the .Modal mixin sets colors
+      background-color: @white;
+    });
+
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  &__preloadImages {
+    // forces both image to preload so there's no delay on slow connections
+    .backgroundImage();
+
+    &:after {
+      content: '';
+      .promoImage();
+    }
+
+    &, &:after {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      overflow: hidden;
+    }
+  }
+
+  &__content {
+    padding: 3 * @grid-size;
+    .themeify({
+      background-color: fadeout(@theme-body-color, 15%);
+    });
+  }
+
+  &__promoImage {
+    .promoImage();
+
+    // responsive square
+    @size: 50%;
+    width: @size;
+    padding-bottom: @size;
+    margin: 3 * @grid-size auto;
+  }
+
+  &__primaryText {
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 2 * @grid-size;
+  }
+
+  &__buttonGroup {
+    text-align: center;
+  }
+
+  &__button {
+    display: inline-block;
+    padding: @grid-size;
+    margin: @half-grid-size;
+    border-radius: 3px;
+    border: 2px solid @blue;
+    color: @white;
+    background-color: @blue;
+
+    text-transform: uppercase;
+
+    &.m-outlined {
+      background-color: inherit;
+      color: @blue;
+    }
+  }
+}

@@ -6,7 +6,6 @@ import Raven from 'raven-js';
 import isEmpty from 'lodash/isEmpty';
 
 import localStorageAvailable from 'lib/localStorageAvailable';
-import onVisibilityChange from 'lib/onVisibilityChange';
 
 import Client from 'platform/Client';
 import * as platformActions from 'platform/actions';
@@ -178,9 +177,3 @@ client.dispatch(platformActions.activateClient());
 if (isShell) {
   client.dispatch(xpromoActions.checkAndSet());
 }
-
-// The listing click interstitial hides itself after a delay.
-// But by dispatching hide on focus, we can ensure it hides as soon as possible
-onVisibilityChange(() => {
-  client.dispatch(xpromoActions.hideListingClickInterstitialIfNeeded());
-});

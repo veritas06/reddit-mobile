@@ -1,9 +1,10 @@
+import { XPROMO_MODAL_LISTING_CLICK_NAME } from 'app/constants';
 import {
   getXPromoListingClickLink,
   markBannerClosed,
   markListingClickTimestampLocalStorage,
   shouldNotShowBanner,
-  shouldNotListingClick,
+  listingClickInitialState as getListingClickInitialState,
 } from 'lib/xpromoState';
 import {
   trackPreferenceEvent,
@@ -11,15 +12,6 @@ import {
   XPROMO_DISMISS,
   XPROMO_VIEW,
 } from 'lib/eventUtils';
-
-import {
-  XPROMO_LISTING_CLICK_EVENTS_NAME,
-} from 'app/constants';
-
-import features from 'app/featureFlags';
-import { flags } from 'app/constants';
-const { XPROMO_LISTING_CLICK_EVERY_TIME_COHORT } = flags;
-
 
 export const SHOW = 'XPROMO__SHOW';
 export const show = () => ({ type: SHOW });
@@ -37,57 +29,43 @@ export const promoScrollPast = () => ({ type: PROMO_SCROLLPAST });
 export const PROMO_SCROLLUP = 'XPROMO__SCROLLUP';
 export const promoScrollUp = () => ({ type: PROMO_SCROLLUP });
 
-export const CAN_LISTING_CLICK = 'XPROMO__CAN_LISTING_CLICK';
-export const canListingClick = () => ({ type: CAN_LISTING_CLICK });
+export const LISTING_CLICK_INITIAL_STATE = 'XPROMO__LISTING_CLICK_INITIAL_STATE';
+export const listingClickInitialState = ({ ineligibilityReason='', lastModalClick=0 }) => ({
+  type: LISTING_CLICK_INITIAL_STATE,
+  payload: {
+    ineligibilityReason,
+    lastModalClick,
+  },
+});
 
-export const MARK_LISTING_CLICK_TIMESTAMP = 'XPROMO__MARK_LISTING_CLICK_TIMESTAMP';
-export const markListingClickTimeStamp = () => async (dispatch) => {
-  dispatch({ type: MARK_LISTING_CLICK_TIMESTAMP });
-  markListingClickTimestampLocalStorage();
-};
-
-export const XPROMO_LISTING_CLICKED = 'XPROMO__LISTING_CLICKED';
-export const promoListingClicked = () => ({ type: XPROMO_LISTING_CLICKED });
-
-export const XPROMO_LISTING_CLICK_ANIMATION_COMPLETED = 'XPROMO__LISTING_CLICK_ANIMATION_COMPLETED';
-export const promoListingAnimated = () => ({ type: XPROMO_LISTING_CLICK_ANIMATION_COMPLETED });
-
-// max delay for the listing click interstitial to be on screen after trying
-// to navigate to the app store / installed app. If the user doesn't give
-// permission to navigate out of the browser, the promo will still be on screen.
-// Normally this is handled by a 'on:focus' listener in the `Client.js`,
-// but in this scenario we won't always have a focus event. You may be wondering,
-// why should there be a listener in the Client at all? Having it close on
-// visibility change protects us from Javascript not executing if the page
-// goes into the background, and ensures we hide the interstitial immediately
-// when the user comes back to the browser.
-const MAX_LISTING_CLICK_INTERSTITIAL_ON_SCREEN = 4000;
-
-// amount of delay from the animation completing before redirecting.
-const LISTING_ANIMATION_COMPLETE_PAUSE = 200;
-
-export const showListingClickInterstitial = () => async (dispatch, _, { waitForAction }) => {
-  dispatch(promoListingClicked());
-
-  return new Promise(resolve => {
-    // wait for the animation to finish, then pause before resolving.
-    // we use a spring-based animation, so we can't specify the exact duration
-    waitForAction(action => action.type === XPROMO_LISTING_CLICK_ANIMATION_COMPLETED, () => {
-      setTimeout(resolve, LISTING_ANIMATION_COMPLETE_PAUSE);
-    });
+export const MARK_MODAL_LISTING_CLICK_TIMESTAMP = 'XPROMO__MARK_MODAL_LISTING_CLICK_TIMESTAMP';
+export const markModalListingClickTimestamp = () => async (dispatch) => {
+  const dateTime = new Date();
+  dispatch({
+    type: MARK_MODAL_LISTING_CLICK_TIMESTAMP,
+    clickTime: dateTime.getTime(),
   });
+  markListingClickTimestampLocalStorage(dateTime);
 };
 
-export const XPROMO_HIDE_LISTING_CLICK_INTERSTITIAL = 'XPROMO__HIDE_LISTING_CLICK_INTERSTITIAL';
-export const hideListingClickInterstitialIfNeeded = () => async (dispatch, getState) => {
-  const state = getState();
+export const LISTING_CLICK_MODAL_ACTIVATED = 'XPROMO__LISTING_CLICK_MODAL_ACTIVATED';
+export const xpromoListingClickModalActivated = ({ postId='', listingClickType='' }) => ({
+  type: LISTING_CLICK_MODAL_ACTIVATED,
+  payload: {
+    postId,
+    listingClickType,
+  },
+});
 
-  if (!state.xpromo.listingClick.showingListingClickInterstitial) {
-    return;
-  }
+export const LISTING_CLICK_RETURNER_MODAL_ACTIVATED =
+  'XPROMO__LISTING_CLICK_RETURNER_MODAL_ACTIVATED';
 
-  dispatch({ type: XPROMO_HIDE_LISTING_CLICK_INTERSTITIAL });
-};
+export const xpromoListingClickReturnerModalActivated = () => ({
+  type: LISTING_CLICK_RETURNER_MODAL_ACTIVATED,
+});
+
+export const LISTING_CLICK_MODAL_HIDDEN = 'XPROMO__LISTING_CLICK_MODAL_HIDDEN';
+export const listingClickModalHidden = () => ({ type: LISTING_CLICK_MODAL_HIDDEN });
 
 export const TRACK_XPROMO_EVENT = 'XPROMO__TRACK_EVENT';
 export const trackXPromoEvent = (eventType, data) => ({
@@ -123,66 +101,63 @@ export const checkAndSet = () => async (dispatch, getState) => {
     dispatch(show());
   }
 
-  if (!shouldNotListingClick(getState())) {
-    dispatch(canListingClick());
-  }
+  dispatch(listingClickInitialState(getListingClickInitialState()));
 };
 
-let _listingIntersitialHideTimer = null;
-
 export const performListingClick = (postId, listingClickType) => async (dispatch, getState) => {
-  if (getState().xpromo.listingClick.showingListingClickInterstitial) {
+  if (getState().xpromo.listingClick.active) {
     return;
   }
 
-  // _listingIntersitialHideTimer tracks the timeout used to ensure we don't
-  // indefinetly show the listing interstitial. If the user is in everytime and:
-  // clicks -> comes back -> clicks again, we need to reset that timer.
-  if (_listingIntersitialHideTimer) {
-    clearTimeout(_listingIntersitialHideTimer);
-  }
-
-  const extraEventData = {
-    interstitial_type: XPROMO_LISTING_CLICK_EVENTS_NAME,
-    listing_click_type: listingClickType,
-  };
-
-  const trackingPromise = Promise.all([
-    // resolves when the interstitial animation is complete
-    dispatch(showListingClickInterstitial()),
-    dispatch(trackXPromoEvent(XPROMO_VIEW, extraEventData)),
-    dispatch(trackXPromoEvent(XPROMO_APP_STORE_VISIT, {
-      ...extraEventData,
-      visit_trigger: XPROMO_LISTING_CLICK_EVENTS_NAME,
-    })),
-  ]);
-
-  // For the every two week cohort, record the click
-  const state = getState();
-  const featureContext = features.withContext({ state });
-  if (!featureContext.enabled(XPROMO_LISTING_CLICK_EVERY_TIME_COHORT)) {
-    dispatch(markListingClickTimeStamp());
-  }
-
-  // Navigate right-away without waiting for tracking, this way deep-linking
-  // on iOS and Android works as expected in productio.
-  const listingClickURL = getXPromoListingClickLink(getState(), postId, listingClickType);
-  navigateToAppStore(listingClickURL);
-
-  await trackingPromise;
-
-  // The user might not approve opening the link externally, in which case
-  // we'll still be on this page. So we should close the interstitial.
-  _listingIntersitialHideTimer = setTimeout(
-    () => dispatch(hideListingClickInterstitialIfNeeded()),
-    MAX_LISTING_CLICK_INTERSTITIAL_ON_SCREEN
-  );
+  dispatch(xpromoListingClickModalActivated({ postId, listingClickType }));
+  dispatch(trackXPromoEvent(XPROMO_VIEW));
+  dispatch(markModalListingClickTimestamp());
 };
 
-export const logAppStoreNavigation = visitType => async (dispatch) => {
+export const listingClickModalAppStoreClicked = () => async (dispatch, getState) => {
+  // guard against duplicate clicks
+  const state = getState();
+  if (!state.xpromo.listingClick.showingAppStoreModal) {
+    return;
+  }
+
+  const { listingClickType, postId } = state.xpromo.listingClick.clickInfo;
+
+  // Start tracking before navigating to the app store
+  const trackingPromise = logAppStoreNavigation(XPROMO_MODAL_LISTING_CLICK_NAME, {
+    listingClickType,
+  });
+
+  dispatch(xpromoListingClickReturnerModalActivated());
+
+  navigateToAppStore(getXPromoListingClickLink(state, postId, listingClickType));
+
+  await trackingPromise;
+};
+
+export const listingClickModalDismissClicked = () => async (dispatch, getState) => {
+  // guard against duplicate clicks
+  const state = getState();
+  if (!state.xpromo.listingClick.active) {
+    return;
+  }
+
+  const { showingReturnerModal } = state.xpromo.listingClick;
+
+  dispatch(trackXPromoEvent(XPROMO_DISMISS, {
+    dismiss_type: `${XPROMO_MODAL_LISTING_CLICK_NAME}${showingReturnerModal ? '_returner' : ''}`,
+  }));
+
+  dispatch(listingClickModalHidden());
+};
+
+export const logAppStoreNavigation = (visitType, extraData={}) => async (dispatch) => {
   return Promise.all([
     dispatch(trackXPromoEvent(XPROMO_DISMISS, { dismiss_type: 'app_store_visit' })),
-    dispatch(trackXPromoEvent(XPROMO_APP_STORE_VISIT, { visit_trigger: visitType })),
+    dispatch(trackXPromoEvent(XPROMO_APP_STORE_VISIT, {
+      ...extraData,
+      visit_trigger: visitType,
+    })),
   ]);
 };
 

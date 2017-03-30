@@ -4,7 +4,6 @@ import values from 'lodash/values';
 import url from 'url';
 
 import {
-  interstitialType,
   isPartOfXPromoExperiment,
   currentExperimentData as currentXPromoExperimentData,
   listingClickExperimentData,
@@ -13,6 +12,8 @@ import {
   isEligibleListingPage,
   isEligibleCommentsPage,
 } from 'app/selectors/xpromo';
+
+import { interstitialData } from 'lib/xpromoState';
 
 import {
   buildAdditionalEventData as listingPageEventData,
@@ -172,6 +173,10 @@ export function trackXPromoEvent(state, eventType, additionalEventData) {
     ...buildSubredditData(state),
     ...getXPromoExperimentPayload(state),
     ...xPromoExtraScreenViewData(state),
+    // We should append the interstitialData, if this is not an XPROMO_INELIGIBLE
+    // event. In that case, we might not bucketed the user, so we should
+    // avoid trigger those events.
+    ...(eventType === XPROMO_INELIGIBLE ? {} : interstitialData(state)),
     ...additionalEventData,
   };
 
@@ -203,7 +208,6 @@ function getXPromoExperimentPayload(state) {
 export function trackXPromoView(state, additionalEventData) {
   trackXPromoEvent(state, XPROMO_VIEW, {
     ...additionalEventData,
-    interstitial_type: interstitialType(state),
   });
 }
 

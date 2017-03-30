@@ -8,7 +8,7 @@ import PostsList from 'app/components/PostsList';
 import NSFWInterstitial from 'app/components/NSFWInterstitial';
 import SortAndTimeSelector from 'app/components/SortAndTimeSelector';
 import SubNav from 'app/components/SubNav';
-import XPromoListingClickInterstitial from 'app/components/XPromoListingClickInterstitial';
+import XPromoListingClickModal from 'app/components/XPromoListingClickModal';
 
 import PostsFromSubredditHandler from 'app/router/handlers/PostsFromSubreddit';
 import { paramsToPostsListsId } from 'app/models/PostsList';
@@ -90,7 +90,7 @@ export const PostsFromSubredditPage = connect(mapStateToProps)(props => {
         subredditIsNSFW={ !!subreddit && subreddit.over18 }
         subredditShowSpoilers={ !!subreddit && subreddit.spoilersEnabled }
       />
-      <XPromoListingClickInterstitial />
+      <XPromoListingClickModal />
     </div>
   );
 });

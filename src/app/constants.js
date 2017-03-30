@@ -66,9 +66,7 @@ export const RECENT_CLICKS_LENGTH = 5;
 
 export const XPROMO_INTERSTITIAL_OPT_OUT = 'no_xpromo_interstitial';
 
-export const XPROMO_LISTING_CLICK_EVENTS_NAME = 'listing_click';
-
-export const XPROMO_LAST_LISTING_CLICK_DATE = 'lastListingClick';
+export const XPROMO_MODAL_LISTING_CLICK_NAME = 'modal_listing_click';
 
 /**
  * Listing clicks have a target type,
@@ -118,28 +116,35 @@ export const flags = {
   VARIANT_RECOMMENDED_BY_POST_HOT: 'experimentRecommendedByPostHot',
   VARIANT_RECOMMENDED_SIMILAR_POSTS: 'experimentRecommendedSimilarPosts',
   VARIANT_SUBREDDIT_HEADER: 'experimentSubredditHeader',
-  VARIANT_XPROMO_LOGIN_REQUIRED_IOS: 'experimentXPromoLoginRequiredIOS',
-  VARIANT_XPROMO_LOGIN_REQUIRED_ANDROID: 'experimentXPromoLoginRequiredAndroid',
-  VARIANT_XPROMO_LOGIN_REQUIRED_IOS_CONTROL: 'experimentXPromoLoginRequiredIOSControl',
-  VARIANT_XPROMO_LOGIN_REQUIRED_ANDROID_CONTROL: 'experimentXPromoLoginRequiredAndroidControl',
-  VARIANT_XPROMO_INTERSTITIAL_COMMENTS_IOS: 'experimentXPromoInterstitialCommentsIos',
-  VARIANT_XPROMO_INTERSTITIAL_COMMENTS_ANDROID: 'experimentXPromoInterstitialCommentsAndroid',
-  XPROMO_LISTING_CLICK_EVERY_TIME_COHORT: 'XPromoListingClickEveryTimeCohort',
-  VARIANT_XPROMO_LISTING_CLICK_TWO_WEEK_IOS_ENABLED: 'experimentXPromoListingClickTwoWeekIOSEnabled',
-  VARIANT_XPROMO_LISTING_CLICK_TWO_WEEK_ANDROID_ENABLED: 'experimentXPromoListingClickTwoWeekAndroidEnabled',
-  VARIANT_XPROMO_LISTING_CLICK_EVERY_TIME_IOS_ENABLED: 'experimentXPromoListingClickEveryTimeIOSEnabled',
-  VARIANT_XPROMO_LISTING_CLICK_EVERY_TIME_ANDROID_ENABLED: 'experimentXPromoListingClickEveryTimeAndroidEnabled',
-  VARIANT_XPROMO_INTERSTITIAL_FREQUENCY_IOS: 'experimentXPromoInterstitialFrequencyIos',
-  VARIANT_XPROMO_INTERSTITIAL_FREQUENCY_ANDROID: 'experimentXPromoInterstitialFrequencyAndroid',
-  VARIANT_XPROMO_INTERSTITIAL_FREQUENCY_IOS_CONTROL: 'experimentXPromoInterstitialFrequencyIosControl',
-  VARIANT_XPROMO_INTERSTITIAL_FREQUENCY_ANDROID_CONTROL: 'experimentXPromoInterstitialFrequencyAndroidControl',
   VARIANT_TITLE_EXPANDO: 'experimentTitleExpando',
   VARIANT_MIXED_VIEW: 'experimentMixedView',
   SHOW_AMP_LINK: 'showAmpLink',
+
+  // RULES
   RULES_MODAL_ON_COMMENT_CLICK_ANYWHERE: 'rulesModalOnCommentClickAnywhere',
   RULES_MODAL_ON_COMMENT_CLICK_BUTTON: 'rulesModalOnCommentClickButton',
   RULES_MODAL_ON_SUBMIT_CLICK_ANYWHERE: 'rulesModalOnSubmitClickAnywhere',
   RULES_MODAL_ON_SUBMIT_CLICK_BUTTON: 'rulesModalOnSubmitClickButton',
+
+  // XPromo Login Required
+  VARIANT_XPROMO_LOGIN_REQUIRED_IOS: 'experimentXPromoLoginRequiredIOS',
+  VARIANT_XPROMO_LOGIN_REQUIRED_ANDROID: 'experimentXPromoLoginRequiredAndroid',
+  VARIANT_XPROMO_LOGIN_REQUIRED_IOS_CONTROL: 'experimentXPromoLoginRequiredIOSControl',
+  VARIANT_XPROMO_LOGIN_REQUIRED_ANDROID_CONTROL: 'experimentXPromoLoginRequiredAndroidControl',
+
+  // XPromo Comments Interstitial
+  VARIANT_XPROMO_INTERSTITIAL_COMMENTS_IOS: 'experimentXPromoInterstitialCommentsIos',
+  VARIANT_XPROMO_INTERSTITIAL_COMMENTS_ANDROID: 'experimentXPromoInterstitialCommentsAndroid',
+
+  // XPromo Modal Listing Click
+  VARIANT_MODAL_LISTING_CLICK_IOS: 'experimentXPromoModalListingClickIOS',
+  VARIANT_MODAL_LISTING_CLICK_ANDROID: 'experimentXPromoModalListingClickAndroid',
+
+  // XPromo Interstitial Frequrency
+  VARIANT_XPROMO_INTERSTITIAL_FREQUENCY_IOS: 'experimentXPromoInterstitialFrequencyIos',
+  VARIANT_XPROMO_INTERSTITIAL_FREQUENCY_ANDROID: 'experimentXPromoInterstitialFrequencyAndroid',
+  VARIANT_XPROMO_INTERSTITIAL_FREQUENCY_IOS_CONTROL: 'experimentXPromoInterstitialFrequencyIosControl',
+  VARIANT_XPROMO_INTERSTITIAL_FREQUENCY_ANDROID_CONTROL: 'experimentXPromoInterstitialFrequencyAndroidControl',
 };
 
 export const xpromoDisplayTheme = {
@@ -164,19 +169,25 @@ export const genericErrors = {
   UNKNOWN_ERROR: 'UNKNOWN_ERROR',
 };
 
+export const EVERY_HOUR = 'every_hour';
 export const EVERY_DAY = 'every_day';
 export const EVERY_THREE_DAYS = 'every_three_days';
 export const EVERY_WEEK = 'every_week';
 export const EVERY_TWO_WEEKS = 'every_two_weeks';
 
-export const experimentFrequencyVariants = {};
-experimentFrequencyVariants[EVERY_DAY] = 24 * 60 * 60 * 1000;
-experimentFrequencyVariants[EVERY_THREE_DAYS] = 3 * 24 * 60 * 60 * 1000;
-experimentFrequencyVariants[EVERY_WEEK] = 1 * 7 * 24 * 60 * 60 * 1000;
-experimentFrequencyVariants[EVERY_TWO_WEEKS] = 2 * 7 * 24 * 60 * 60 * 1000;
+const HOUR_IN_MS = 60 * 60 * 1000;
 
-export const localstorage = {
+export const EXPERIMENT_FREQUENCY_VARIANTS = {
+  [EVERY_HOUR]: HOUR_IN_MS,
+  [EVERY_DAY]: 24 * HOUR_IN_MS,
+  [EVERY_THREE_DAYS]: 3 * 24 * HOUR_IN_MS,
+  [EVERY_WEEK]: 1 * 7 * 24 * HOUR_IN_MS,
+  [EVERY_TWO_WEEKS]: 2 * 7 * 24 * HOUR_IN_MS,
+};
+
+export const LOCAL_STORAGE_KEYS = {
   BANNER_LAST_CLOSED : 'bannerLastClosed',
+  XPROMO_LAST_MODAL_CLICK: 'lastModalListingClick',
 };
 
 export const rulesModalExperimentSubreddits = ['AskHistorians', 'apple', 'CasualConversation', 'tourettes', 'PartyParrot', 'townofsalemgame', 'books', 'NeutralPolitics', 'history', 'freebies', 'battlestations', 'pcgaming', 'DBZDokkanBattle', 'analog', 'pokemongo', 'ClashRoyale', 'OnePieceTC', 'television', 'MealtimeVideos', 'steam_giveaway', 'marketing', 'toronto', 'ukpersonalfinance', 'lesbianactually', 'MLPLounge', 'SandersForPresident', 'DailyShow', 'mylittlepony', 'adventures', 'running', 'aspergers_Beta', 'VPN', 'woweconomy', 'NotTheOnion', 'Videos', 'needamod', 'scandal', 'yokaiwatch', 'jillstein', 'RandomActsOfBlowJob', 'NBA2K', 'SeattleWA', 'ccw', 'freelance', 'shutupandtakemymoney', 'chronicpain', 'jailbreak', 'iOSthemes', 'pathofexile', 'mylittleantisonic1', 'drugs', 'nfl', 'campingandhiking', 'DestinyTheGame', 'Louisville', 'Drugs', 'LGBTeens', 'politics', 'twitchplayspokemon', 'nintendo', 'LiverpoolFC', 'Judaism', 'restaurateur', 'powerlifting', 'parentsofmultiples', 'woahdude', 'JUSTNOMIL', 'offmychest', 'Lightroom', 'niu', 'gopro', 'StuckInThisAirport', 'History', 'Vinesauce', 'titlegore', 'partyparrot', 'NASCAR', 'wow', 'welding', 'icandrawthat', 'DiaryOfARedditor', 'bravefrontier', 'ToolBand', 'BoomBeach', 'CompetitiveOverwatch', 'WikiLeaks', 'Rainbow6', 'crypto', 'ShiftyLifeProTips', 'Electronics', 'AskElectronics', 'howtheworldworks', 'HITMAN', 'InfinityTrain', 'boulder', '2007scape', 'InternetIsBeautiful', 'androiddev', 'animenocontext', 'birthday', 'dirtykikpals', 'AT4W', 'NintendoSwitch', 'FireEmblemHeroes', 'amiibo', 'mildlyinfuriating', 'trailerparkboys', 'steam', 'korea', 'realms', 'wow', 'SubredditDrama', 'Wellthatsucks', 'TheoryOfReddit', 'BoomBeach', 'sitecore', 'SkincareAddiction', 'maninthehighcastle', 'DestinyTheGame', 'Minecraft', 'worldnews', 'OverwatchUniversity', 'thewalkingdead', 'natureismetal', 'SexyButNotPornofMen', 'confession', 'emulation', 'popheads', 'WritingPrompts', 'thenetherlands', 'BigBrother', 'razer', 'runescape', 'cordcutters', 'MorbidReality', 'opiates', 'DestinyLore', 'Neverwinter', 'im14andthisisfunny', 'AndroidGaming', 'phoenix', 'DarkNetMarkets', 'DarkNetMarketsNoobs', 'howtonotgiveafuck', 'youwontgetbanned', 'chess', 'csgo', 'lounge', 'prettygirls', 'Overwatch', 'AngelDensetsu', 'food', 'military', 'darknet'];

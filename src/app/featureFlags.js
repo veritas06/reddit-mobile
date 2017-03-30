@@ -10,7 +10,11 @@ import {
 import getSubreddit from 'lib/getSubredditFromState';
 import getRouteMetaFromState from 'lib/getRouteMetaFromState';
 import getContentId from 'lib/getContentIdFromState';
-import { featureEnabled, extractUser, getExperimentData } from 'lib/experiments';
+import {
+  featureEnabled,
+  extractUser,
+  getExperimentData,
+} from 'lib/experiments';
 import { getEventTracker } from 'lib/eventTracker';
 import { getBasePayload } from 'lib/eventUtils';
 import { getDevice, IPHONE, IOS_DEVICES, ANDROID } from 'lib/getDeviceFromState';
@@ -46,15 +50,15 @@ const {
   VARIANT_XPROMO_LOGIN_REQUIRED_ANDROID,
   VARIANT_XPROMO_LOGIN_REQUIRED_IOS_CONTROL,
   VARIANT_XPROMO_LOGIN_REQUIRED_ANDROID_CONTROL,
+
   // Comments
   VARIANT_XPROMO_INTERSTITIAL_COMMENTS_IOS,
   VARIANT_XPROMO_INTERSTITIAL_COMMENTS_ANDROID,
-  // Listing Click
-  XPROMO_LISTING_CLICK_EVERY_TIME_COHORT,
-  VARIANT_XPROMO_LISTING_CLICK_TWO_WEEK_IOS_ENABLED,
-  VARIANT_XPROMO_LISTING_CLICK_TWO_WEEK_ANDROID_ENABLED,
-  VARIANT_XPROMO_LISTING_CLICK_EVERY_TIME_IOS_ENABLED,
-  VARIANT_XPROMO_LISTING_CLICK_EVERY_TIME_ANDROID_ENABLED,
+
+  // Modal Listing Click
+  VARIANT_MODAL_LISTING_CLICK_IOS,
+  VARIANT_MODAL_LISTING_CLICK_ANDROID,
+
   // Interstitial frequency
   VARIANT_XPROMO_INTERSTITIAL_FREQUENCY_IOS,
   VARIANT_XPROMO_INTERSTITIAL_FREQUENCY_ANDROID,
@@ -274,10 +278,7 @@ const config = {
       ] },
     ],
   },
-  [XPROMO_LISTING_CLICK_EVERY_TIME_COHORT]: {
-    enabled: 'mweb_xpromo_listing_click_every_time',
-  },
-  [VARIANT_XPROMO_LISTING_CLICK_TWO_WEEK_IOS_ENABLED]: {
+  [VARIANT_MODAL_LISTING_CLICK_IOS]: {
     and: [
       { allowedDevices: [IPHONE] },
       { allowNSFW: false },
@@ -285,12 +286,15 @@ const config = {
       {
         or: [
           { url: 'xpromolistingclick' },
-          { variant: 'mweb_xpromo_two_week_listing_click_ios:listing_click' },
+          { variant: 'mweb_xpromo_modal_listing_click_ios:hourly_dismissable' },
+          { variant: 'mweb_xpromo_modal_listing_click_ios:hourly_nodismiss' },
+          { variant: 'mweb_xpromo_modal_listing_click_ios:daily_dismissable' },
+          { variant: 'mweb_xpromo_modal_listing_click_ios:daily_nodimiss' },
         ],
       },
     ],
   },
-  [VARIANT_XPROMO_LISTING_CLICK_TWO_WEEK_ANDROID_ENABLED]: {
+  [VARIANT_MODAL_LISTING_CLICK_ANDROID]: {
     and: [
       { allowedDevices: [ANDROID] },
       { allowNSFW: false },
@@ -298,33 +302,10 @@ const config = {
       {
         or: [
           { url: 'xpromolistingclick' },
-          { variant: 'mweb_xpromo_two_week_listing_click_android:listing_click' },
-        ],
-      },
-    ],
-  },
-  [VARIANT_XPROMO_LISTING_CLICK_EVERY_TIME_IOS_ENABLED]: {
-    and: [
-      { allowedDevices: [IPHONE] },
-      { allowNSFW: false },
-      { allowedPages: ['index', 'listing'] },
-      {
-        or: [
-          { url: 'xpromolistingclick' },
-          { variant: 'mweb_xpromo_every_time_listing_click_ios:listing_click' },
-        ],
-      },
-    ],
-  },
-  [VARIANT_XPROMO_LISTING_CLICK_EVERY_TIME_ANDROID_ENABLED]: {
-    and: [
-      { allowedDevices: [ANDROID] },
-      { allowNSFW: false },
-      { allowedPages: ['index', 'listing'] },
-      {
-        or: [
-          { url: 'xpromolistingclick' },
-          { variant: 'mweb_xpromo_every_time_listing_click_android:listing_click' },
+          { variant: 'mweb_xpromo_modal_listing_click_android:hourly_dismissable' },
+          { variant: 'mweb_xpromo_modal_listing_click_android:hourly_nodismiss' },
+          { variant: 'mweb_xpromo_modal_listing_click_android:daily_dismissable' },
+          { variant: 'mweb_xpromo_modal_listing_click_android:daily_nodimiss' },
         ],
       },
     ],

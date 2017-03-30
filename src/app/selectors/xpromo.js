@@ -1,10 +1,13 @@
 import { find, some } from 'lodash';
 
 import {
+  EXPERIMENT_FREQUENCY_VARIANTS,
+  EVERY_HOUR,
+  EVERY_DAY,
   flags as flagConstants,
   themes,
   xpromoDisplayTheme,
-  XPROMO_LISTING_CLICK_EVENTS_NAME,
+  XPROMO_MODAL_LISTING_CLICK_NAME,
 } from 'app/constants';
 
 import features, { isNSFWPage } from 'app/featureFlags';
@@ -12,24 +15,27 @@ import getRouteMetaFromState from 'lib/getRouteMetaFromState';
 import { getExperimentData } from 'lib/experiments';
 import { getDevice, IPHONE, ANDROID } from 'lib/getDeviceFromState';
 
-import { shouldNotListingClick } from 'lib/xpromoState';
 import { trackXPromoIneligibleEvent } from 'lib/eventUtils';
 
 const { DAYMODE } = themes;
 const { USUAL, MINIMAL } = xpromoDisplayTheme;
 
 const {
+  // XPromo Login Required
   VARIANT_XPROMO_LOGIN_REQUIRED_IOS,
   VARIANT_XPROMO_LOGIN_REQUIRED_ANDROID,
   VARIANT_XPROMO_LOGIN_REQUIRED_IOS_CONTROL,
   VARIANT_XPROMO_LOGIN_REQUIRED_ANDROID_CONTROL,
+
+  // XPromo Comments Interstitial
   VARIANT_XPROMO_INTERSTITIAL_COMMENTS_IOS,
   VARIANT_XPROMO_INTERSTITIAL_COMMENTS_ANDROID,
-  XPROMO_LISTING_CLICK_EVERY_TIME_COHORT,
-  VARIANT_XPROMO_LISTING_CLICK_TWO_WEEK_IOS_ENABLED,
-  VARIANT_XPROMO_LISTING_CLICK_TWO_WEEK_ANDROID_ENABLED,
-  VARIANT_XPROMO_LISTING_CLICK_EVERY_TIME_IOS_ENABLED,
-  VARIANT_XPROMO_LISTING_CLICK_EVERY_TIME_ANDROID_ENABLED,
+
+  // XPromo Modal Listing Click
+  VARIANT_MODAL_LISTING_CLICK_IOS,
+  VARIANT_MODAL_LISTING_CLICK_ANDROID,
+
+  // XPromo Interstitial Frequrency
   VARIANT_XPROMO_INTERSTITIAL_FREQUENCY_IOS,
   VARIANT_XPROMO_INTERSTITIAL_FREQUENCY_ANDROID,
 } = flagConstants;
@@ -53,14 +59,9 @@ const COMMENTS_PAGE_BANNER_FLAGS = [
   VARIANT_XPROMO_INTERSTITIAL_COMMENTS_ANDROID,
 ];
 
-const TWO_WEEK_LISTING_CLICK_FLAGS = [
-  VARIANT_XPROMO_LISTING_CLICK_TWO_WEEK_IOS_ENABLED,
-  VARIANT_XPROMO_LISTING_CLICK_TWO_WEEK_ANDROID_ENABLED,
-];
-
-const EVERY_TIME_LISTING_CLICK_FLAGS = [
-  VARIANT_XPROMO_LISTING_CLICK_EVERY_TIME_IOS_ENABLED,
-  VARIANT_XPROMO_LISTING_CLICK_EVERY_TIME_ANDROID_ENABLED,
+const MODAL_LISTING_CLICK_FLAGS = [
+  VARIANT_MODAL_LISTING_CLICK_IOS,
+  VARIANT_MODAL_LISTING_CLICK_ANDROID,
 ];
 
 const INTERSTITIAL_FREQUENCY_FLAGS = [
@@ -75,10 +76,8 @@ const EXPERIMENT_NAMES = {
   [VARIANT_XPROMO_LOGIN_REQUIRED_ANDROID_CONTROL]: 'mweb_xpromo_require_login_android',
   [VARIANT_XPROMO_INTERSTITIAL_COMMENTS_IOS]: 'mweb_xpromo_interstitial_comments_ios',
   [VARIANT_XPROMO_INTERSTITIAL_COMMENTS_ANDROID]: 'mweb_xpromo_interstitial_comments_android',
-  [VARIANT_XPROMO_LISTING_CLICK_TWO_WEEK_IOS_ENABLED]: 'mweb_xpromo_two_week_listing_click_ios',
-  [VARIANT_XPROMO_LISTING_CLICK_TWO_WEEK_ANDROID_ENABLED]: 'mweb_xpromo_two_week_listing_click_android',
-  [VARIANT_XPROMO_LISTING_CLICK_EVERY_TIME_IOS_ENABLED]: 'mweb_xpromo_every_time_listing_click_ios',
-  [VARIANT_XPROMO_LISTING_CLICK_EVERY_TIME_ANDROID_ENABLED]: 'mweb_xpromo_every_time_listing_click_android',
+  [VARIANT_MODAL_LISTING_CLICK_IOS]: 'mweb_xpromo_modal_listing_click_ios',
+  [VARIANT_MODAL_LISTING_CLICK_ANDROID]: 'mweb_xpromo_modal_listing_click_android',
   [VARIANT_XPROMO_INTERSTITIAL_FREQUENCY_IOS]: 'mweb_xpromo_interstitial_frequency_ios',
   [VARIANT_XPROMO_INTERSTITIAL_FREQUENCY_ANDROID]: 'mweb_xpromo_interstitial_frequency_android',
 };
@@ -182,7 +181,6 @@ export function listingClickEnabled(state, postId) {
   if (!isEligibleListingPage(state) || !xpromoIsEnabledOnDevice(state)) {
     return false;
   }
-
   if (!state.user.loggedOut) {
     const userAccount = state.accounts[state.user.name];
     if (userAccount && userAccount.isMod) {
@@ -190,14 +188,21 @@ export function listingClickEnabled(state, postId) {
     }
   }
 
-  const everyTime = features.withContext({ state }).enabled(XPROMO_LISTING_CLICK_EVERY_TIME_COHORT);
   const eventData = {
-    interstitial_type: XPROMO_LISTING_CLICK_EVENTS_NAME,
-    every_time: everyTime,
+    interstitial_type: XPROMO_MODAL_LISTING_CLICK_NAME,
   };
 
-  if (!state.xpromo.listingClick.canListingClick) {
-    trackXPromoIneligibleEvent(state, eventData, shouldNotListingClick());
+  if (state.xpromo.listingClick.ineligibilityReason) {
+    trackXPromoIneligibleEvent(state, eventData, state.xpromo.listingClick.ineligibilityReason);
+    return;
+  }
+
+  if (!anyFlagEnabled(state, MODAL_LISTING_CLICK_FLAGS)) {
+    return false;
+  }
+
+  if (!eligibleTimeForModalListingClick(state)) {
+    trackXPromoIneligibleEvent(state, eventData, 'dismissed_previously');
     return false;
   }
 
@@ -207,11 +212,7 @@ export function listingClickEnabled(state, postId) {
     return false;
   }
 
-  if (everyTime) {
-    return anyFlagEnabled(state, EVERY_TIME_LISTING_CLICK_FLAGS);
-  }
-
-  return anyFlagEnabled(state, TWO_WEEK_LISTING_CLICK_FLAGS);
+  return true;
 }
 
 /**
@@ -220,17 +221,53 @@ export function listingClickEnabled(state, postId) {
  * properly attribute experiment data
  */
 export function listingClickExperimentData(state) {
-  let experimentName = null;
+  const experimentName = activeXPromoExperimentName(state, MODAL_LISTING_CLICK_FLAGS);
+  return getExperimentData(state, experimentName);
+}
 
-  if (features.withContext({ state }).enabled(XPROMO_LISTING_CLICK_EVERY_TIME_COHORT)) {
-    experimentName = activeXPromoExperimentName(state, EVERY_TIME_LISTING_CLICK_FLAGS);
-  } else {
-    experimentName = activeXPromoExperimentName(state, TWO_WEEK_LISTING_CLICK_FLAGS);
+/**
+ * @func xpromoModalListingClickVariantInfo
+ * @param {object} state - our application's redux state
+ *
+ * @return {object} details of the experiment based on the variant name
+ * @return {int} details.timeLimit - the length of time in epoch milliseconds
+ *  to wait before showing the modal again
+ * @return {bool} details.dimissable - true if the app store modal can be dimissed
+ * NOTE: this function should not be called until we're sure the user is
+ * eligible and bucketed in the experiment. It will throw or mis-fire bucketing
+ * events otherwise
+ */
+export function xpromoModalListingClickVariantInfo(state) {
+  const { variant} = listingClickExperimentData(state);
+  const [ timePeriodString, dimissableString ] = variant.split('_');
+
+  return {
+    timeLimit: EXPERIMENT_FREQUENCY_VARIANTS[timePeriodString === 'hourly' ? EVERY_HOUR : EVERY_DAY],
+    dismissable: dimissableString === 'dismissable',
+  };
+}
+
+/**
+ * @func eligibleTimeForModalListingClick
+ * @param {object} state - our applications redux state. Depends on
+ *  - state.xpromo.listingClick.lastModalClick
+ *  - state.accounts.me
+ *
+ * Note: This function is time senstiive, it's result will vary based on the
+ * current time.
+ *
+ * @return {bool} Based only on time based eligibility, can we bucket the
+ *   current user into one of the xpromo modal listing click experiments
+ */
+export function eligibleTimeForModalListingClick(state) {
+  const { lastModalClick } = state.xpromo.listingClick;
+  if (lastModalClick === 0) {
+    return true;
   }
 
-  if (experimentName) {
-    return getExperimentData(state, experimentName);
-  }
+  const { timeLimit } = xpromoModalListingClickVariantInfo(state);
+  const ineligibleLimit = lastModalClick + timeLimit;
+  return Date.now() > ineligibleLimit;
 }
 
 /**
@@ -261,22 +298,6 @@ export function shouldShowXPromo(state) {
   return state.xpromo.interstitials.showBanner &&
     xpromoIsEnabledOnPage(state) &&
     xpromoIsEnabledOnDevice(state);
-}
-
-export function interstitialType(state) {
-  if (isEligibleListingPage(state)) {
-    if (state.xpromo.listingClick.showingListingClickInterstitial) {
-      return XPROMO_LISTING_CLICK_EVENTS_NAME;
-    }
-
-    if (loginRequiredEnabled(state)) {
-      return 'require_login';
-    }
-
-    return 'transparent';
-  } else if (isEligibleCommentsPage(state)) {
-    return 'black_banner_fixed_bottom';
-  }
 }
 
 export function isPartOfXPromoExperiment(state) {
