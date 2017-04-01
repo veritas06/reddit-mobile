@@ -60,7 +60,6 @@ createTest({ reducers: { interstitials }, routes }, ({ getStore, expect }) => {
 
         // Indicate desire to show, record that we showed, navigate.
         store.dispatch(xpromoActions.show());
-        store.dispatch(xpromoActions.recordShown('/foo/bar'));
         store.dispatch(platformActions.navigateToUrl(METHODS.GET, '/user/foobar'));
         const { interstitials } = store.getState();
         const { showBanner } = interstitials;
