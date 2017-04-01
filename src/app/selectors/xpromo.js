@@ -243,7 +243,7 @@ export function xpromoModalListingClickVariantInfo(state) {
 
   return {
     timeLimit: EXPERIMENT_FREQUENCY_VARIANTS[timePeriodString === 'hourly' ? EVERY_HOUR : EVERY_DAY],
-    dismissable: dimissableString === 'dismissable',
+    dismissible: dimissableString === 'dismissible',
   };
 }
 

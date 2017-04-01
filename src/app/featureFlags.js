@@ -286,9 +286,9 @@ const config = {
       {
         or: [
           { url: 'xpromolistingclick' },
-          { variant: 'mweb_xpromo_modal_listing_click_ios:hourly_dismissable' },
+          { variant: 'mweb_xpromo_modal_listing_click_ios:hourly_dismissible' },
           { variant: 'mweb_xpromo_modal_listing_click_ios:hourly_nodismiss' },
-          { variant: 'mweb_xpromo_modal_listing_click_ios:daily_dismissable' },
+          { variant: 'mweb_xpromo_modal_listing_click_ios:daily_dismissible' },
           { variant: 'mweb_xpromo_modal_listing_click_ios:daily_nodimiss' },
         ],
       },
@@ -302,9 +302,9 @@ const config = {
       {
         or: [
           { url: 'xpromolistingclick' },
-          { variant: 'mweb_xpromo_modal_listing_click_android:hourly_dismissable' },
+          { variant: 'mweb_xpromo_modal_listing_click_android:hourly_dismissible' },
           { variant: 'mweb_xpromo_modal_listing_click_android:hourly_nodismiss' },
-          { variant: 'mweb_xpromo_modal_listing_click_android:daily_dismissable' },
+          { variant: 'mweb_xpromo_modal_listing_click_android:daily_dismissible' },
           { variant: 'mweb_xpromo_modal_listing_click_android:daily_nodimiss' },
         ],
       },

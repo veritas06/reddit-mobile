@@ -17,12 +17,12 @@ const showing = state => state.xpromo.listingClick.active;
 
 const selector = createStructuredSelector({
   showing,
-  dismissable: state => {
+  dismissible: state => {
     if (!showing(state)) {
       return null;
     }
 
-    return xpromoModalListingClickVariantInfo(state).dismissable;
+    return xpromoModalListingClickVariantInfo(state).dismissible;
   },
   returner: state => state.xpromo.listingClick.showingReturnerModal,
 });
@@ -42,7 +42,7 @@ export default connect(selector, dispatcher)(props => {
   }
 
   const {
-    dismissable,
+    dismissible,
     onDismiss,
     onGotoAppStore,
     returner,
@@ -55,7 +55,7 @@ export default connect(selector, dispatcher)(props => {
           ? <ReturnerContent onDismiss={ onDismiss } />
           : (
             <AppStoreContent
-              dismissable={ dismissable }
+              dismissible={ dismissible }
               onDismiss={ onDismiss }
               onGotoAppStore={ onGotoAppStore }
             />
@@ -95,13 +95,13 @@ const Button = ({ children, onClick, outlined }) => (
   </div>
 );
 
-const AppStoreContent = ({ dismissable, onDismiss, onGotoAppStore }) => (
+const AppStoreContent = ({ dismissible, onDismiss, onGotoAppStore }) => (
   <ModalContent>
     <PrimaryText>
       This content is best viewed in our mobile app.
     </PrimaryText>
     <ButtonGroup>
-      { dismissable && (
+      { dismissible && (
           <Button outlined onClick={ onDismiss }>
             Take Me Back
           </Button>
