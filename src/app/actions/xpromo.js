@@ -13,6 +13,10 @@ import {
   XPROMO_VIEW,
 } from 'lib/eventUtils';
 
+import { xpromoModalListingClickVariantInfo } from 'app/selectors/xpromo';
+
+import onVisibilityChange from 'lib/onVisibilityChange';
+
 export const SHOW = 'XPROMO__SHOW';
 export const show = () => ({ type: SHOW });
 
@@ -49,11 +53,16 @@ export const markModalListingClickTimestamp = () => async (dispatch) => {
 };
 
 export const LISTING_CLICK_MODAL_ACTIVATED = 'XPROMO__LISTING_CLICK_MODAL_ACTIVATED';
-export const xpromoListingClickModalActivated = ({ postId='', listingClickType='' }) => ({
+export const xpromoListingClickModalActivated = ({
+  listingClickType='',
+  postId='',
+  systemPrompt=false,
+}) => ({
   type: LISTING_CLICK_MODAL_ACTIVATED,
   payload: {
-    postId,
     listingClickType,
+    postId,
+    systemPrompt,
   },
 });
 
@@ -104,15 +113,82 @@ export const checkAndSet = () => async (dispatch, getState) => {
   dispatch(listingClickInitialState(getListingClickInitialState()));
 };
 
+// The `systemPrompt` variants of listing modal click want to show the
+// app-store-returner-modal if and only if we think the user navigated to the
+// app store after being prompted to do so by the phone's operating system.
+//
+// We have no 'programatic' way to do so, so we listen to visibility events
+// to try to guess 'did the user click confirm and go to the app store, and
+// then come back to this tab' and distinguish that from 'did the user click
+// cancel'. The first case seems very hard to distinguish from 'did user
+// switch apps in general' and the cancel case is hard to distinguish from
+// 'did the user lock their phone and come back a bit later'. So we
+// use time-delays as an approximation for what happened.
+//
+// This is a good demonstration of why having redux-observeable or redux-saga
+//  in our architecture would be beneficial. We have to essentially set up
+//  a singleton with ad-hoc state. Having one event listner that listened for
+//  visibility changes and published them would allow the `performListingClick`
+//  function to start up an observer when it activates, that could tear itself
+//  down after the appropriate events have happened.
+//
+
+let navigationTime = Infinity;
+let beenHidden = false;
+let wentToAppStoreHandler = () => {};
+
+const TEN_SECONDS = 1000 * 10;
+
+const visibilityChangeHandler = hidden => {
+  if (hidden) {
+    beenHidden = true;
+  } else {
+    const now = Date.now();
+    if (beenHidden && (now < navigationTime + TEN_SECONDS)) {
+      wentToAppStoreHandler();
+    }
+  }
+};
+
+const markTime = () => {
+  navigationTime = Date.now();
+};
+
+const subscribeToAppStoreReturn = callback => {
+  beenHidden = false;
+  markTime();
+  wentToAppStoreHandler = callback;
+};
+
+if (process.env.ENV === 'client') {
+  onVisibilityChange(
+    () => visibilityChangeHandler(false),
+    () => visibilityChangeHandler(true),
+  );
+}
+
 export const performListingClick = (postId, listingClickType) => async (dispatch, getState) => {
-  if (getState().xpromo.listingClick.active) {
+  const state = getState();
+  if (state.xpromo.listingClick.active) {
     return;
   }
 
-  dispatch(xpromoListingClickModalActivated({ postId, listingClickType }));
+  const { systemPrompt } = xpromoModalListingClickVariantInfo(state);
+
+  // TODO renamed this action to `modalListingClickActivated`
+  dispatch(xpromoListingClickModalActivated({ postId, listingClickType, systemPrompt }));
   dispatch(trackXPromoEvent(XPROMO_VIEW));
   dispatch(markModalListingClickTimestamp());
+
+  if (systemPrompt) {
+    // state has changed from the other actions, so use `getState` for the freshest
+    navigateToAppStore(getXPromoListingClickLink(getState(), postId, listingClickType));
+    dispatch(listingClickModalHidden());
+    subscribeToAppStoreReturn(() => dispatch(xpromoListingClickReturnerModalActivated()));
+  }
 };
+
+
 
 export const listingClickModalAppStoreClicked = () => async (dispatch, getState) => {
   // guard against duplicate clicks

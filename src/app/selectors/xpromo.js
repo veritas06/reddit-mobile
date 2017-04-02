@@ -201,10 +201,10 @@ export function listingClickEnabled(state, postId) {
     return false;
   }
 
-  if (!eligibleTimeForModalListingClick(state)) {
-    trackXPromoIneligibleEvent(state, eventData, 'dismissed_previously');
-    return false;
-  }
+  // if (!eligibleTimeForModalListingClick(state)) {
+  //   trackXPromoIneligibleEvent(state, eventData, 'dismissed_previously');
+  //   return false;
+  // }
 
   const post = state.posts[postId];
   if (post.promoted) {
@@ -239,11 +239,12 @@ export function listingClickExperimentData(state) {
  */
 export function xpromoModalListingClickVariantInfo(state) {
   const { variant} = listingClickExperimentData(state);
-  const [ timePeriodString, dimissableString ] = variant.split('_');
+  const [ timePeriodString, descriptionString ] = variant.split('_');
 
   return {
     timeLimit: EXPERIMENT_FREQUENCY_VARIANTS[timePeriodString === 'hourly' ? EVERY_HOUR : EVERY_DAY],
-    dismissible: dimissableString === 'dismissible',
+    dismissible: descriptionString === 'dismissible',
+    systemPrompt: descriptionString === 'systemPrompt',
   };
 }
 

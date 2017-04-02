@@ -51,11 +51,11 @@ export default function(state=DEFAULT, action={}) {
     }
 
     case xpromoActions.LISTING_CLICK_MODAL_ACTIVATED: {
-      const { postId, listingClickType } = action.payload;
+      const { postId, listingClickType, systemPrompt } = action.payload;
 
       return merge(state, {
         active: true,
-        showingAppStoreModal: true,
+        showingAppStoreModal: !systemPrompt,
         clickInfo: {
           listingClickType,
           postId,

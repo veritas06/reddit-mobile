@@ -13,7 +13,10 @@ import cx from 'lib/classNames';
 
 const CLASS = 'XPromoListingClickModal';
 
-const showing = state => state.xpromo.listingClick.active;
+const showing = state => {
+  const { showingAppStoreModal, showingReturnerModal } = state.xpromo.listingClick;
+  return showingAppStoreModal || showingReturnerModal;
+};
 
 const selector = createStructuredSelector({
   showing,
