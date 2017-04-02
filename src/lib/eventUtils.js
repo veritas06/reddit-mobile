@@ -4,9 +4,7 @@ import values from 'lodash/values';
 import url from 'url';
 
 import {
-  isPartOfXPromoExperiment,
-  currentExperimentData as currentXPromoExperimentData,
-  listingClickExperimentData,
+  getXPromoExperimentPayload,
   xpromoIsEnabledOnDevice,
   commentsInterstitialEnabled,
   isEligibleListingPage,
@@ -187,23 +185,6 @@ export function trackXPromoEvent(state, eventType, additionalEventData) {
       .track('xpromo_events', eventType, payload);
   });
 }
-
-function getXPromoExperimentPayload(state) {
-  let experimentPayload = {};
-  if (state.xpromo.listingClick.showingListingClickInterstitial) {
-    // If we're showing a listing click interstitial, then we should using
-    const experimentData = listingClickExperimentData(state);
-    if (experimentData) {
-      const {experiment_name, variant } = experimentData;
-      experimentPayload = { experiment_name, experiment_variant: variant };
-    }
-  } else if (isPartOfXPromoExperiment(state) && currentXPromoExperimentData(state)) {
-    const { experiment_name, variant } = currentXPromoExperimentData(state);
-    experimentPayload = { experiment_name, experiment_variant: variant };
-  }
-  return experimentPayload;
-}
-
 
 export function trackXPromoView(state, additionalEventData) {
   trackXPromoEvent(state, XPROMO_VIEW, {

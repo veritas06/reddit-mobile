@@ -12,9 +12,8 @@ import {
 import { LISTING_CLICK_TYPES } from 'app/constants';
 
 import {
-  currentExperimentData,
+  getXPromoExperimentPayload,
   getFrequencyExperimentData,
-  isPartOfXPromoExperiment,
   isEligibleCommentsPage,
   isEligibleListingPage,
   loginRequiredEnabled,
@@ -63,7 +62,7 @@ export function getXPromoListingClickLink(state, postId, listingClickType) {
 
   const path = getXPromoListingClickPath(state, post, listingClickType);
 
-  return getXPromoLink(state, path, 'listing_click', {
+  return getXPromoLink(state, path, XPROMO_MODAL_LISTING_CLICK_NAME, {
     listing_click_type: listingClickType,
   });
 }
@@ -107,24 +106,19 @@ export function getXPromoLink(state, path, linkType, additionalData={}) {
     interstitial_type: interstitialType(state),
   };
 
-  if (isPartOfXPromoExperiment(state)) {
-    let experimentData = {};
-
-    if (currentExperimentData(state)) {
-      const { experiment_name, variant } = currentExperimentData(state);
-      experimentData = {
-        utm_name: experiment_name,
-        utm_term: variant,
-      };
-    }
+  const experimentData = getXPromoExperimentPayload(state);
+  if (experimentData && experimentData.experiment_name && experimentData.experiment_variant) {
     payload = {
       ...payload,
-      ...experimentData,
+      utm_name: experimentData.experiment_name,
+      utm_term: experimentData.experiment_variant,
       utm_medium: 'experiment',
     };
-
   } else {
-    payload = { ...payload, utm_medium: 'interstitial' };
+    payload = {
+      ...payload,
+      utm_medium: 'interstitial',
+    };
   }
 
   payload = {

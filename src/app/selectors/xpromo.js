@@ -286,6 +286,22 @@ export function currentExperimentData(state) {
   return getExperimentData(state, experimentName);
 }
 
+export function getXPromoExperimentPayload(state) {
+  let experimentPayload = {};
+  if (state.xpromo.listingClick.active) {
+    // If we're showing a listing click interstitial, then we should using
+    const experimentData = listingClickExperimentData(state);
+    if (experimentData) {
+      const {experiment_name, variant } = experimentData;
+      experimentPayload = { experiment_name, experiment_variant: variant };
+    }
+  } else if (isPartOfXPromoExperiment(state) && currentExperimentData(state)) {
+    const { experiment_name, variant } = currentExperimentData(state);
+    experimentPayload = { experiment_name, experiment_variant: variant };
+  }
+  return experimentPayload;
+}
+
 export function scrollPastState(state) {
   return state.xpromo.interstitials.scrolledPast;
 }
