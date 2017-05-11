@@ -10,6 +10,7 @@ import * as xpromoActions from 'app/actions/xpromo';
 import { getSubredditNamePrefixed } from 'lib/getSubredditFromState';
 import { XPROMO_DISPLAY_THEMES as THEME } from 'app/constants';
 import { getXPromoLinkforCurrentPage } from 'lib/xpromoState';
+import AppButton from '../Button';
 import {
   loginRequiredEnabled as requireXPromoLogin,
 } from 'app/selectors/xpromo';

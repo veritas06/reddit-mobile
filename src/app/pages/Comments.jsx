@@ -12,7 +12,9 @@ import RelevantContent from 'app/components/RelevantContent';
 import CommentTree from 'app/components/CommentTree';
 import CommentsPageTools from 'app/components/CommentsPage/CommentsPageTools';
 import Post from 'app/components/Post';
-import Loading from 'app/components/Loading';
+
+import LoadingXpromo from 'app/components/LoadingXpromo';
+
 import RecommendedPosts from 'app/components/RecommendedPosts';
 import RecommendedSubreddits from 'app/components/RecommendedSubreddits';
 import SubNav from 'app/components/SubNav';
@@ -42,7 +44,7 @@ function CommentsPage(props) {
   if (!postLoaded) {
     return (
       <div className='CommentsPage'>
-        <Loading />
+        <LoadingXpromo />
       </div>
     );
   }

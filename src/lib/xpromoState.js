@@ -103,8 +103,6 @@ function getXPromoListingClickPath(state, post, listingClickType) {
         }
         return '/';
       }
-
-
       return post.cleanPermalink;
     }
   }

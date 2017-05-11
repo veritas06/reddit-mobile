@@ -4,9 +4,7 @@
 import merge from 'platform/merge';
 import * as xpromoActions from 'app/actions/xpromo';
 
-export const DEFAULT = {
-  appLink: undefined
-};
+export const DEFAULT = { appLink: undefined };
 
 const server = function(state=DEFAULT, action={}) {
   switch (action.type) {
@@ -19,7 +17,6 @@ const server = function(state=DEFAULT, action={}) {
     default: return state;
   }
 }
-
 
 /**
  * @module {function} xpromo

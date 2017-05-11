@@ -137,7 +137,7 @@ export function isXPromoFixedBottom(state) {
   return (theme === PERSIST || theme === MINIMAL);
 }
 
-export function xpromoIsConfiguredOnPage(state) {
+function xpromoIsConfiguredOnPage(state) {
   const actionName = getRouteActionName(state);
   if (actionName === 'index' || actionName === 'listing') {
     return true;
@@ -179,18 +179,17 @@ function anyFlagEnabled(state, flags) {
 }
 
 export function loginRequiredEnabled(state) {
-  if (!shouldShowXPromo(state)) {
-    return false;
+  if (shouldShowXPromo(state)) {
+    return anyFlagEnabled(state, LOGIN_REQUIRED_FLAGS);
   }
-
-  return anyFlagEnabled(state, LOGIN_REQUIRED_FLAGS);
+  return false;
 }
 
 export function commentsInterstitialEnabled(state) {
-  if (!shouldShowXPromo(state)) {
-    return false;
+  if (shouldShowXPromo(state)) {
+    return anyFlagEnabled(state, COMMENTS_PAGE_BANNER_FLAGS);
   }
-  return anyFlagEnabled(state, COMMENTS_PAGE_BANNER_FLAGS);
+  return false;
 }
 
 /**
@@ -238,11 +237,20 @@ export function listingClickEnabled(state, postId) {
 }
 
 /**
- * This should only be called when we know the user is eligible and buckted
+ * @func getExperimentDataByFlags
+ *
+ * Note: This should only be called when we know the user is eligible and buckted
  * for a listing click experiment group. Used to let `getXPromoExperimentPayload`
  * properly attribute experiment data
+ *
+ * @param {object} state - our applications redux state.
+ * @param {array} FLAGS - list of experiments.
+ *
+ * Note: If FLAGS-param is empty -> current experiment data will be returned.
+ *
+ * @return {object}
  */
-export function getExperimentDataByFlags(state, FLAGS) {
+function getExperimentDataByFlags(state, FLAGS) {
   const experimentName = activeXPromoExperimentName(state, FLAGS);
   return getExperimentData(state, experimentName);
 }
@@ -281,7 +289,7 @@ export function xpromoModalListingClickVariantInfo(state) {
  * @return {bool} Based only on time based eligibility, can we bucket the
  *   current user into one of the xpromo modal listing click experiments
  */
-export function eligibleTimeForModalListingClick(state) {
+function eligibleTimeForModalListingClick(state) {
   const { lastModalClick } = state.xpromo.listingClick;
   if (lastModalClick === 0) {
     return true;
@@ -292,11 +300,6 @@ export function eligibleTimeForModalListingClick(state) {
   return Date.now() > ineligibleLimit;
 }
 
-/**
- * @TODO: These functions should refactored:
- * - currentExperimentData
- * - isXPromoPersistent
- */
 export function getExperimentRange(state) {
   // For frequency experiment
   const experimentName = activeXPromoExperimentName(state, INTERSTITIAL_FREQUENCY_FLAGS);
@@ -304,11 +307,6 @@ export function getExperimentRange(state) {
   if (experimentData) {
     return experimentData.variant;
   }
-}
-
-export function currentExperimentData(state) {
-  const experimentName = activeXPromoExperimentName(state);
-  return getExperimentData(state, experimentName);
 }
 
 function populateExperimentPayload(experimentData) {
@@ -335,8 +333,8 @@ export function getXPromoExperimentPayload(state) {
     experimentPayload = populateExperimentPayload(experimentData);
   }
   // Common rules
-  if (isPartOfXPromoExperiment(state) && currentExperimentData(state)) {
-    const experimentData = currentExperimentData(state);
+  if (isPartOfXPromoExperiment(state) && getExperimentDataByFlags(state)) {
+    const experimentData = getExperimentDataByFlags(state);
     experimentPayload = populateExperimentPayload(experimentData);
   }
   return experimentPayload;
@@ -362,11 +360,14 @@ export function isXPromoPersistent(state) {
 export function isXPromoBannerEnabled(state) {
   return anyFlagEnabled(state, [XPROMOBANNER]);
 }
-export function shouldShowXPromo(state) {
+export function isXPromoAdLoadingEnabled(state) {
+  return anyFlagEnabled(state, [AD_LOADING]);
+}
+function shouldShowXPromo(state) {
   return state.xpromo.interstitials.showBanner &&
     isXPromoBannerEnabled(state);
 }
-export function isPartOfXPromoExperiment(state) {
+function isPartOfXPromoExperiment(state) {
   return shouldShowXPromo(state) && anyFlagEnabled(state, EXPERIMENT_FULL);
 }
 export function XPromoIsActive(state) {
