@@ -75,10 +75,15 @@ const {
   // Persistent Xpromo
   VARIANT_XPROMO_PERSISTENT_IOS,
   VARIANT_XPROMO_PERSISTENT_ANDROID,
+  // Ad Loading
+  AD_LOADING,
 } = flagConstants;
 
 const config = {
   [BETA]: true,
+
+  [AD_LOADING]: true,
+
   [XPROMOBANNER]: {
     and: [
       { notOptedOut: OPT_OUT_XPROMO_INTERSTITIAL.STORE_KEY },

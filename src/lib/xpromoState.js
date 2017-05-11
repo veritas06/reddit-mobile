@@ -62,7 +62,7 @@ export function isXPromoPersistentEnabled(state) {
 }
 
 export function getXPromoLinkforCurrentPage(state, linkType) {
-  const path = window.location.href.split(window.location.host)[1];
+  const path = (typeof(window) !== 'undefined' ? window.location.href.split(window.location.host)[1] : 'SERVERR-LOCALHOST');
   return getXPromoLink(state, path, linkType);
 }
 
@@ -138,10 +138,7 @@ export function getXPromoLink(state, path, linkType, additionalData={}) {
     ...xPromoExtraScreenViewData(state),
   };
 
-  return getBranchLink(state, path, {
-    ...payload,
-    ...xPromoExtraScreenViewData(state),
-  });
+  return getBranchLink(state, path, payload);
 }
 
 function getXpromoClosingTime(state, localStorageKey=BANNER_LAST_CLOSED) {
@@ -266,6 +263,10 @@ function interstitialType(state) {
   } else if (isEligibleCommentsPage(state)) {
     return MINIMAL;
   }
+
+  // this type is going to work on a server part
+  // when the beginnig of this app id launching
+  return 'Ad_loading';
 }
 
 export function interstitialData(state) {

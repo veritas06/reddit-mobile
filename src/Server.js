@@ -27,6 +27,7 @@ import dispatchInitialEUCookieNotice from 'server/initialState/dispatchInitialEU
 import { dispatchInitialMeta } from 'server/initialState/dispatchInitialMeta';
 import { dispatchInitialOver18 } from 'server/initialState/dispatchInitialOver18';
 import { dispatchInitialTheme } from 'server/initialState/dispatchInitialTheme';
+import { dispatchInitialXPromoLink } from 'server/initialState/dispatchInitialXPromo';
 
 import {
   dispatchInitialRecentSubreddits,
@@ -107,6 +108,7 @@ export function startServer() {
       dispatchInitialOver18(ctx, dispatch);
       dispatchInitialRecentSubreddits(ctx, dispatch);
       await dispatchInitialUser(ctx, dispatch, getState);
+      dispatchInitialXPromoLink(ctx, dispatch, getState);
     },
     preRouteServerMiddleware: [
       buildFiles,

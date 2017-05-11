@@ -1,3 +1,4 @@
+import get from 'lodash/get';
 import find from 'lodash/find';
 import omit from 'lodash/omit';
 import values from 'lodash/values';
@@ -46,8 +47,7 @@ export function convertId(id) {
 }
 
 function getSubredditFromState(state) {
-  const { subredditName } = state.platform.currentPage.urlParams;
-
+  const subredditName = get(state,`platform.currentPage.urlParams.subredditName`, undefined);
   if (subredditName && !isFakeSubreddit(subredditName)) {
     return state.subreddits[subredditName.toLowerCase()];
   }
@@ -55,15 +55,13 @@ function getSubredditFromState(state) {
 
 export function buildSubredditData(state) {
   const subreddit = getSubredditFromState(state);
-
-  if (!subreddit) {
-    return {};
+  if (subreddit) {
+    return {
+      sr_id: convertId(subreddit.name),
+      sr_name: subreddit.displayName,
+    };
   }
-
-  return {
-    sr_id: convertId(subreddit.name),
-    sr_name: subreddit.displayName,
-  };
+  return {};
 }
 
 export function buildProfileData(state, extraPayload) {
@@ -136,7 +134,7 @@ export function getBasePayload(state) {
     referrer_domain: referrer ? getDomain(referrer, meta) : '',
     referrer_url: referrer,
     language: preferences.lang,
-    dnt: !!window.DO_NOT_TRACK,
+    dnt: (typeof(window)!=='undefined' ? !!window.DO_NOT_TRACK : !!"SERVER.DO_NOT_TRACK"),
     compact_view: compact,
     adblock: hasAdblock(),
     session_id: getSessionIdFromCookie(),

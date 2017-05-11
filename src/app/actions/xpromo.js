@@ -97,6 +97,15 @@ export const loginRequired = () => ({ type: LOGIN_REQUIRED });
 
 const EXTERNAL_PREF_NAME = 'hide_mweb_xpromo_banner';
 
+export const XPROMO_LINK_SET = 'XPROMO__LINK_SET';
+export const xpromoSetAppLink = (appLink="") => async (dispatch) => {
+  dispatch(trackXPromoEvent())
+  dispatch({
+    type: XPROMO_LINK_SET,
+    payload: { appLink },
+  });
+};
+
 // element is the interface element through which
 // the user dismissed the crosspromo experience.
 export const close = () => async (dispatch, getState) => {

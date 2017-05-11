@@ -156,6 +156,9 @@ export const flags = {
   // XPromo Persistent Banner
   VARIANT_XPROMO_PERSISTENT_IOS: 'experimentXPromoPersistentIos',
   VARIANT_XPROMO_PERSISTENT_ANDROID: 'experimentXPromoPersistentAndroid',
+
+  // AD onload
+  AD_LOADING: 'experimentXPromoAdLoading',
 };
 
 export const XPROMO_DISPLAY_THEMES = {
