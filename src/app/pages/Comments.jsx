@@ -23,7 +23,6 @@ import getSubreddit from 'lib/getSubredditFromState';
 import CommentsPageHandler from 'app/router/handlers/CommentsPage';
 import { paramsToCommentsPageId } from 'app/models/CommentsPage';
 
-
 const T = React.PropTypes;
 
 function CommentsPage(props) {
@@ -166,6 +165,5 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     onToggleReply: () => onToggleReply(stateProps.post.name),
   };
 };
-
 
 export default connect(stateProps, dispatchProps, mergeProps)(CommentsPage);

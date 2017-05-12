@@ -85,27 +85,6 @@
     }
   }
 
-  &__button {
-    display: inline-block;
-    padding: 0 20px;
-    font-size: 14px;
-    height: 48px;
-    line-height: 48px;
-    text-align: center;
-    margin: @grid-size @grid-size*3 @half-grid-size;
-    width: calc(100% ~ '-' @grid-size*6);
-    max-width: 320px;
-    border-radius: 5px;
-    text-transform: uppercase;
-
-    background-color: @orangered;
-    color: @white;
-
-    &:hover {
-      background-color: darken(@orangered, 10%);
-    }
-  }
-
   @closeLinkHPadding: 2 * @grid-size;
 
   &__dismissalLink {

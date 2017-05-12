@@ -12,11 +12,6 @@ import DualPartInterstitialHeader from 'app/components/DualPartInterstitial/Head
 import DualPartInterstitialFooter from 'app/components/DualPartInterstitial/Footer';
 
 import {
-  logAppStoreNavigation,
-  navigateToAppStore,
-  promoClicked,
-} from 'app/actions/xpromo';
-import {
   xpromoTheme,
   scrollPastState,
   isXPromoPersistentActive,
@@ -61,38 +56,4 @@ export const selector = createSelector(
   }),
 );
 
-const mapDispatchToProps = dispatch => {
-  let preventExtraClick = false;
-
-  return {
-    navigator: (visitTrigger, url, xpromoPersistState) => (async () => {
-      // Prevention of additional click events
-      // while the Promise dispatch is awaiting
-      if (!preventExtraClick) {
-        preventExtraClick = true;
-        // We should not call `await` until the app-store navigation is in progress,
-        // see actions/xpromo.navigateToAppStore for more info.
-        const trackingPromise = dispatch(logAppStoreNavigation(visitTrigger));
-        dispatch(promoClicked(xpromoPersistState));
-        navigateToAppStore(url);
-        await trackingPromise;
-        preventExtraClick = false;
-      }
-    }),
-  };
-};
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-  const { xpromoTheme, xpromoPersistState } = stateProps;
-  const { navigator: dispatchNavigator } = dispatchProps;
-  const visitTrigger = getXpromoTheme(xpromoTheme).visitTrigger;
-
-  return {
-    ...stateProps,
-    ...dispatchProps,
-    ...ownProps,
-    navigator: url => dispatchNavigator(visitTrigger, url, xpromoPersistState),
-  };
-};
-
-export default connect(selector, mapDispatchToProps, mergeProps)(DualPartInterstitial);
+export default connect(selector)(DualPartInterstitial);

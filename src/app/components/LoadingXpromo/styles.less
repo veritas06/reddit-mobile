@@ -1,6 +1,5 @@
 @import (reference) '~app/less/variables';
 @import (reference) '~app/less/mixins/importAll';
-@import (reference) '~app/less/themes/themeify';
 @import (reference) '~app/components/Loading/styles';
 
 .adLoading {
@@ -8,26 +7,10 @@
   text-align: center;
   position: relative;
 
-  &__button {
+  &__wrapper {
     display: inline-block;
     position: relative;
     margin: 8px auto 4px;
-
-    button {
-      padding: 0 20px;
-      font-size: 14px;
-      height: 48px;
-      line-height: 48px;
-      text-align: center;
-      display: inline-block;
-      position: relative;
-      max-width: 320px;
-      border-radius: 5px;
-      text-transform: uppercase;
-      background-color: #FF4500;
-      color: #FFF;
-      z-index: 2;
-    }
 
     &:before {
       z-index: 1;
@@ -40,12 +23,15 @@
       -webkit-animation: scaleout 1.5s infinite ease-in-out;
       animation: scaleout 1.5s infinite ease-in-out;
     }
+  }
+  &__button {
+    display: inline-block;
+    position: relative;
+    z-index: 2;
+  }
 
-    .loading{
-      position: absolute;
-      top: -110px;
-      left: 50%;
-      margin-left: -93px;
-    }
+  // @TODO — temporary.
+  .Loading{
+    padding: 15px;
   }
 }
