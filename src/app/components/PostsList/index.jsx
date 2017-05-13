@@ -6,7 +6,7 @@ import { createSelector } from 'reselect';
 import Ad from 'app/components/Ad';
 import PaginationButtons from 'app/components/PaginationButtons';
 import Post from 'app/components/Post';
-import Loading from 'app/components/Loading';
+import LoadingXpromo from 'app/components/LoadingXpromo';
 import adLocationForPostRecords from 'lib/adLocationForPostRecords';
 
 const T = React.PropTypes;
@@ -16,7 +16,7 @@ export const PostsList = props => {
   const shouldRenderPagination = !loading && shouldPage && postRecords.length;
 
   if (loading) {
-    return <Loading />;
+    return <LoadingXpromo />;
   }
 
   return (

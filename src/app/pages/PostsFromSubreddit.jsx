@@ -4,7 +4,7 @@ import { createSelector } from 'reselect';
 import { some } from 'lodash/collection';
 
 import CommunityHeader from 'app/components/CommunityHeader';
-import Loading from 'app/components/Loading';
+import LoadingXpromo from 'app/components/LoadingXpromo';
 import PostsList from 'app/components/PostsList';
 import NSFWInterstitial from 'app/components/NSFWInterstitial';
 import SortAndTimeSelector from 'app/components/SortAndTimeSelector';
@@ -91,7 +91,7 @@ export const PostsFromSubredditPage = connect(mapStateToProps)(props => {
       // Show loading until we know the subreddit is over 18 or not
       return (
         <div className={ className }>
-          <Loading />
+          <LoadingXpromo />
         </div>
       );
     }
