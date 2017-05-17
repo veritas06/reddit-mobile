@@ -62,7 +62,7 @@ export function isXPromoPersistentEnabled(state) {
 }
 
 export function getXPromoLinkforCurrentPage(state, linkType) {
-  const path = (typeof(window) !== 'undefined' ? window.location.href.split(window.location.host)[1] : 'SERVERR-LOCALHOST');
+  const path = (typeof (window) !== 'undefined' ? window.location.href.split(window.location.host)[1] : 'SERVERR-LOCALHOST');
   return getXPromoLink(state, path, linkType);
 }
 
@@ -248,7 +248,13 @@ export const markListingClickTimestampLocalStorage = (dateTime) => {
   localStorage.setItem(XPROMO_LAST_MODAL_CLICK, dateTime);
 };
 
-function interstitialType(state) {
+export function interstitialType(state) {
+  // this type is going to work on a server part
+  // when the beginnig of this app id launching
+  if (state.meta.env === 'SERVER') {
+    return 'Ad_loading';
+  }
+
   if (isEligibleListingPage(state)) {
     if (state.xpromo.listingClick.active) {
       return XPROMO_MODAL_LISTING_CLICK_NAME;
@@ -261,10 +267,6 @@ function interstitialType(state) {
   } else if (isEligibleCommentsPage(state)) {
     return MINIMAL;
   }
-
-  // this type is going to work on a server part
-  // when the beginnig of this app id launching
-  return 'Ad_loading';
 }
 
 export function interstitialData(state) {

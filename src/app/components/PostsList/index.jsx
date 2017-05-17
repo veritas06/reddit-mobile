@@ -19,6 +19,14 @@ export const PostsList = props => {
     return <LoadingXpromo />;
   }
 
+  // @TODO Add more STRONGEST check here!
+  // This check shows the preloader when the application is loaded
+  // from the server, otherwise there is no preloader until the Client
+  // starts to work.
+  if (!postRecords.length) {
+    return <LoadingXpromo />;
+  }
+
   return (
     <div className='PostsList PostAndCommentList'>
       { renderPostsList(props) }

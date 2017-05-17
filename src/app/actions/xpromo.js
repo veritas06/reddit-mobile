@@ -95,19 +95,18 @@ export const trackXPromoEvent = (eventType, data) => ({
 export const LOGIN_REQUIRED = 'XPROMO__LOGIN_REQUIRED';
 export const loginRequired = () => ({ type: LOGIN_REQUIRED });
 
-const EXTERNAL_PREF_NAME = 'hide_mweb_xpromo_banner';
-
 export const XPROMO_LINK_SET = 'XPROMO__LINK_SET';
-export const xpromoSetAppLink = (appLink="") => async (dispatch) => {
-  dispatch(trackXPromoEvent())
-  dispatch({
-    type: XPROMO_LINK_SET,
-    payload: { appLink },
-  });
+export const xpromoSetAppLink = (appLink='') => async (dispatch) => {
+  dispatch({type: XPROMO_LINK_SET, payload: { appLink }});
+};
+export const XPROMO_ADD_BUCKET_EVENT = 'XPROMO__ADD_BUCKET_EVENT';
+export const xpromoAddBucketingEvent = (bucketEventName='') => async (dispatch) => {
+  dispatch({type: XPROMO_ADD_BUCKET_EVENT, payload: { bucketEventName }});
 };
 
 // element is the interface element through which
 // the user dismissed the crosspromo experience.
+const EXTERNAL_PREF_NAME = 'hide_mweb_xpromo_banner';
 export const close = () => async (dispatch, getState) => {
   markBannerClosed();
   dispatch(hide());

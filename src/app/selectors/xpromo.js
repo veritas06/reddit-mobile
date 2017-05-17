@@ -97,6 +97,7 @@ const EXPERIMENT_NAMES = {
   [VARIANT_XPROMO_INTERSTITIAL_FREQUENCY_ANDROID]: 'mweb_xpromo_interstitial_frequency_android',
   [VARIANT_XPROMO_PERSISTENT_IOS]: 'mweb_xpromo_persistent_ios',
   [VARIANT_XPROMO_PERSISTENT_ANDROID]: 'mweb_xpromo_persistent_android',
+  [AD_LOADING]: 'mweb_xpromo_ad_loading_ios',
 };
 
 export function getRouteActionName(state) {
@@ -250,7 +251,7 @@ export function listingClickEnabled(state, postId) {
  *
  * @return {object}
  */
-function getExperimentDataByFlags(state, FLAGS) {
+export function getExperimentDataByFlags(state, FLAGS) {
   const experimentName = activeXPromoExperimentName(state, FLAGS);
   return getExperimentData(state, experimentName);
 }
@@ -363,6 +364,7 @@ export function isXPromoBannerEnabled(state) {
 export function isXPromoAdLoadingEnabled(state) {
   return anyFlagEnabled(state, [AD_LOADING]);
 }
+
 function shouldShowXPromo(state) {
   return state.xpromo.interstitials.showBanner &&
     isXPromoBannerEnabled(state);

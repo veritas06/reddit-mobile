@@ -1,6 +1,4 @@
 import Flags from '@r/flags';
-import omitBy from 'lodash/omitBy';
-import isNull from 'lodash/isNull';
 import sha1 from 'crypto-js/sha1';
 import url from 'url';
 import {
@@ -14,15 +12,14 @@ import {
 import getSubreddit from 'lib/getSubredditFromState';
 import getRouteMetaFromState from 'lib/getRouteMetaFromState';
 import getContentId from 'lib/getContentIdFromState';
+import isFakeSubreddit from 'lib/isFakeSubreddit';
+import { getDevice, IPHONE, ANDROID } from 'lib/getDeviceFromState';
+import { trackBucketingEvents } from 'lib/eventUtils';
 import {
   featureEnabled,
   extractUser,
   getExperimentData,
 } from 'lib/experiments';
-import { getEventTracker } from 'lib/eventTracker';
-import { getBasePayload } from 'lib/eventUtils';
-import { getDevice, IPHONE, ANDROID } from 'lib/getDeviceFromState';
-import isFakeSubreddit from 'lib/isFakeSubreddit';
 
 const {
   BETA,
@@ -82,7 +79,17 @@ const {
 const config = {
   [BETA]: true,
 
-  [AD_LOADING]: true,
+  [AD_LOADING]: {
+    and: [
+      { allowedDevices: [IPHONE] },
+      // @TODO fix me.
+      // In this part, an error occurs when the server side is running
+      // { allowedPages: ['index', 'listing', 'comments'] },
+      { or: [
+        { variant: 'mweb_xpromo_ad_loading_ios:treatment' },
+      ]},
+    ],
+  },
 
   [XPROMOBANNER]: {
     and: [
@@ -532,33 +539,21 @@ flags.addRule('peak', function(experimentName) {
   return result;
 });
 
-const firstBuckets = new Set();
-
 flags.addRule('variant', function (name) {
   const [experiment_name, checkedVariant] = name.split(':');
   const experimentData = getExperimentData(this.state, experiment_name);
+
   if (experimentData) {
-    const { variant, experiment_id, owner } = experimentData;
+    const { variant } = experimentData;
+    const isNotFiredOnServer = (this.state.xpromo.server.firstBuckets.indexOf(experiment_name)<0);
 
-    // we only want to bucket the user once per session for any given experiment.
-    // to accomplish this, we're going to use the fact that featureFlags is a
-    // singleton, and use `firstBuckets` (which is in this module's closure's
-    // scope) to keep track of which experiments we've already bucketed.
-    if (this.state.meta.env === 'CLIENT' && !firstBuckets.has(experiment_name)) {
-      firstBuckets.add(experiment_name);
-
-      const eventTracker = getEventTracker();
-      const payload = {
-        ...getBasePayload(this.state),
-        experiment_id,
-        experiment_name,
-        variant,
-        owner: owner || null,
-      };
-
-      eventTracker.track('bucketing_events', 'cs.bucket', omitBy(payload, isNull));
+    // Here the "trackBucketingEvents" should be fired only on the Client Side 
+    // For the Server Side it's better to run "trackBucketingEvents" manually
+    // And of course we need to be shure that this event is not fired twice 
+    // (both on the Client and Server sides)
+    if (this.state.meta.env === 'CLIENT' && isNotFiredOnServer) {
+      trackBucketingEvents(this.state, experimentData);
     }
-
     return variant === checkedVariant;
   }
   return false;
@@ -598,6 +593,10 @@ flags.addRule('directVisit', function (wantDirect) {
 });
 
 flags.addRule('allowedPages', function (allowedPages) {
+  // @TODO fix me.
+  // There is one more problem with finding a route
+  // when the initialization occurs on the Server side
+
   const routeMeta = getRouteMetaFromState(this.state);
   const actionName = routeMeta && routeMeta.name;
   return allowedPages.includes(actionName);

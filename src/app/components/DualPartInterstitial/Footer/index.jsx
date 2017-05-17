@@ -13,7 +13,7 @@ import AppButton from 'app/components/DualPartInterstitial/AppButton';
 import BulletList from 'app/components/DualPartInterstitial/Footer/BulletList';
 
 import {
-  loginRequiredEnabled as requireXPromoLogin
+  loginRequiredEnabled as requireXPromoLogin,
 } from 'app/selectors/xpromo';
 
 class DualPartInterstitialFooter extends React.Component {

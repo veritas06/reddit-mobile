@@ -60,7 +60,7 @@ export default function(state=DEFAULT, action={}) {
             //   experiment_id: 123456,
             // },
 
-            mweb_xpromo_ad_loading: {
+            mweb_xpromo_ad_loading_ios: {
               variant: 'treatment',
               owner: 'channels',
               experiment_id: 1237,

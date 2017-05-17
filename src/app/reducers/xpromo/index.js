@@ -4,7 +4,10 @@
 import merge from 'platform/merge';
 import * as xpromoActions from 'app/actions/xpromo';
 
-export const DEFAULT = { appLink: undefined };
+export const DEFAULT = {
+  appLink: undefined,
+  firstBuckets: [],
+};
 
 const server = function(state=DEFAULT, action={}) {
   switch (action.type) {
@@ -12,11 +15,18 @@ const server = function(state=DEFAULT, action={}) {
       return merge(state, {
         appLink: action.payload.appLink,
       });
-      return state;
+    }
+    case xpromoActions.XPROMO_ADD_BUCKET_EVENT: {
+      const firstBuckets = state.firstBuckets;
+      return merge(state, {
+        firstBuckets: [
+          ...firstBuckets,
+          action.payload.bucketEventName,
+        ]});
     }
     default: return state;
   }
-}
+};
 
 /**
  * @module {function} xpromo

@@ -7,7 +7,7 @@ import { isXPromoAdLoadingEnabled } from 'app/selectors/xpromo';
 import AppButton from 'app/components/DualPartInterstitial/AppButton';
 import Loading from 'app/components/Loading';
 
-const AdLoading = (props) => {
+const AdLoading = () => {
   return (
     <div className='adLoading'>
       <Loading />
@@ -19,17 +19,19 @@ const AdLoading = (props) => {
       </div>
     </div>
   );
-}
+};
 
+// In case when XPromo experiment with button is enabled let's 
+// show <AdLoading />, otherwise - regular <Loading />;
 const Loader = (props) => {
-  return (props.isEnabled ? <AdLoading {...props} /> : <Loading />);
-}
+  return (props.isEnabled ? <AdLoading { ...props } /> : <Loading />);
+};
 
 const selector = createSelector(
   (state) => state.xpromo.server.appLink,
   isXPromoAdLoadingEnabled,
   (appLink, isEnabled) => ({
-    appLink, isEnabled
+    appLink, isEnabled,
   }),
 );
 

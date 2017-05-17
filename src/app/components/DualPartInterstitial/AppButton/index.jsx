@@ -3,8 +3,6 @@ import './styles.less';
 import React from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-
-import cx from 'lib/classNames';
 import getXpromoTheme from 'lib/xpromoTheme';
 import { getXPromoLinkforCurrentPage } from 'lib/xpromoState';
 import { XPROMO_DISPLAY_THEMES as THEME } from 'app/constants';
@@ -20,25 +18,30 @@ export function AppButton(props) {
     title,
     navigator,
     xpromoTheme,
-    nativeInterstitialLink 
+    serverAppLink,
+    clientAppLink,
   } = props;
 
-  const themeText = (xpromoTheme === THEME.PERSIST ? 'Open in app' : 'Continue')
-
+  const CLASSNAME = 'DualPartInterstitialButton';
+  const themeText = (xpromoTheme === THEME.PERSIST ? 'Open in app' : 'Continue');
+  // Two cases here:
+  // 1) We should use A tag to avoid React rendering inconsistency
+  // 2) We render this button both on the client and on the server side
+  // — For the server side, HREF works (onClick is not enabled yet)
+  // — For the client side, onClick (HREF will be prevented)
   return (
-      <div 
-        className='DualPartInterstitialButton'
-        onClick={ navigator(nativeInterstitialLink) }
-      > {(title || themeText)}
-      </div>
+    <a className={ CLASSNAME } href={ serverAppLink } onClick={ navigator(clientAppLink) }>
+      { (title || themeText) }
+    </a>
   );
 }
 
 export const selector = createSelector(
+  (state) => state.xpromo.server.appLink,
   (state) => getXPromoLinkforCurrentPage(state, 'interstitial'),
   xpromoTheme,
-  (nativeInterstitialLink, xpromoTheme) => ({
-    nativeInterstitialLink, xpromoTheme
+  (serverAppLink, clientAppLink, xpromoTheme) => ({
+    serverAppLink, clientAppLink, xpromoTheme,
   }),
 );
 
@@ -46,7 +49,7 @@ const mapDispatchToProps = dispatch => {
   let preventExtraClick = false;
 
   return {
-    navigator: (visitTrigger, url, xpromoPersistState) => (async () => {
+    navigator: (async (visitTrigger, url) => {
       // Prevention of additional click events
       // while the Promise dispatch is awaiting
       if (!preventExtraClick) {
@@ -54,7 +57,7 @@ const mapDispatchToProps = dispatch => {
         // We should not call `await` until the app-store navigation is in progress,
         // see actions/xpromo.navigateToAppStore for more info.
         const trackingPromise = dispatch(logAppStoreNavigation(visitTrigger));
-        dispatch(promoClicked(xpromoPersistState));
+        dispatch(promoClicked());
         navigateToAppStore(url);
         await trackingPromise;
         preventExtraClick = false;
@@ -64,7 +67,7 @@ const mapDispatchToProps = dispatch => {
 };
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
-  const { xpromoTheme, xpromoPersistState } = stateProps;
+  const { xpromoTheme } = stateProps;
   const { navigator: dispatchNavigator } = dispatchProps;
   const visitTrigger = getXpromoTheme(xpromoTheme).visitTrigger;
 
@@ -72,7 +75,15 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     ...stateProps,
     ...dispatchProps,
     ...ownProps,
-    navigator: url => dispatchNavigator(visitTrigger, url, xpromoPersistState),
+    navigator: (url) => (e) => {
+      dispatchNavigator(visitTrigger, url);
+
+      // Prevents HREF redirection
+      // for the client side.
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    },
   };
 };
 
