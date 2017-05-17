@@ -23,6 +23,7 @@ export default config => {
     getServerRouter=() => {},
     template=() => {},
     dispatchBeforeNavigation=async () => {},
+    dispatchAfterNavigation=async () => {},
     onHandlerComplete=() => {},
   } = config;
 
@@ -47,7 +48,6 @@ export default config => {
     await store.dispatch(async (dispatch, getState, utils) => {
       await dispatchBeforeNavigation(ctx, dispatch, getState, utils);
     });
-
     store.dispatch(actions.navigateToUrl(
       ctx.request.method.toLowerCase(),
       ctx.path,
@@ -57,6 +57,9 @@ export default config => {
         referrer: ctx.headers.referer,
       }
     ));
+    await store.dispatch(async (dispatch, getState, utils) => {
+      await dispatchAfterNavigation(ctx, dispatch, getState, utils);
+    });
 
     await well.onComplete();
     const state = store.getState();

@@ -108,6 +108,8 @@ export function startServer() {
       dispatchInitialOver18(ctx, dispatch);
       dispatchInitialRecentSubreddits(ctx, dispatch);
       await dispatchInitialUser(ctx, dispatch, getState);
+    },
+    dispatchAfterNavigation: async (ctx, dispatch, getState) => {
       dispatchInitialXPromoLink(ctx, dispatch, getState);
     },
     preRouteServerMiddleware: [

@@ -320,22 +320,22 @@ export function trackPagesXPromoEvents(state, additionalEventData) {
   // This event should be fired only on the server side
   if (process.env.ENV === 'server' && isXPromoAdLoadingEnabled(state)) {
     trackXPromoView(state, { interstitial_type: interstitialType(state) });
-  }
+  } else {
+    // Before triggering any of these xPromo events, we need
+    // be sure that the first and main XPROMOBANNER is enabled
+    // on these: PAGE / DEVICE / NSFW / SUBREDDIT
+    if (!isXPromoBannerEnabled(state)) {
+      return false;
+    }
+    const ineligibilityReason = shouldNotShowBanner(state);
 
-  // Before triggering any of these xPromo events, we need
-  // be sure that the first and main XPROMOBANNER is enabled
-  // on these: PAGE / DEVICE / NSFW / SUBREDDIT
-  if (!isXPromoBannerEnabled(state)) {
-    return false;
-  }
-  const ineligibilityReason = shouldNotShowBanner(state);
-
-  if (ineligibilityReason && isXPromoEnabledOnPages(state)) {
-    return trackXPromoIneligibleEvent(state, additionalEventData, ineligibilityReason);
-  } else if (isEligibleListingPage(state) || commentsInterstitialEnabled(state)) {
-    // listing pages always track view events because they'll
-    // either see the normal xpromo, or the login required variant
-    return trackXPromoView(state, additionalEventData);
+    if (ineligibilityReason && isXPromoEnabledOnPages(state)) {
+      return trackXPromoIneligibleEvent(state, additionalEventData, ineligibilityReason);
+    } else if (isEligibleListingPage(state) || commentsInterstitialEnabled(state)) {
+      // listing pages always track view events because they'll
+      // either see the normal xpromo, or the login required variant
+      return trackXPromoView(state, additionalEventData);
+    }
   }
 }
 
@@ -362,11 +362,25 @@ export const trackBucketingEvents = (state, experimentData, dispatch) => {
     // to accomplish this, we're going to use the fact that featureFlags is a
     // singleton, and use `firstBuckets` (which is in this module's closure's
     // scope) to keep track of which experiments we've already bucketed.
+
+    // On the Server side this condition will be always true.
+    // "New Set()" on the server side will NOT work per session.
+    // Case:
+    // — open Index and Comments pages
+    // — reload the Index page -> "New Set()" will get the bucket name
+    // — reload Comment page at the same time -> bucket name will not be fired because of the "New Set()"
+
     if (!firstBuckets.has(experiment_name)) {
-      firstBuckets.add(experiment_name);
 
       if (dispatch) {
         dispatch(xpromoAddBucketingEvent(experiment_name));
+      }
+
+      if (process.env.ENV === 'client') {
+        // There is some concern about requests and applying
+        // this "new Set()" for the multiple users per request.
+        // That's why it should only work on the client side
+        firstBuckets.add(experiment_name);
       }
 
       const payload = {

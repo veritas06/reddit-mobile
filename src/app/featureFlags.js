@@ -82,9 +82,7 @@ const config = {
   [AD_LOADING]: {
     and: [
       { allowedDevices: [IPHONE] },
-      // @TODO fix me.
-      // In this part, an error occurs when the server side is running
-      // { allowedPages: ['index', 'listing', 'comments'] },
+      { allowedPages: ['index', 'listing', 'comments'] },
       { or: [
         { variant: 'mweb_xpromo_ad_loading_ios:treatment' },
       ]},
