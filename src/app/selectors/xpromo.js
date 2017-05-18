@@ -1,4 +1,5 @@
 import { find, some } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 
 import {
   EXPERIMENT_FREQUENCY_VARIANTS,
@@ -366,12 +367,18 @@ export function isXPromoAdLoadingEnabled(state) {
 }
 
 function shouldShowXPromo(state) {
-  return state.xpromo.interstitials.showBanner &&
-    isXPromoBannerEnabled(state);
+  return state.xpromo.interstitials.showBanner && isXPromoBannerEnabled(state);
 }
 function isPartOfXPromoExperiment(state) {
   return shouldShowXPromo(state) && anyFlagEnabled(state, EXPERIMENT_FULL);
 }
+function isContentLoaded(state) {
+  const actionName = getRouteActionName(state);
+  if ((actionName === 'index' || actionName === 'listing') && isEmpty(state.posts)) {
+    return false;
+  }
+  return true;
+}
 export function XPromoIsActive(state) {
-  return shouldShowXPromo(state) && xpromoIsConfiguredOnPage(state);
+  return isContentLoaded(state) && shouldShowXPromo(state) && xpromoIsConfiguredOnPage(state);
 }
