@@ -6,23 +6,49 @@
   padding: @size;
   text-align: center;
   position: relative;
+  padding: 60px 10px;
+
+  &__logo{
+    position: relative;
+    background: #000;
+    border-radius: 100px;
+    margin: 0 auto 10px;
+    display: inline-block;
+    overflow: hidden;
+
+    &Bg {
+      z-index: 1;
+      content: '';
+      position: absolute;
+      bottom: 0;left: 0; right: 0; top: 0;
+      background: @orangered;
+      animation: scaleout 5s forwards cubic-bezier(.36,1.01,.57,.95);
+    }
+
+    .SnooIcon {
+      position: relative;
+      fill: transparent;
+      margin: auto;
+      height: 140px;
+      width: 140px;
+      z-index: 2;
+
+      circle { fill: transparent; }
+    }
+  }
+
+  h3 {
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  p
 
   &__wrapper {
     display: inline-block;
     position: relative;
     margin: 8px auto 4px;
-
-    &:before {
-      z-index: 1;
-      content: '';
-      position: absolute;
-      left:0; top:0; right:0; bottom:0;
-      opacity: .75;
-      border-radius: 5px;
-      background-color: @orangered;
-      -webkit-animation: scaleout 1.5s infinite ease-in-out;
-      animation: scaleout 1.5s infinite ease-in-out;
-    }
   }
   &__button {
     display: inline-block;
@@ -31,7 +57,22 @@
   }
 
   // @TODO — temporary.
+  &__button a.DualPartInterstitialButton {
+    background: #27D2BB;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 21px 45px 20px;
+    height: 0;
+    line-height: 0px;
+    vertical-align: middle;
+  }
   .Loading{
     padding: 15px;
   }
+}
+
+@keyframes scaleout {
+  0% { top: 100%; }
+  100% { top: 20px; }
 }
