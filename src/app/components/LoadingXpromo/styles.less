@@ -15,6 +15,7 @@
     margin: 0 auto 10px;
     display: inline-block;
     overflow: hidden;
+    z-index: 3;
 
     &Bg {
       z-index: 1;
@@ -22,7 +23,8 @@
       position: absolute;
       bottom: 0;left: 0; right: 0; top: 0;
       background: @orangered;
-      animation: scaleout 5s forwards cubic-bezier(.36,1.01,.57,.95);
+
+      .animation(growup);
     }
 
     .SnooIcon {
@@ -56,7 +58,8 @@
     z-index: 2;
   }
 
-  // @TODO — temporary.
+  // (!) For testing (!)
+  // @TODO refactoring before merge
   &__button a.DualPartInterstitialButton {
     background: #27D2BB;
     border-radius: 50px;
@@ -72,7 +75,38 @@
   }
 }
 
-@keyframes scaleout {
-  0% { top: 100%; }
-  100% { top: 20px; }
+// @TODO refactoring before merge
+.animation(@name, @time: 25s, @repeat: forwards, @easing: cubic-bezier(.36,1.01,.57,.95)) {
+  -webkit-animation: @name @time @repeat @easing;
+  animation: @name @time @repeat @easing;
+}
+
+@-webkit-keyframes growup {
+  0%    { top: 100%; }
+  100%  { top: 20px; }
+}
+@keyframes growup {
+  0%    { top: 100%; }
+  100%  { top: 20px; }
+}
+
+
+
+.textLoader {
+  span {
+    display: inline-block;
+    border-radius: 50%;
+    position: relative;
+    height: 3px; width: 3px;
+    background: #000;
+    margin-left: 2px;
+  }
+  &__ball1{ animation: grow 1s ease-in-out 0s infinite alternate; }
+  &__ball2{ animation: grow 1s ease-in-out 0.33s infinite alternate; }
+  &__ball3{ animation: grow 1s ease-in-out 0.66s infinite alternate; }
+}
+
+@keyframes grow{
+  0%{ opacity: 1; }
+  100%{ opacity: 0; }
 }

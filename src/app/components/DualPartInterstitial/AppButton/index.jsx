@@ -16,6 +16,7 @@ import {
 export function AppButton(props) {
   const { 
     title,
+    children,
     navigator,
     xpromoTheme,
     serverAppLink,
@@ -31,7 +32,7 @@ export function AppButton(props) {
   // — For the client side, onClick (HREF will be prevented)
   return (
     <a className={ CLASSNAME } href={ serverAppLink } onClick={ navigator(clientAppLink) }>
-      { (title || themeText) }
+      { (children || title || themeText) }
     </a>
   );
 }

@@ -17,7 +17,7 @@ import * as commentActions from 'app/actions/comment';
 
 import commentDispatchers, { returnDispatchers } from 'app/components/Comment/dispatchers';
 
-import Loading from 'app/components/Loading';
+import LoadingXpromo from 'app/components/LoadingXpromo';
 
 import { COMMENT_LOAD_MORE } from 'apiClient/models/thingTypes';
 
@@ -52,7 +52,7 @@ export function CommentTree(props) {
   } = props;
 
   if (commentsPending) {
-    return <Loading />;
+    return <LoadingXpromo type='comments'/>;
   }
 
   return (
