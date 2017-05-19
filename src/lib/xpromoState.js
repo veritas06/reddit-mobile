@@ -62,7 +62,7 @@ export function isXPromoPersistentEnabled(state) {
 }
 
 export function getXPromoLinkforCurrentPage(state, linkType) {
-  const path = (typeof (window) !== 'undefined' ? window.location.href.split(window.location.host)[1] : 'SERVERR-LOCALHOST');
+  const path = state.platform.currentPage.url;
   return getXPromoLink(state, path, linkType);
 }
 

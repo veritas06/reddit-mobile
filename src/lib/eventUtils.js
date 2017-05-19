@@ -141,7 +141,7 @@ export function getBasePayload(state) {
     referrer_domain: referrer ? getDomain(referrer, meta) : '',
     referrer_url: referrer,
     language: preferences.lang,
-    dnt: (typeof (window)!=='undefined' ? !!window.DO_NOT_TRACK : !!'SERVER.DO_NOT_TRACK'),
+    dnt: (typeof (window)!=='undefined' ? !!window.DO_NOT_TRACK : null),
     compact_view: compact,
     adblock: hasAdblock(),
     session_id: getSessionIdFromCookie(),
