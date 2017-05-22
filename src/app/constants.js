@@ -157,8 +157,10 @@ export const flags = {
   VARIANT_XPROMO_PERSISTENT_IOS: 'experimentXPromoPersistentIos',
   VARIANT_XPROMO_PERSISTENT_ANDROID: 'experimentXPromoPersistentAndroid',
 
-  // AD onload
-  AD_LOADING: 'experimentXPromoAdLoading',
+  // Ad loading (preloader and Mobile App redirect button)
+  // Note: client and server side rendering
+  AD_LOADING_IOS: 'experimentXPromoAdLoadingIos',
+  AD_LOADING_ANDROID: 'experimentXPromoAdLoadingAndroid',
 };
 
 export const XPROMO_DISPLAY_THEMES = {

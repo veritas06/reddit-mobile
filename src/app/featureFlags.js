@@ -69,22 +69,35 @@ const {
   VARIANT_XPROMO_INTERSTITIAL_FREQUENCY_ANDROID,
   VARIANT_XPROMO_INTERSTITIAL_FREQUENCY_IOS_CONTROL,
   VARIANT_XPROMO_INTERSTITIAL_FREQUENCY_ANDROID_CONTROL,
+
   // Persistent Xpromo
   VARIANT_XPROMO_PERSISTENT_IOS,
   VARIANT_XPROMO_PERSISTENT_ANDROID,
-  // Ad Loading
-  AD_LOADING,
+
+  // Ad loading (preloader and Mobile App redirect button)
+  AD_LOADING_IOS,
+  AD_LOADING_ANDROID,
 } = flagConstants;
 
 const config = {
   [BETA]: true,
 
-  [AD_LOADING]: {
+  [AD_LOADING_IOS]: {
     and: [
       { allowedDevices: [IPHONE] },
       { allowedPages: ['index', 'listing', 'comments'] },
       { or: [
         { variant: 'mweb_xpromo_ad_loading_ios:treatment' },
+      ]},
+    ],
+  },
+
+  [AD_LOADING_ANDROID]: {
+    and: [
+      { allowedDevices: [ANDROID] },
+      { allowedPages: ['index', 'listing', 'comments'] },
+      { or: [
+        { variant: 'mweb_xpromo_ad_loading_android:treatment' },
       ]},
     ],
   },
