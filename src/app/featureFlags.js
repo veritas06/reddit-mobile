@@ -604,10 +604,6 @@ flags.addRule('directVisit', function (wantDirect) {
 });
 
 flags.addRule('allowedPages', function (allowedPages) {
-  // @TODO fix me.
-  // There is one more problem with finding a route
-  // when the initialization occurs on the Server side
-
   const routeMeta = getRouteMetaFromState(this.state);
   const actionName = routeMeta && routeMeta.name;
   return allowedPages.includes(actionName);
