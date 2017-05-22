@@ -2,7 +2,8 @@ import './styles.less';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { createSelector } from 'reselect';
+import { createStructuredSelector } from 'reselect';
+
 import getXpromoTheme from 'lib/xpromoTheme';
 import { getXPromoLinkforCurrentPage } from 'lib/xpromoState';
 import { XPROMO_DISPLAY_THEMES as THEME } from 'app/constants';
@@ -37,14 +38,11 @@ export function AppButton(props) {
   );
 }
 
-export const selector = createSelector(
-  (state) => state.xpromo.server.appLink,
-  (state) => getXPromoLinkforCurrentPage(state, 'interstitial'),
+const selector = createStructuredSelector({
+  serverAppLink: (state) => state.xpromo.server.appLink,
+  clientAppLink: (state) => getXPromoLinkforCurrentPage(state, 'interstitial'),
   xpromoTheme,
-  (serverAppLink, clientAppLink, xpromoTheme) => ({
-    serverAppLink, clientAppLink, xpromoTheme,
-  }),
-);
+});
 
 const mapDispatchToProps = dispatch => {
   let preventExtraClick = false;
