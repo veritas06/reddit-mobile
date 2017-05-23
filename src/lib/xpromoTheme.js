@@ -6,6 +6,10 @@ export default function getXpromoTheme(
   isXPromoPersistentActive
 ) {
   switch (xpromoTheme) {
+    case THEME.ADLOADING:
+      return {
+        visitTrigger : 'ad_loading_button',
+      };
     case THEME.MINIMAL:
       return {
         visitTrigger : 'banner_button',

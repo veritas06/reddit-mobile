@@ -2,11 +2,21 @@ import './styles.less';
 import React from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-
 import { isXPromoAdLoadingEnabled } from 'app/selectors/xpromo';
 import AppButton from 'app/components/DualPartInterstitial/AppButton';
 import Loading from 'app/components/Loading';
 import SnooIcon from 'app/components/SnooIcon';
+import getXpromoTheme from 'lib/xpromoTheme';
+import {
+  XPROMO_DISPLAY_THEMES as THEME,
+  XPROMO_ADLOADING_TYPES as TYPE,
+} from 'app/constants';
+
+const CreateAppButton = (title, interstitialType) => {
+  const visitTrigger = getXpromoTheme(THEME.ADLOADING).visitTrigger;
+  const buttonProps = { title, interstitialType, visitTrigger };
+  return <AppButton  { ...buttonProps } />;
+};
 
 const CommentsTextButton = () => {
   return (
@@ -16,10 +26,10 @@ const CommentsTextButton = () => {
         <span className="textLoader__ball2"></span>
         <span className="textLoader__ball3"></span>
       </h3>
-
       <p>The App is 50% Faster</p>
+
       <div className='adLoading__button'>
-        <AppButton title='OPEN IN APP' />
+        { CreateAppButton('OPEN IN APP', TYPE.COMMENTS) }
       </div>
     </div>
   );
@@ -34,9 +44,10 @@ const BigLogoTextButton = () => {
       </div>
       <h3>The Reddit App is&nbsp;50% Faster than&nbsp;Web</h3>
       <p>Infinite Scrolls. Autoplay GIFs.</p>
+
       <div className='adLoading__wrapper'>
         <div className='adLoading__button'>
-          <AppButton title='UPGRADE TO APP'/>
+          { CreateAppButton('UPGRADE TO APP', TYPE.MAIN) }
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { xpromoSetAppLink } from '../../app/actions/xpromo';
 import { getXPromoLinkforCurrentPage } from '../../lib/xpromoState';
 import { getExperimentDataByFlags } from '../../app/selectors/xpromo';
+import { XPROMO_ADLOADING_TYPES as TYPE } from '../../app/constants';
 import {
   trackBucketingEvents,
   trackPagesXPromoEvents,
@@ -21,5 +22,5 @@ export const dispatchInitialXPromoLink = async (ctx, dispatch, getState) => {
   console.error('========================================');
   console.error(state.meta.env, 'EVENT: xpromo_view_event');
   console.error('========================================');
-  trackPagesXPromoEvents(state);
+  trackPagesXPromoEvents(state, {interstitial_type: TYPE.MAIN});
 };

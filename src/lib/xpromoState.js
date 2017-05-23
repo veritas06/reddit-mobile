@@ -61,9 +61,9 @@ export function isXPromoPersistentEnabled(state) {
   return isXPromoPersistent(state);
 }
 
-export function getXPromoLinkforCurrentPage(state, linkType) {
+export function getXPromoLinkforCurrentPage(state, linkType, additionalData={}) {
   const path = state.platform.currentPage.url;
-  return getXPromoLink(state, path, linkType);
+  return getXPromoLink(state, path, linkType, additionalData);
 }
 
 export function getXPromoListingClickLink(state, postId, listingClickType) {
@@ -108,12 +108,12 @@ function getXPromoListingClickPath(state, post, listingClickType) {
   }
 }
 
-export function getXPromoLink(state, path, linkType, additionalData={}) {
+function getXPromoLink(state, path, linkType, additionalData={}) {
   let payload = {
-    ...additionalData,
     utm_source: 'xpromo',
     utm_content: linkType,
     ...interstitialData(state),
+    ...additionalData,
   };
 
   const experimentData = getXPromoExperimentPayload(state);
@@ -249,12 +249,6 @@ export const markListingClickTimestampLocalStorage = (dateTime) => {
 };
 
 export function interstitialType(state) {
-  // this type is going to work on a server part
-  // when the beginnig of this app id launching
-  if (state.meta.env === 'SERVER') {
-    return 'Ad_loading';
-  }
-
   if (isEligibleListingPage(state)) {
     if (state.xpromo.listingClick.active) {
       return XPROMO_MODAL_LISTING_CLICK_NAME;

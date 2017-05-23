@@ -87,7 +87,6 @@ export function buildProfileData(state, extraPayload) {
     return null;
   }
 
-
   return {
     target_name: user.name,
     target_fullname: `t2_${user.id}`,
@@ -141,14 +140,30 @@ export function getBasePayload(state) {
     referrer_domain: referrer ? getDomain(referrer, meta) : '',
     referrer_url: referrer,
     language: preferences.lang,
-    dnt: (typeof (window)!=='undefined' ? !!window.DO_NOT_TRACK : null),
+    dnt: (typeof (window)!=='undefined' ? !!window.DO_NOT_TRACK : false),
     compact_view: compact,
     adblock: hasAdblock(),
-    session_id: getSessionIdFromCookie(),
+    session_id: getSessionId(state),
     ...getUserInfoOrLoid(state),
   };
 
   return payload;
+}
+
+function getSessionId(state){
+  const userCtxCookie = ((state) => {
+    const user = state.user;
+    const usertRequests = state.accountRequests[user.name];
+    if (usertRequests) {
+      return usertRequests.meta['set-cookie'];
+    }
+  })(state);
+
+  // Currently, this userCtxCookie
+  // (which comes from state.accountRequest.meta.set-cookie) helps
+  // to get the correct SessionId from the server-side cookie, but
+  // we can use it on all servers (on the client and server side).
+  return getSessionIdFromCookie(userCtxCookie);
 }
 
 function trackScreenViewEvent(state, additionalEventData) {
@@ -319,7 +334,7 @@ export const logClientAdblock = (method, placementIndex, state) => {
 export function trackPagesXPromoEvents(state, additionalEventData) {
   // This event should be fired only on the server side
   if (process.env.ENV === 'server' && isXPromoAdLoadingEnabled(state)) {
-    trackXPromoView(state, { interstitial_type: interstitialType(state) });
+    trackXPromoView(state, additionalEventData);
   } else {
     // Before triggering any of these xPromo events, we need
     // be sure that the first and main XPROMOBANNER is enabled
