@@ -15,15 +15,10 @@ export const PostsList = props => {
   const { loading, postRecords, nextUrl, prevUrl, shouldPage } = props;
   const shouldRenderPagination = !loading && shouldPage && postRecords.length;
 
-  if (loading) {
-    return <LoadingXpromo />;
-  }
-
-  // @TODO Add more STRONGEST check here!
-  // This check shows the preloader when the application is loaded
-  // from the server, otherwise there is no preloader until the Client
-  // starts to work.
-  if (!postRecords.length) {
+  // On the Server side, the const "loading" is false until the client-side
+  // is loaded, so we need to check the contents of the postRecords to find
+  // out whether to show the Loader while rendering on the server-side
+  if (loading || (!postRecords.length)) {
     return <LoadingXpromo />;
   }
 
