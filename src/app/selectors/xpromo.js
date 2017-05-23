@@ -46,9 +46,9 @@ const {
   VARIANT_XPROMO_PERSISTENT_IOS,
   VARIANT_XPROMO_PERSISTENT_ANDROID,
 
-  // Ad loading (preloader and Mobile App redirect button)
-  AD_LOADING_IOS,
-  AD_LOADING_ANDROID,
+  // XPromo Ad loading (preloader and Mobile App redirect button)
+  VARIANT_XPROMO_AD_LOADING_IOS,
+  VARIANT_XPROMO_AD_LOADING_ANDROID,
 } = flagConstants;
 
 const EXPERIMENT_FULL = [
@@ -58,8 +58,8 @@ const EXPERIMENT_FULL = [
   VARIANT_XPROMO_LOGIN_REQUIRED_ANDROID_CONTROL,
   VARIANT_XPROMO_INTERSTITIAL_FREQUENCY_IOS,
   VARIANT_XPROMO_INTERSTITIAL_FREQUENCY_ANDROID,
-  AD_LOADING_IOS,
-  AD_LOADING_ANDROID,
+  VARIANT_XPROMO_AD_LOADING_IOS,
+  VARIANT_XPROMO_AD_LOADING_ANDROID,
 ];
 
 const LOGIN_REQUIRED_FLAGS = [
@@ -87,10 +87,10 @@ const XPROMO_PERSISTENT_FLAGS = [
   VARIANT_XPROMO_PERSISTENT_ANDROID,
 ];
 
-const AD_LOADING_FLAGS = [
-  AD_LOADING_IOS,
-  AD_LOADING_ANDROID,
-]
+const XPROMO_AD_LOADING_FLAGS = [
+  VARIANT_XPROMO_AD_LOADING_IOS,
+  VARIANT_XPROMO_AD_LOADING_ANDROID,
+];
 
 const EXPERIMENT_NAMES = {
   [VARIANT_XPROMO_LOGIN_REQUIRED_IOS]: 'mweb_xpromo_require_login_ios',
@@ -105,8 +105,8 @@ const EXPERIMENT_NAMES = {
   [VARIANT_XPROMO_INTERSTITIAL_FREQUENCY_ANDROID]: 'mweb_xpromo_interstitial_frequency_android',
   [VARIANT_XPROMO_PERSISTENT_IOS]: 'mweb_xpromo_persistent_ios',
   [VARIANT_XPROMO_PERSISTENT_ANDROID]: 'mweb_xpromo_persistent_android',
-  [AD_LOADING_IOS]: 'mweb_xpromo_ad_loading_ios',
-  [AD_LOADING_ANDROID]: 'mweb_xpromo_ad_loading_android',
+  [VARIANT_XPROMO_AD_LOADING_IOS]: 'mweb_xpromo_ad_loading_ios',
+  [VARIANT_XPROMO_AD_LOADING_ANDROID]: 'mweb_xpromo_ad_loading_android',
 };
 
 export function getRouteActionName(state) {
@@ -371,7 +371,7 @@ export function isXPromoBannerEnabled(state) {
   return anyFlagEnabled(state, [XPROMOBANNER]);
 }
 export function isXPromoAdLoadingEnabled(state) {
-  return anyFlagEnabled(state, AD_LOADING_FLAGS);
+  return anyFlagEnabled(state, XPROMO_AD_LOADING_FLAGS);
 }
 
 function shouldShowXPromo(state) {

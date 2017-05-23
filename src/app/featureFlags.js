@@ -75,32 +75,12 @@ const {
   VARIANT_XPROMO_PERSISTENT_ANDROID,
 
   // Ad loading (preloader and Mobile App redirect button)
-  AD_LOADING_IOS,
-  AD_LOADING_ANDROID,
+  VARIANT_XPROMO_AD_LOADING_IOS,
+  VARIANT_XPROMO_AD_LOADING_ANDROID,
 } = flagConstants;
 
 const config = {
   [BETA]: true,
-
-  [AD_LOADING_IOS]: {
-    and: [
-      { allowedDevices: [IPHONE] },
-      { allowedPages: ['index', 'listing', 'comments'] },
-      { or: [
-        { variant: 'mweb_xpromo_ad_loading_ios:treatment' },
-      ]},
-    ],
-  },
-
-  [AD_LOADING_ANDROID]: {
-    and: [
-      { allowedDevices: [ANDROID] },
-      { allowedPages: ['index', 'listing', 'comments'] },
-      { or: [
-        { variant: 'mweb_xpromo_ad_loading_android:treatment' },
-      ]},
-    ],
-  },
 
   [XPROMOBANNER]: {
     and: [
@@ -376,6 +356,24 @@ const config = {
           { variant: 'mweb_xpromo_modal_listing_click_android:daily_nodimiss' },
         ],
       },
+    ],
+  },
+  [VARIANT_XPROMO_AD_LOADING_IOS]: {
+    and: [
+      { allowedDevices: [IPHONE] },
+      { allowedPages: ['index', 'listing', 'comments'] },
+      { or: [
+        { variant: 'mweb_xpromo_ad_loading_ios:treatment' },
+      ]},
+    ],
+  },
+  [VARIANT_XPROMO_AD_LOADING_ANDROID]: {
+    and: [
+      { allowedDevices: [ANDROID] },
+      { allowedPages: ['index', 'listing', 'comments'] },
+      { or: [
+        { variant: 'mweb_xpromo_ad_loading_android:treatment' },
+      ]},
     ],
   },
   [VARIANT_TITLE_EXPANDO]: {

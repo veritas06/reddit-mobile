@@ -27,4 +27,4 @@ export default function(state=DEFAULT, action={}) {
     }
     default: return state;
   }
-};
+}

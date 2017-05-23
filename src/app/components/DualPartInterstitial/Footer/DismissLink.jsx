@@ -46,12 +46,12 @@ class DismissLink extends React.Component {
 
     const defaultLink = (
       <span>
-        or go to the <a className={CLASSNAME} onClick={ this.onClose }>mobile site</a>
+        or go to the <a className={ CLASSNAME } onClick={ this.onClose }>mobile site</a>
       </span>
     );
     const requireLoginLink = (
       <span>
-        or <a className={CLASSNAME} onClick={ this.onClose }>login</a> to the mobile site
+        or <a className={ CLASSNAME } onClick={ this.onClose }>login</a> to the mobile site
       </span>
     );
     return (

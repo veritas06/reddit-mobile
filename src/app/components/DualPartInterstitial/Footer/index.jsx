@@ -13,7 +13,7 @@ import BulletList from 'app/components/DualPartInterstitial/Footer/BulletList';
 import DismissLink from 'app/components/DualPartInterstitial/Footer/DismissLink';
 
 class DualPartInterstitialFooter extends React.Component {
-  buttonProps(){
+  buttonProps() {
     const { xpromoTheme } = this.props;
     return {
       title: (xpromoTheme === THEME.PERSIST ? 'Open in app' : 'Continue'),

@@ -18,11 +18,7 @@ import {
 } from 'app/selectors/xpromo';
 
 import getSessionIdFromCookie from 'lib/getSessionIdFromCookie';
-import {
-  interstitialData,
-  interstitialType,
-} from 'lib/xpromoState';
-
+import { interstitialData } from 'lib/xpromoState';
 import {
   buildAdditionalEventData as listingPageEventData,
 } from 'app/router/handlers/PostsFromSubreddit';
@@ -150,7 +146,7 @@ export function getBasePayload(state) {
   return payload;
 }
 
-function getSessionId(state){
+function getSessionId(state) {
   const userCtxCookie = ((state) => {
     const user = state.user;
     const usertRequests = state.accountRequests[user.name];

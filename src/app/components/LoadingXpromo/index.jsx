@@ -15,7 +15,7 @@ import {
 const CreateAppButton = (title, interstitialType) => {
   const visitTrigger = getXpromoTheme(THEME.ADLOADING).visitTrigger;
   const buttonProps = { title, interstitialType, visitTrigger };
-  return <AppButton  { ...buttonProps } />;
+  return <AppButton { ...buttonProps } />;
 };
 
 const CommentsTextButton = () => {

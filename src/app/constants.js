@@ -159,8 +159,8 @@ export const flags = {
 
   // Ad loading (preloader and Mobile App redirect button)
   // Note: client and server side rendering
-  AD_LOADING_IOS: 'experimentXPromoAdLoadingIos',
-  AD_LOADING_ANDROID: 'experimentXPromoAdLoadingAndroid',
+  VARIANT_XPROMO_AD_LOADING_IOS: 'experimentXPromoAdLoadingIos',
+  VARIANT_XPROMO_AD_LOADING_ANDROID: 'experimentXPromoAdLoadingAndroid',
 };
 
 // Now we have 2 different types of XPromo
