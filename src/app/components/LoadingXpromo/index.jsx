@@ -69,11 +69,8 @@ const Loader = (props) => {
 };
 
 const selector = createSelector(
-  (state) => state.xpromo.server.appLink,
   isXPromoAdLoadingEnabled,
-  (appLink, isEnabled) => ({
-    appLink, isEnabled,
-  }),
+  (isEnabled) => ({ isEnabled }),
 );
 
 export default connect(selector)(Loader);

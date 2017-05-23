@@ -95,10 +95,6 @@ export const trackXPromoEvent = (eventType, data) => ({
 export const LOGIN_REQUIRED = 'XPROMO__LOGIN_REQUIRED';
 export const loginRequired = () => ({ type: LOGIN_REQUIRED });
 
-export const XPROMO_LINK_SET = 'XPROMO__LINK_SET';
-export const xpromoSetAppLink = (appLink='') => async (dispatch) => {
-  dispatch({type: XPROMO_LINK_SET, payload: { appLink }});
-};
 export const XPROMO_ADD_BUCKET_EVENT = 'XPROMO__ADD_BUCKET_EVENT';
 export const xpromoAddBucketingEvent = (bucketEventName='') => async (dispatch) => {
   dispatch({type: XPROMO_ADD_BUCKET_EVENT, payload: { bucketEventName }});

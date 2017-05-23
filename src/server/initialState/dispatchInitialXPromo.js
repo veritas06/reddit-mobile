@@ -1,5 +1,3 @@
-import { xpromoSetAppLink } from '../../app/actions/xpromo';
-import { getXPromoLinkforCurrentPage } from '../../lib/xpromoState';
 import { getExperimentDataByFlags } from '../../app/selectors/xpromo';
 import { XPROMO_ADLOADING_TYPES as TYPE } from '../../app/constants';
 import {
@@ -9,10 +7,7 @@ import {
 
 export const dispatchInitialXPromoLink = async (ctx, dispatch, getState) => {
   const state = getState();
-  const link = getXPromoLinkforCurrentPage(state, 'interstitial');
   const experimentData = getExperimentDataByFlags(state);
-
-  dispatch(xpromoSetAppLink(link));
 
   console.error('=======================================');
   console.error(state.meta.env, 'EVENT: bucketing_events');

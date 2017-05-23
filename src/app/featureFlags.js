@@ -556,7 +556,8 @@ flags.addRule('variant', function (name) {
 
   if (experimentData) {
     const { variant } = experimentData;
-    const isNotFiredOnServer = (this.state.xpromo.server.firstBuckets.indexOf(experiment_name)<0);
+    const firstBuckets = this.state.xpromo.serverSide.firstBuckets;
+    const isNotFiredOnServer = (firstBuckets.indexOf(experiment_name)<0);
 
     // Here the "trackBucketingEvents" should be fired only on the Client Side 
     // For the Server Side it's better to run "trackBucketingEvents" manually
