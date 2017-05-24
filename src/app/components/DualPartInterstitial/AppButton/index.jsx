@@ -10,51 +10,41 @@ import {
   promoClicked,
 } from 'app/actions/xpromo';
 
-// :) Dirty-Dirty-Dirty-inline-script and wrap-component, that acually works 
-// only after the server-side rendering and while the client-side is loading. 
-// It is mostly used for the Ad Loading (with XPromo button in it). The purpouse 
-// of it is to prevent opening <A data-href /> link in Tab or in New browser window.
-class AppButtonWrapper extends React.Component {
+class AppButton extends React.Component {
+  // Because of the rendering of this component on both sides (client
+  // and server) and to avoid React rendering inconsistency and warnings,
+  // we need to mounted it right after the first server-side rendering.
   constructor(props) {
     super(props);
-    this.intersepterId = `inline_script_id_${Date.now()}`;
+    this.state = { mounted: false };
   }
-  clickInterseptorScript() {
-    const linkhref = 'let l=e.currentTarget.parentElement.getElementsByTagName("A")[0].getAttribute("data-href");';
-    const redirect = 'window.location.href=l;';
-    const parentEl = 'let b=document.getElementById("${this.intersepterId}");';
-    const eventHdl = 'b.addEventListener("click", a, {once: true});';
-    return {__html : 'let a=function(e){${linkhref} ${redirect}}; ${parentEl} ${eventHdl}'};
+  componentDidMount() {
+    this.setState({ mounted: true });
   }
+
   render() {
-    return (<div className="AppButton" id={ this.intersepterId }>
-      <script dangerouslySetInnerHTML={ this.clickInterseptorScript() }></script>
-      { this.props.children }
-    </div>);
+    const {
+      title,
+      appLink,
+      children,
+      navigator,
+    } = this.props;
+
+    const content = (children || title || 'Continue');
+    const CLASSNAME = 'DualPartInterstitialButton';
+
+    const serverLink = <a
+      className={ CLASSNAME }
+      href={ appLink }
+    >{content}</a>;
+
+    const clinetLink = <span
+      className={ CLASSNAME }
+      onClick={ navigator(appLink) }
+    >{content}</span>;
+
+    return (this.state.mounted ? clinetLink : serverLink);
   }
-}
-
-export function AppButton(props) {
-  const { 
-    title,
-    appLink,
-    children,
-    navigator,
-  } = props;
-
-  const CLASSNAME = 'DualPartInterstitialButton';
-  // Two cases here:
-  // 1) We should use A tag to avoid React rendering inconsistency
-  // 2) We render this button both on the client and on the server side
-  // — For the server side, HREF works (onClick is not enabled yet)
-  // — For the client side, onClick (HREF will be prevented)
-  return (
-    <AppButtonWrapper>
-      <a className={ CLASSNAME } data-href={ appLink } onClick={ navigator(appLink) }>
-        { (children || title || 'Continue') }
-      </a>
-    </AppButtonWrapper>
-  );
 }
 
 export const selector = createSelector(
