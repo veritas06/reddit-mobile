@@ -1,7 +1,7 @@
 import './styles.less';
 import React from 'react';
 import { connect } from 'react-redux';
-import { createSelector } from 'reselect';
+import { createStructuredSelector } from 'reselect';
 import { isXPromoAdLoadingEnabled } from 'app/selectors/xpromo';
 import AppButton from 'app/components/DualPartInterstitial/AppButton';
 import Loading from 'app/components/Loading';
@@ -68,9 +68,8 @@ const Loader = (props) => {
   return <Loading />;
 };
 
-const selector = createSelector(
-  isXPromoAdLoadingEnabled,
-  (isEnabled) => ({ isEnabled }),
-);
+const selector = createStructuredSelector({
+  isEnabled: state => isXPromoAdLoadingEnabled(state),
+});
 
 export default connect(selector)(Loader);

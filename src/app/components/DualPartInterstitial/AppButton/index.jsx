@@ -32,17 +32,16 @@ class AppButton extends React.Component {
 
     const content = (children || title || 'Continue');
     const CLASSNAME = 'DualPartInterstitialButton';
-
-    const serverLink = <a
-      className={ CLASSNAME }
-      href={ appLink }
-    >{content}</a>;
-
-    const clinetLink = <span
-      className={ CLASSNAME }
-      onClick={ navigator(appLink) }
-    >{content}</span>;
-
+    const serverLink = (
+      <a className={ CLASSNAME } href={ appLink }>
+        { content }
+      </a>
+    );
+    const clinetLink = (
+      <span className={ CLASSNAME } onClick={ navigator(appLink) }>
+        { content }
+      </span>
+    );
     return (this.state.mounted ? clinetLink : serverLink);
   }
 }
