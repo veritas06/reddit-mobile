@@ -10,6 +10,30 @@ import {
   promoClicked,
 } from 'app/actions/xpromo';
 
+// :) Dirty-Dirty-Dirty-inline-script and wrap-component, that acually works 
+// only after the server-side rendering and while the client-side is loading. 
+// It is mostly used for the Ad Loading (with XPromo button in it). The purpouse 
+// of it is to prevent opening <A data-href /> link in Tab or in New browser window.
+class AppButtonWrapper extends React.Component {
+  constructor(props) {
+    super(props);
+    this.intersepterId = `inline_script_id_${Date.now()}`;
+  }
+  clickInterseptorScript() {
+    const linkhref = 'let l=e.currentTarget.parentElement.getElementsByTagName("A")[0].getAttribute("data-href");';
+    const redirect = 'window.location.href=l;';
+    const parentEl = 'let b=document.getElementById("${this.intersepterId}");';
+    const eventHdl = 'b.addEventListener("click", a, {once: true});';
+    return {__html : 'let a=function(e){${linkhref} ${redirect}}; ${parentEl} ${eventHdl}'};
+  }
+  render() {
+    return (<div className="AppButton" id={ this.intersepterId }>
+      <script dangerouslySetInnerHTML={ this.clickInterseptorScript() }></script>
+      { this.props.children }
+    </div>);
+  }
+}
+
 export function AppButton(props) {
   const { 
     title,
@@ -19,16 +43,17 @@ export function AppButton(props) {
   } = props;
 
   const CLASSNAME = 'DualPartInterstitialButton';
-
   // Two cases here:
   // 1) We should use A tag to avoid React rendering inconsistency
   // 2) We render this button both on the client and on the server side
   // — For the server side, HREF works (onClick is not enabled yet)
   // — For the client side, onClick (HREF will be prevented)
   return (
-    <a className={ CLASSNAME } href={ appLink } onClick={ navigator(appLink) }>
-      { (children || title || 'Continue') }
-    </a>
+    <AppButtonWrapper>
+      <a className={ CLASSNAME } data-href={ appLink } onClick={ navigator(appLink) }>
+        { (children || title || 'Continue') }
+      </a>
+    </AppButtonWrapper>
   );
 }
 
