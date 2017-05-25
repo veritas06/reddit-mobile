@@ -1,9 +1,11 @@
 import './styles.less';
 
 import React from 'react';
+import cx from 'lib/classNames';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import { getXPromoLinkforCurrentPage } from 'lib/xpromoState';
+import { XPROMO_ADLOADING_TYPES as ADLOADING_TYPES } from 'app/constants';
 import {
   logAppStoreNavigation,
   navigateToAppStore,
@@ -21,7 +23,13 @@ class AppButton extends React.Component {
   componentDidMount() {
     this.setState({ mounted: true });
   }
-
+  getMixin(){
+    const { interstitialType } = this.props;
+    switch ( interstitialType ) {
+      case ADLOADING_TYPES.MAIN: return 'm-main';
+      case ADLOADING_TYPES.COMMENTS: return 'm-comment';
+    }
+  }
   render() {
     const {
       title,
@@ -31,7 +39,7 @@ class AppButton extends React.Component {
     } = this.props;
 
     const content = (children || title || 'Continue');
-    const CLASSNAME = 'DualPartInterstitialButton';
+    const CLASSNAME = cx('appButton', this.getMixin());
     const serverLink = (
       <a className={ CLASSNAME } href={ appLink }>
         { content }

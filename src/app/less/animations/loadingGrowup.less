@@ -1,0 +1,15 @@
+@import (reference) '~app/less/variables';
+@import (reference) '~app/less/mixins/importAll';
+
+@-webkit-keyframes growup {
+  0%    { top: 100%; }
+  100%  { top: 20px; }
+}
+@keyframes growup {
+  0%    { top: 100%; }
+  100%  { top: 20px; }
+}
+
+.growupAnimation {
+  .animation(growup, 25s, forwards, cubic-bezier(.36,1.01,.57,.95));
+}

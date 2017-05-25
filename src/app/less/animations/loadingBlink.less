@@ -1,0 +1,15 @@
+@import (reference) '~app/less/variables';
+@import (reference) '~app/less/mixins/importAll';
+
+.blinkAnimation1 { .animation(blink, 1s, infinite, ease-in-out, 0s, alternate) }
+.blinkAnimation2 { .animation(blink, 1s, infinite, ease-in-out, 0.33s, alternate) }
+.blinkAnimation3 { .animation(blink, 1s, infinite, ease-in-out, 0.66s, alternate) }
+
+@-webkit-keyframes blink {
+  0%    { opacity: 1; }
+  100%  { opacity: 0; }
+}
+@keyframes blink{
+  0%    { opacity: 1; }
+  100%  { opacity: 0; }
+}

@@ -17,6 +17,20 @@
   box-shadow: 0 5px 5px -5px rgba(0,0,0,0.05);
 }
 
+.animation (
+  @name,
+  @duration: 0.2s,
+  @count: infinite,
+  @timing: ease-in-out,
+  @delay: 0s,
+  @direction: normal,
+  @mode: none,
+  @state: running
+) {
+  -webkit-animation: @name @duration @timing @delay @count @direction;
+          animation: @name @duration @timing @delay @count @direction;
+}
+
 .transition (@properties, @time: 0.3s, @delay: 0, @easing: ease-in ) {
    -webkit-transition-timing-function: @easing;
            transition-timing-function: @easing;

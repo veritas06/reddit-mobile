@@ -2,6 +2,9 @@
 @import (reference) '~app/less/mixins/importAll';
 @import (reference) '~app/components/Loading/styles';
 
+@import '~app/less/animations/loadingBlink';
+@import '~app/less/animations/loadingGrowup';
+
 .adLoading {
   padding: @size;
   text-align: center;
@@ -24,7 +27,7 @@
       bottom: 0;left: 0; right: 0; top: 0;
       background: @orangered;
 
-      .animation(growup);
+      .growupAnimation();
     }
 
     .SnooIcon {
@@ -57,37 +60,9 @@
     position: relative;
     z-index: 2;
   }
-
-  // (!) For testing (!)
-  // @TODO refactoring before merge
-  &__button .DualPartInterstitialButton {
-    background: #27D2BB;
-    border-radius: 50px;
-    font-size: 12px;
-    font-weight: bold;
-    padding: 21px 45px 20px;
-    height: 0;
-    line-height: 0px;
-    vertical-align: middle;
-  }
   .Loading{
     padding: 15px;
   }
-}
-
-// @TODO refactoring before merge
-.animation(@name, @time: 25s, @repeat: forwards, @easing: cubic-bezier(.36,1.01,.57,.95)) {
-  -webkit-animation: @name @time @repeat @easing;
-  animation: @name @time @repeat @easing;
-}
-
-@-webkit-keyframes growup {
-  0%    { top: 100%; }
-  100%  { top: 20px; }
-}
-@keyframes growup {
-  0%    { top: 100%; }
-  100%  { top: 20px; }
 }
 
 .textLoader {
@@ -99,12 +74,7 @@
     background: #000;
     margin-left: 2px;
   }
-  &__ball1{ animation: grow 1s ease-in-out 0s infinite alternate; }
-  &__ball2{ animation: grow 1s ease-in-out 0.33s infinite alternate; }
-  &__ball3{ animation: grow 1s ease-in-out 0.66s infinite alternate; }
-}
-
-@keyframes grow{
-  0%{ opacity: 1; }
-  100%{ opacity: 0; }
+  &__ball1 { .blinkAnimation1() }
+  &__ball2 { .blinkAnimation2() }
+  &__ball3 { .blinkAnimation3() }
 }

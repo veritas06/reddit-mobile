@@ -1,8 +1,7 @@
 @import (reference) '~app/less/variables';
 
-.DualPartInterstitialButton,
-a.DualPartInterstitialButton,
-span.DualPartInterstitialButton {
+.appButton,
+a.appButton {
   display: block;
   padding: 0 20px;
   font-size: 14px;
@@ -10,7 +9,6 @@ span.DualPartInterstitialButton {
   line-height: 48px;
   text-align: center;
   border-radius: 5px;
-  text-decoration: none;
   text-transform: uppercase;
   background-color: @orangered;
   color: @white;
@@ -19,5 +17,17 @@ span.DualPartInterstitialButton {
   &:hover {
     background-color: darken(@orangered, 10%);
     color: @white;
+  }
+
+  &.m-main,
+  &.m-comment {
+    background: #27D2BB;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 21px 45px 20px;
+    height: 0;
+    line-height: 0px;
+    vertical-align: middle;
   }
 }
