@@ -3,7 +3,7 @@ import './styles.less';
 import React from 'react';
 import cx from 'lib/classNames';
 import { connect } from 'react-redux';
-import { createSelector } from 'reselect';
+import { createStructuredSelector } from 'reselect';
 import { getXPromoLinkforCurrentPage } from 'lib/xpromoState';
 import { XPROMO_ADLOADING_TYPES as ADLOADING_TYPES } from 'app/constants';
 import {
@@ -23,9 +23,9 @@ class AppButton extends React.Component {
   componentDidMount() {
     this.setState({ mounted: true });
   }
-  getMixin(){
+  getMixin() {
     const { interstitialType } = this.props;
-    switch ( interstitialType ) {
+    switch (interstitialType) {
       case ADLOADING_TYPES.MAIN: return 'm-main';
       case ADLOADING_TYPES.COMMENTS: return 'm-comment';
     }
@@ -54,10 +54,9 @@ class AppButton extends React.Component {
   }
 }
 
-export const selector = createSelector(
-  (state, props) => getXPromoLinkforCurrentPage(state, props.interstitialType),
-  (appLink) => ({ appLink }),
-);
+export const selector = createStructuredSelector({
+  appLink: (state, props) => getXPromoLinkforCurrentPage(state, props.interstitialType),
+});
 
 const mapDispatchToProps = dispatch => {
   let preventExtraClick = false;

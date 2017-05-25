@@ -5,7 +5,7 @@ import {
   trackPagesXPromoEvents,
 } from 'lib/eventUtils';
 
-export const dispatchInitialXPromoLink = async (ctx, dispatch, getState) => {
+export const dispatchInitialXPromo = async (ctx, dispatch, getState) => {
   const state = getState();
   const experimentData = getExperimentDataByFlags(state);
   trackBucketingEvents(state, experimentData, dispatch);

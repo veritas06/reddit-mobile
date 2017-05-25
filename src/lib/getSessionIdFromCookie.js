@@ -15,9 +15,9 @@ const parseServerSideCookies = (ctxCookie) => {
     const delimiter = ';';
     const cookieStr = [ctxCookie].join(delimiter);
     const getSession = new RegExp(`${SESSION_COOKIE_KEY}=(.+?;).*`, 'g');
-    const sessionId = cookieStr.replace(getSession, '$1');
-    const isSessionIdWasFound = new RegExp(delimiter).test(sessionId);
-    return (isSessionIdWasFound ? sessionId : false);
+    const sessionCookie = cookieStr.replace(getSession, '$1');
+    const isSessionCookieWasFound = new RegExp(delimiter).test(sessionCookie);
+    return (isSessionCookieWasFound ? sessionCookie : false);
   }
   return false;
 };
