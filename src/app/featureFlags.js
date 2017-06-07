@@ -74,9 +74,13 @@ const {
   VARIANT_XPROMO_PERSISTENT_IOS,
   VARIANT_XPROMO_PERSISTENT_ANDROID,
 
-  // Ad loading (preloader and Mobile App redirect button)
+  // XPromo Ad loading (preloader and Mobile App redirect button)
   VARIANT_XPROMO_AD_LOADING_IOS,
   VARIANT_XPROMO_AD_LOADING_ANDROID,
+
+  // XPromo Ad Feed inside the Listing pages
+  VARIANT_XPROMO_AD_FEED_IOS,
+  VARIANT_XPROMO_AD_FEED_ANDROID,
 } = flagConstants;
 
 const config = {
@@ -375,6 +379,27 @@ const config = {
       { allowedPages: ['index', 'listing', 'comments'] },
       { or: [
         { variant: 'mweb_xpromo_ad_loading_android:treatment' },
+      ]},
+    ],
+  },
+
+  [VARIANT_XPROMO_AD_FEED_IOS]: {
+    and: [
+      { notOptedOut: OPT_OUT_FLAGS },
+      { allowedDevices: [IPHONE] },
+      { allowedPages: ['index', 'listing'] },
+      { or: [
+        { variant: 'mweb_xpromo_ad_feed_ios:treatment' },
+      ]},
+    ],
+  },
+  [VARIANT_XPROMO_AD_FEED_ANDROID]: {
+    and: [
+      { notOptedOut: OPT_OUT_FLAGS },
+      { allowedDevices: [ANDROID] },
+      { allowedPages: ['index', 'listing'] },
+      { or: [
+        { variant: 'mweb_xpromo_ad_feed_android:treatment' },
       ]},
     ],
   },

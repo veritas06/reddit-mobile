@@ -176,10 +176,14 @@ export const flags = {
   VARIANT_XPROMO_PERSISTENT_IOS: 'experimentXPromoPersistentIos',
   VARIANT_XPROMO_PERSISTENT_ANDROID: 'experimentXPromoPersistentAndroid',
 
-  // Ad loading (preloader and Mobile App redirect button)
+  // XPromo Ad loading (preloader and Mobile App redirect button)
   // Note: client and server side rendering
   VARIANT_XPROMO_AD_LOADING_IOS: 'experimentXPromoAdLoadingIos',
   VARIANT_XPROMO_AD_LOADING_ANDROID: 'experimentXPromoAdLoadingAndroid',
+
+  // XPromo Ad Feed inside the Listing pages
+  VARIANT_XPROMO_AD_FEED_IOS: 'experimentXPromoAdFeedIos',
+  VARIANT_XPROMO_AD_FEED_ANDROID: 'experimentXPromoAdFeedAndroid',
 };
 
 // Now we have 2 different types of XPromo
@@ -188,6 +192,13 @@ export const flags = {
 export const XPROMO_TYPES = {
   INTERSTITIAL: 'interstitial',         // All interstitials banners
   ADLOADING: 'ad_loading',              // App button inside the preloader
+  ADFEED: 'ad_feed',
+};
+
+export const XPROMO_AD_FEED_TYPES = {
+  TOP: 'ad_feed_big_top_banner',
+  LISTING_BIG: 'ad_feed_big_banner',
+  LISTING_SMALL: 'ad_feed_small_banner',
 };
 
 export const XPROMO_ADLOADING_TYPES = {
@@ -201,6 +212,7 @@ export const XPROMO_DISPLAY_THEMES = {
   MINIMAL: 'black_banner_fixed_bottom', // Black banner in the fixed bottom position and dismiss link
   PERSIST: 'persistent_banner',         // ...same as MINIMAL but without dismiss link
   ADLOADING: 'ad_loading',
+  ADFEED: 'ad_feed'
 };
 
 export const COLOR_SCHEME = {

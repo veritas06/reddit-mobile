@@ -55,7 +55,9 @@ class AppButton extends React.Component {
 }
 
 export const selector = createStructuredSelector({
-  appLink: (state, props) => getXPromoLinkforCurrentPage(state, props.interstitialType),
+  appLink: (state, props) => {
+    return getXPromoLinkforCurrentPage(state, props.interstitialType);
+  },
 });
 
 const mapDispatchToProps = dispatch => {

@@ -1,4 +1,5 @@
 import url from 'url';
+import get from 'lodash/get';
 import cookies from 'js-cookie';
 
 import config from 'config';
@@ -61,9 +62,11 @@ export function isXPromoPersistentEnabled(state) {
   return isXPromoPersistent(state);
 }
 
-export function getXPromoLinkforCurrentPage(state, linkType, additionalData={}) {
+export function getXPromoLinkforCurrentPage(state, interstitial_type) {
   const path = state.platform.currentPage.url;
-  return getXPromoLink(state, path, linkType, additionalData);
+  // utm_content (3 arg) and interstitial_type (4 arg) are
+  // should be the same inside the url link (as payload also).
+  return getXPromoLink(state, path, interstitial_type, { interstitial_type });
 }
 
 export function getXPromoListingClickLink(state, postId, listingClickType) {
@@ -112,7 +115,7 @@ function getXPromoLink(state, path, linkType, additionalData={}) {
   let payload = {
     utm_source: 'xpromo',
     utm_content: linkType,
-    ...interstitialData(state),
+    ...interstitialData(state, additionalData),
     ...additionalData,
   };
 
@@ -263,9 +266,12 @@ export function interstitialType(state) {
   }
 }
 
-export function interstitialData(state) {
+export function interstitialData(state, additionalData) {
   const baseData = {
-    interstitial_type: interstitialType(state),
+    interstitial_type: (
+      get(additionalData, 'interstitialType') ||
+      interstitialType(state)
+    ),
   };
 
   const { active, clickInfo } = state.xpromo.listingClick;

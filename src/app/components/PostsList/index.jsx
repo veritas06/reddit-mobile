@@ -6,8 +6,10 @@ import { createSelector } from 'reselect';
 import Ad from 'app/components/Ad';
 import PaginationButtons from 'app/components/PaginationButtons';
 import Post from 'app/components/Post';
+import XPromoAdFeed from 'app/components/XPromoAdFeed';
 import LoadingXpromo from 'app/components/LoadingXpromo';
 import adLocationForPostRecords from 'lib/adLocationForPostRecords';
+import { isXPromoAdFeedEnabled as isXPromoEnabled} from 'app/selectors/xpromo';
 
 const T = React.PropTypes;
 
@@ -55,7 +57,7 @@ const renderPostsList = props => {
   const { postRecords, ad, adId, forceCompact, subredditIsNSFW, subredditShowSpoilers, onPostClick } = props;
   const records = ad ? recordsWithAd(postRecords, ad) : postRecords;
 
-  return records.map((postRecord, index) => {
+  const postsList =  records.map((postRecord, index) => {
     const postId = postRecord.uuid;
 
     const postProps = {
@@ -71,9 +73,13 @@ const renderPostsList = props => {
       // Ad wants the adId for tracking the ad impression
       return <Ad postProps={ postProps } adId={ adId } placementIndex={ index }/>;
     }
-
     return <Post { ...postProps } />;
   });
+
+  if(isXPromoEnabled){
+    postsList.splice(5, 0, <XPromoAdFeed />);
+  }
+  return postsList;
 };
 
 const recordsWithAd = (postRecords, ad) => {
@@ -96,7 +102,7 @@ const isAdLoaded = adRequest => (
   adRequest && !adRequest.pending && adRequest.ad
 );
 
-const listSelector = createSelector(
+const selector = createSelector(
   (state, props) => state.postsLists[props.postsListId],
   state => state.posts,
   (state, props) => {
@@ -106,14 +112,16 @@ const listSelector = createSelector(
   },
   (_, props) => props.nextUrl,
   (_, props) => props.prevUrl,
-  (postsList, posts, adRequest, nextUrl, prevUrl) => ({
+  isXPromoEnabled,
+  (postsList, posts, adRequest, nextUrl, prevUrl, isXPromoEnabled) => ({
     loading: !!postsList && postsList.loading,
     postRecords: postsList ? postsList.results.filter(p => !posts[p.uuid].hidden) : [],
     ad: isAdLoaded(adRequest) ? adRequest.ad : '',
     adId: isAdLoaded(adRequest) ? adRequest.adId : '',
     prevUrl,
     nextUrl,
+    isXPromoEnabled,
   }),
 );
 
-export default connect(listSelector)(PostsList);
+export default connect(selector)(PostsList);
