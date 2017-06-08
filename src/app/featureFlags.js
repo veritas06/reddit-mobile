@@ -3,6 +3,7 @@ import sha1 from 'crypto-js/sha1';
 import url from 'url';
 import {
   OPT_OUT_FLAGS,
+  XPROMO_AD_FEED_TYPES,
   flags as flagConstants,
 } from 'app/constants';
 import {
@@ -389,7 +390,9 @@ const config = {
       { allowedDevices: [IPHONE] },
       { allowedPages: ['index', 'listing'] },
       { or: [
-        { variant: 'mweb_xpromo_ad_feed_ios:treatment' },
+        { variant: `mweb_xpromo_ad_feed_ios:${XPROMO_AD_FEED_TYPES.TOP_BIG}` },
+        { variant: `mweb_xpromo_ad_feed_ios:${XPROMO_AD_FEED_TYPES.LISTING_BIG}` },
+        { variant: `mweb_xpromo_ad_feed_ios:${XPROMO_AD_FEED_TYPES.LISTING_SMALL}` },
       ]},
     ],
   },
@@ -399,7 +402,9 @@ const config = {
       { allowedDevices: [ANDROID] },
       { allowedPages: ['index', 'listing'] },
       { or: [
-        { variant: 'mweb_xpromo_ad_feed_android:treatment' },
+        { variant: `mweb_xpromo_ad_feed_android:${XPROMO_AD_FEED_TYPES.TOP_BIG}` },
+        { variant: `mweb_xpromo_ad_feed_android:${XPROMO_AD_FEED_TYPES.LISTING_BIG}` },
+        { variant: `mweb_xpromo_ad_feed_android:${XPROMO_AD_FEED_TYPES.LISTING_SMALL}` },
       ]},
     ],
   },
@@ -656,12 +661,15 @@ flags.addRule('allowedDevices', function (allowed) {
 // - string (value of STORE_KEY key)
 // - array of objects with STORE_KEY keys
 flags.addRule('notOptedOut', function (flagOrFlags) {
-  if (typeof flagOrFlags === 'string') {
-    return !(this.state.optOuts[flagOrFlags]);
+  if (this.state.optOuts) {
+    if (typeof flagOrFlags === 'string') {
+      return !(this.state.optOuts[flagOrFlags]);
+    }
+    return !(flagOrFlags.find((item={}) => {
+      return !!this.state.optOuts[item.STORE_KEY];
+    }));
   }
-  return !(flagOrFlags.find((item={}) => {
-    return !!this.state.optOuts[item.STORE_KEY];
-  }));
+  return false;
 });
 
 // NOTE (prashant.singh - 07 November 2016): This is interim functionality to

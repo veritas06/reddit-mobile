@@ -7,6 +7,7 @@ import {
   EVERY_DAY,
   flags as flagConstants,
   COLOR_SCHEME,
+  XPROMO_AD_FEED_TYPES,
   XPROMO_DISPLAY_THEMES,
   XPROMO_MODAL_LISTING_CLICK_NAME,
   OPT_OUT_XPROMO_INTERSTITIAL_MENU,
@@ -300,6 +301,22 @@ export function xpromoModalListingClickVariantInfo(state) {
   };
 }
 
+export function xpromoAdFeedIsVariantEnabled(state, checkableVariant) {
+  const experimentVariant = xpromoAdFeedVariant(state);
+  if (Array.isArray(checkableVariant)) {
+    return checkableVariant.some((variant) => (variant === experimentVariant));
+  }
+  return (experimentVariant === checkableVariant);
+}
+export function xpromoAdFeedVariant(state) {
+  const experiment = getExperimentDataByFlags(state, XPROMO_AD_FEED_FLAGS);
+  return experiment ? experiment.variant : undefined;
+}
+export function isXPromoInFeedEnabled(state) {
+  const { LISTING_BIG, LISTING_SMALL } = XPROMO_AD_FEED_TYPES;
+  return xpromoAdFeedIsVariantEnabled(state, [LISTING_BIG, LISTING_SMALL]);
+}
+
 /**
  * @func eligibleTimeForModalListingClick
  * @param {object} state - our applications redux state. Depends on
@@ -385,9 +402,6 @@ export function isXPromoBannerEnabled(state) {
 }
 export function isXPromoAdLoadingEnabled(state) {
   return anyFlagEnabled(state, XPROMO_AD_LOADING_FLAGS);
-}
-export function isXPromoAdFeedEnabled(state) {
-  return anyFlagEnabled(state, XPROMO_AD_FEED_FLAGS);
 }
 
 function shouldShowXPromo(state) {

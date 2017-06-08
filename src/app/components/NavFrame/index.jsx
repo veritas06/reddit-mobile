@@ -2,7 +2,7 @@ import './styles.less';
 import React from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-
+import { XPromoAdFeedTopBig } from 'app/components/XPromoAdFeed';
 import DualPartInterstitial from 'app/components/DualPartInterstitial';
 import EUCookieNotice from 'app/components/EUCookieNotice';
 import TopNav from 'app/components/TopNav';
@@ -44,6 +44,7 @@ const NavFrame = props => {
 
   return (
     <div className='NavFrame'>
+      <XPromoAdFeedTopBig />
       { xPromoBanner }
       { otherContent }
     </div>

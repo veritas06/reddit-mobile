@@ -72,12 +72,9 @@ export default function(state=DEFAULT, action={}) {
             //   experiment_id: 1008,
             // },
 
-            mweb_xpromo_ad_feed_ios: {
-              variant: 'treatment',
-              owner: 'channels',
-              experiment_id: 1009,
-            },
-
+            // mweb_xpromo_ad_feed_ios: { variant: 'ad_feed_big_top_banner', owner: 'channels', experiment_id: 1009 },
+            // mweb_xpromo_ad_feed_ios: { variant: 'ad_feed_big_feed_banner', owner: 'channels', experiment_id: 1009 },
+            mweb_xpromo_ad_feed_ios: { variant: 'ad_feed_small_feed_banner', owner: 'channels', experiment_id: 1009 },
           },
         });
       });

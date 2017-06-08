@@ -196,9 +196,9 @@ export const XPROMO_TYPES = {
 };
 
 export const XPROMO_AD_FEED_TYPES = {
-  TOP: 'ad_feed_big_top_banner',
-  LISTING_BIG: 'ad_feed_big_banner',
-  LISTING_SMALL: 'ad_feed_small_banner',
+  TOP_BIG: 'ad_feed_big_top_banner',
+  LISTING_BIG: 'ad_feed_big_feed_banner',
+  LISTING_SMALL: 'ad_feed_small_feed_banner',
 };
 
 export const XPROMO_ADLOADING_TYPES = {
@@ -212,7 +212,7 @@ export const XPROMO_DISPLAY_THEMES = {
   MINIMAL: 'black_banner_fixed_bottom', // Black banner in the fixed bottom position and dismiss link
   PERSIST: 'persistent_banner',         // ...same as MINIMAL but without dismiss link
   ADLOADING: 'ad_loading',
-  ADFEED: 'ad_feed'
+  ADFEED: 'ad_feed',
 };
 
 export const COLOR_SCHEME = {

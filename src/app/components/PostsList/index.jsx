@@ -6,10 +6,10 @@ import { createSelector } from 'reselect';
 import Ad from 'app/components/Ad';
 import PaginationButtons from 'app/components/PaginationButtons';
 import Post from 'app/components/Post';
-import XPromoAdFeed from 'app/components/XPromoAdFeed';
 import LoadingXpromo from 'app/components/LoadingXpromo';
 import adLocationForPostRecords from 'lib/adLocationForPostRecords';
-import { isXPromoAdFeedEnabled as isXPromoEnabled} from 'app/selectors/xpromo';
+import { addXPromoToPostsList } from 'app/components/XPromoAdFeed';
+import { isXPromoInFeedEnabled } from 'app/selectors/xpromo';
 
 const T = React.PropTypes;
 
@@ -54,12 +54,19 @@ PostsList.defaultProps = {
 };
 
 const renderPostsList = props => {
-  const { postRecords, ad, adId, forceCompact, subredditIsNSFW, subredditShowSpoilers, onPostClick } = props;
+  const {
+    postRecords,
+    ad, adId,
+    forceCompact,
+    subredditIsNSFW,
+    subredditShowSpoilers,
+    onPostClick,
+    isXPromoEnabled,
+  } = props;
+
   const records = ad ? recordsWithAd(postRecords, ad) : postRecords;
-
-  const postsList =  records.map((postRecord, index) => {
+  const postsList = records.map((postRecord, index) => {
     const postId = postRecord.uuid;
-
     const postProps = {
       postId,
       forceCompact,
@@ -76,8 +83,8 @@ const renderPostsList = props => {
     return <Post { ...postProps } />;
   });
 
-  if(isXPromoEnabled){
-    postsList.splice(5, 0, <XPromoAdFeed />);
+  if (isXPromoEnabled) {
+    addXPromoToPostsList(postsList, 5);
   }
   return postsList;
 };
@@ -112,7 +119,7 @@ const selector = createSelector(
   },
   (_, props) => props.nextUrl,
   (_, props) => props.prevUrl,
-  isXPromoEnabled,
+  isXPromoInFeedEnabled,
   (postsList, posts, adRequest, nextUrl, prevUrl, isXPromoEnabled) => ({
     loading: !!postsList && postsList.loading,
     postRecords: postsList ? postsList.results.filter(p => !posts[p.uuid].hidden) : [],

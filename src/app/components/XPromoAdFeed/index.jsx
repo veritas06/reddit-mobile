@@ -1,26 +1,33 @@
-import './styles.less';
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import AppButton from 'app/components/DualPartInterstitial/AppButton';
-import getXpromoTheme from 'lib/xpromoTheme';
+import adlist from 'app/components/XPromoAdFeed/adlist';
+import { XPROMO_AD_FEED_TYPES as TYPE } from 'app/constants';
 import {
-  XPROMO_AD_FEED_TYPES as TYPE,
-  XPROMO_DISPLAY_THEMES as THEME,
-} from 'app/constants';
+  xpromoAdFeedVariant,
+  xpromoAdFeedIsVariantEnabled,
+} from 'app/selectors/xpromo';
 
-export default function XPromoAdFeed() {
+// Variants switcher
+const XPromoAd = props => {
+  const { variant, isEnabled } = props;
+  return (isEnabled ? adlist[variant] : null);
+};
+const selector = createSelector(
+  (state) => xpromoAdFeedVariant(state),
+  (state, props) => xpromoAdFeedIsVariantEnabled(state, props.variant),
+  (variant, isEnabled) => ({ variant, isEnabled }),
+);
+const XPromoAdSwitcher = connect(selector)(XPromoAd);
 
-  const buttonProps = {
-    title: 'Open in app',
-    visitTrigger: getXpromoTheme(THEME.ADFEED).visitTrigger,
-    interstitialType: TYPE.LISTING_SMALL,
-  }
-
-  return (
-    <div className="XPromoAdFeed">
-        <AppButton { ...buttonProps } />
-    </div>
-  );
-}
+// Shared dumb components
+// 1) Top-big XPromo Ad
+export const XPromoAdFeedTopBig = () => {
+  return (<XPromoAdSwitcher variant={ [TYPE.TOP_BIG] } />);
+};
+// 2) Big and Small (in feed) XPromo Ad
+// This func inject (Big or Small) Ad into the posts feed
+export const addXPromoToPostsList = (postsList, place) => {
+  const inFeedVariants = [TYPE.LISTING_BIG, TYPE.LISTING_SMALL];
+  return postsList.splice(place, 0, <XPromoAdSwitcher variant={ inFeedVariants } />);
+};
