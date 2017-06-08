@@ -10,34 +10,49 @@ import {
 
 const XPromoAppButton = (props) => {
   const buttonProps = {
-    title : 'Open in app',
+    title : 'OPEN IN APP',
     visitTrigger : getXpromoTheme(THEME.ADFEED),
     interstitialType : props.varian,
   };
   return <AppButton { ...buttonProps } />;
 };
 
-const AdTopBig = () => (
+export const AdListingSmall = () => (
   <div className="XPromoAdFeed">
-    <h1>TOP_BIG</h1>
-    <XPromoAppButton varian={ TYPE.TOP_BIG } />
-  </div>
-);
-const AdListingBig = () => (
-  <div className="XPromoAdFeed">
-    <h1>TOP_BIG</h1>
-    <XPromoAppButton varian={ TYPE.LISTING_BIG } />
-  </div>
-);
-const AdListingSmall = () => (
-  <div className="XPromoAdFeed">
-    <h1>TOP_BIG</h1>
+    <h1>{ 'Reddit mobile app. It\'s a smooth-er operator.' }</h1>
+    <p>Never miss a conversation with the Reddit mobile app.</p>
     <XPromoAppButton varian={ TYPE.LISTING_SMALL } />
   </div>
 );
 
-export default {
-  [TYPE.TOP_BIG]: (<AdTopBig />),
-  [TYPE.LISTING_BIG]: (<AdListingBig />),
-  [TYPE.LISTING_SMALL]: (<AdListingSmall />),
+export const AdListingBig = () => {
+  const content = [
+    {
+      imagePath: 'img/picture1.gif',
+      header: 'Oh, to be in a place that doesn\'t limit your character.',
+    },{
+      imagePath: 'img/picture2.gif',
+      header: 'Not just a book with faces, we\'re a novel of human conversation.',
+    },{
+      imagePath: 'img/picture3.gif',
+      header: 'I bet this browser is a bit too shiny, but our app is fit just for you.',
+    },{
+      imagePath: 'img/picture4.gif',
+      header: 'Discover interests you never knew you had. No compass icon needed.',
+    },
+  ];
+  const random = Math.floor(Math.random()*header.length);
+  const { imagePath, header } = content[random];
+  return (
+    <div className="XPromoAdFeed">
+      <img src={ imagePath } />
+      <h1>{ header }</h1>
+      <p>Never miss a conversation with the Reddit mobile app.</p>
+      <XPromoAppButton
+        varian={ TYPE.LISTING_BIG }
+        contentVersion={ random }
+      />
+      <sub>Scroll to view mobile site</sub>
+    </div>
+  );
 };

@@ -390,7 +390,6 @@ const config = {
       { allowedDevices: [IPHONE] },
       { allowedPages: ['index', 'listing'] },
       { or: [
-        { variant: `mweb_xpromo_ad_feed_ios:${XPROMO_AD_FEED_TYPES.TOP_BIG}` },
         { variant: `mweb_xpromo_ad_feed_ios:${XPROMO_AD_FEED_TYPES.LISTING_BIG}` },
         { variant: `mweb_xpromo_ad_feed_ios:${XPROMO_AD_FEED_TYPES.LISTING_SMALL}` },
       ]},
@@ -402,7 +401,6 @@ const config = {
       { allowedDevices: [ANDROID] },
       { allowedPages: ['index', 'listing'] },
       { or: [
-        { variant: `mweb_xpromo_ad_feed_android:${XPROMO_AD_FEED_TYPES.TOP_BIG}` },
         { variant: `mweb_xpromo_ad_feed_android:${XPROMO_AD_FEED_TYPES.LISTING_BIG}` },
         { variant: `mweb_xpromo_ad_feed_android:${XPROMO_AD_FEED_TYPES.LISTING_SMALL}` },
       ]},

@@ -1,3 +1,20 @@
+@import (reference) '~app/less/variables';
+@import (reference) '~app/less/mixins/importAll';
+@import (reference) '~app/less/themes/themeify';
+
 .XPromoAdFeed{
   padding: 20px 15px;
+}
+
+.backgroundImage() {
+  background-image: url('/img/listing-click-pattern.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.promoImage() {
+  background-image: url('/img/tutorial-app.png');
+  background-size: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
 }

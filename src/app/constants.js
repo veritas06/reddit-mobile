@@ -196,7 +196,6 @@ export const XPROMO_TYPES = {
 };
 
 export const XPROMO_AD_FEED_TYPES = {
-  TOP_BIG: 'ad_feed_big_top_banner',
   LISTING_BIG: 'ad_feed_big_feed_banner',
   LISTING_SMALL: 'ad_feed_small_feed_banner',
 };
