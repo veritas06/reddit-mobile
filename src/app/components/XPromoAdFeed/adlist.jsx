@@ -45,7 +45,7 @@ export const AdListingBig = () => {
   const header = headers[random];
   return (
     <div className='XPromoAdFeed mBig'>
-      <div className={ 'XPromoAdFeed__img mPic'+random }></div>
+      <div className={ `XPromoAdFeed__img mPic${random}` }></div>
       <h1 className='XPromoAdFeed__title'>{ header }</h1>
       <p className='XPromoAdFeed__text'>
         Never miss a conversation with the Reddit mobile app.

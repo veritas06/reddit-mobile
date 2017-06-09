@@ -13,14 +13,15 @@ import {
 
 // Variants switcher
 const XPromoAd = props => {
-  const { variant, isEnabled } = props;
+  // const { variant, isEnabled } = props;
+  const { isEnabled } = props;
   const variants = {
     [TYPE.LISTING_BIG]: (<AdListingBig />),
     [TYPE.LISTING_SMALL]: (<AdListingSmall />),
   };
-  return (isEnabled ? variants[variant] : null);
+  // return (isEnabled ? variants[variant] : null);
   // @TODO remove me
-  // return (isEnabled ? variants[TYPE.LISTING_BIG] : null);
+  return (isEnabled ? variants[TYPE.LISTING_BIG] : null);
 };
 
 const selector = createSelector(
