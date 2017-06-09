@@ -5,7 +5,10 @@ import cx from 'lib/classNames';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { getXPromoLinkforCurrentPage } from 'lib/xpromoState';
-import { XPROMO_ADLOADING_TYPES as ADLOADING_TYPES } from 'app/constants';
+import {
+  XPROMO_ADLOADING_TYPES as ADLOADING_TYPES,
+  XPROMO_AD_FEED_TYPES as ADFEED_TYPES,
+} from 'app/constants';
 import {
   logAppStoreNavigation,
   navigateToAppStore,
@@ -28,6 +31,8 @@ class AppButton extends React.Component {
     switch (interstitialType) {
       case ADLOADING_TYPES.MAIN: return 'm-main';
       case ADLOADING_TYPES.COMMENTS: return 'm-comment';
+      case ADFEED_TYPES.LISTING_BIG:
+      case ADFEED_TYPES.LISTING_SMALL: return 'm-adfeed';
     }
   }
   render() {

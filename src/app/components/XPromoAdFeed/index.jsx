@@ -19,6 +19,8 @@ const XPromoAd = props => {
     [TYPE.LISTING_SMALL]: (<AdListingSmall />),
   };
   return (isEnabled ? variants[variant] : null);
+  // @TODO remove me
+  // return (isEnabled ? variants[TYPE.LISTING_BIG] : null);
 };
 
 const selector = createSelector(

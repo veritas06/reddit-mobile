@@ -18,41 +18,45 @@ const XPromoAppButton = (props) => {
 };
 
 export const AdListingSmall = () => (
-  <div className="XPromoAdFeed">
-    <h1>{ 'Reddit mobile app. It\'s a smooth-er operator.' }</h1>
-    <p>Never miss a conversation with the Reddit mobile app.</p>
-    <XPromoAppButton varian={ TYPE.LISTING_SMALL } />
+  <div className='XPromoAdFeed mSmall'>
+    <div className='XPromoAdFeed__img'></div>
+    <h1 className='XPromoAdFeed__title'>
+      { 'Reddit mobile app. ' }<br />
+      { 'It\'s a smooth-er operator.' }
+    </h1>
+    <p className='XPromoAdFeed__text'>
+      Never miss a conversation with<br />
+      the Reddit mobile app.
+    </p>
+    <div className='XPromoAdFeed__button'>
+      <XPromoAppButton varian={ TYPE.LISTING_SMALL } />
+    </div>
   </div>
 );
 
 export const AdListingBig = () => {
-  const content = [
-    {
-      imagePath: 'img/picture1.gif',
-      header: 'Oh, to be in a place that doesn\'t limit your character.',
-    },{
-      imagePath: 'img/picture2.gif',
-      header: 'Not just a book with faces, we\'re a novel of human conversation.',
-    },{
-      imagePath: 'img/picture3.gif',
-      header: 'I bet this browser is a bit too shiny, but our app is fit just for you.',
-    },{
-      imagePath: 'img/picture4.gif',
-      header: 'Discover interests you never knew you had. No compass icon needed.',
-    },
+  const headers = [
+    'Oh, to be in a place that doesn\'t limit your character.',
+    'Not just a book with faces, we\'re a novel of human conversation.',
+    'I bet this browser is a bit too shiny, but our app is fit just for you.',
+    'Discover interests you never knew you had. No compass icon needed.',
   ];
-  const random = Math.floor(Math.random()*header.length);
-  const { imagePath, header } = content[random];
+  const random = Math.floor(Math.random()*headers.length);
+  const header = headers[random];
   return (
-    <div className="XPromoAdFeed">
-      <img src={ imagePath } />
-      <h1>{ header }</h1>
-      <p>Never miss a conversation with the Reddit mobile app.</p>
-      <XPromoAppButton
-        varian={ TYPE.LISTING_BIG }
-        contentVersion={ random }
-      />
-      <sub>Scroll to view mobile site</sub>
+    <div className='XPromoAdFeed mBig'>
+      <div className={ 'XPromoAdFeed__img mPic'+random }></div>
+      <h1 className='XPromoAdFeed__title'>{ header }</h1>
+      <p className='XPromoAdFeed__text'>
+        Never miss a conversation with the Reddit mobile app.
+      </p>
+      <div className='XPromoAdFeed__button'>
+        <XPromoAppButton
+          varian={ TYPE.LISTING_BIG }
+          contentVersion={ random }
+        />
+      </div>
+      <sub className='XPromoAdFeed__sub'>Scroll to view mobile site</sub>
     </div>
   );
 };

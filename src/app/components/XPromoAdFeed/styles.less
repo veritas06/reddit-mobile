@@ -1,20 +1,97 @@
 @import (reference) '~app/less/variables';
 @import (reference) '~app/less/mixins/importAll';
-@import (reference) '~app/less/themes/themeify';
+@import (reference) './assets';
 
-.XPromoAdFeed{
-  padding: 20px 15px;
+.insetShadow(){
+  border-top: 1px solid #d3cece;
+  border-bottom: 1px solid #d3cece;
+  box-shadow: inset 0 10px 5px -10px rgba(0, 0, 0, 0.2);
+
+  &:after{
+    z-index: 1;
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 15px;
+    box-shadow: inset 0px -10px 5px -10px rgba(0, 0, 0, 0.2);
+  }
 }
 
-.backgroundImage() {
-  background-image: url('/img/listing-click-pattern.png');
-  background-size: cover;
-  background-repeat: no-repeat;
-}
+.XPromoAdFeed {
+  overflow: hidden;
+  position: relative;
+  padding: 15px 10px;
+  margin: -1px 0;
+  z-index: 1;
+  .insetShadow();
 
-.promoImage() {
-  background-image: url('/img/tutorial-app.png');
-  background-size: 100%;
-  background-position: center;
-  background-repeat: no-repeat;
+  &:before {
+    z-index: 1;
+    content: ' ';
+    opacity: 0.1;
+    height: 100%; width: 100%; left:0; top: 0;
+    position: absolute;
+    .backgroundImage();
+  }
+
+  &__title {
+    font-size: 19px;
+    line-height: 25px;
+    margin: 0 0 10px;
+    font-weight: bold;
+  }
+  &__img,
+  &__button {
+    z-index: 2;
+    position: relative;
+    background-repeat: no-repeat;
+  }
+  &__text {
+    margin: 0 0 12px;
+    line-height: 16px;
+  }
+  &__sub {
+    display: block;
+    padding-bottom: 7px;
+    padding-top: 20px;
+    color: #999999;
+  }
+
+  &.mSmall {
+    .XPromoAdFeed__img {
+      float: right;
+      .snooSmall();
+    }
+    .XPromoAdFeed__button {
+      float: left;
+    }
+  }
+
+  &.mBig{
+    text-align: center;
+
+    .XPromoAdFeed{
+      &__button{
+        display: inline-block;
+      }
+      &__title {
+        margin: 0 auto 10px;
+        max-width: 330px;
+      }
+      &__text{
+        margin-bottom: 30px;
+      }
+      &__img {
+        width: 100%;
+        margin-top: 16px;
+        background-position: center top;
+      }
+    }
+    .mPic0{ .snooBig0(); }
+    .mPic1{ .snooBig1(); }
+    .mPic2{ .snooBig2(); }
+    .mPic3{ .snooBig3(); }
+  }
 }
