@@ -181,5 +181,3 @@ spec:
               - path: "annotations"
                 fieldRef:
                   fieldPath: metadata.annotations
-      imagePullSecrets:
-        - name: image-pull-secret
