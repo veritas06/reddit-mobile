@@ -48,6 +48,7 @@ import subredditsByPost from './subredditsByPost';
 import subredditsToPostsByPost from './subredditsToPostsByPost';
 import subscribedSubreddits from './subscribedSubreddits';
 import theme from './theme';
+import twoFactorAuthentication from './twoFactorAuthentication';
 import toaster from './toaster';
 import tracking from './tracking';
 import unblurredPosts from './unblurredPosts';
@@ -106,6 +107,7 @@ export default {
   subscribedSubreddits,
   subredditRequests,
   theme,
+  twoFactorAuthentication,
   toaster,
   tracking,
   unblurredPosts,

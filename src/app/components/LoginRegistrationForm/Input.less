@@ -45,5 +45,23 @@
     &.error {
       border-bottom: 1px solid @state-danger-bg;
     }
+
+    &.otpInput {
+      text-align: center;
+      padding: 20px;
+      border-radius: 5px;
+
+      .themeify({
+        border: @theme-border;
+      });
+
+      &:focus {
+        border: 1px solid @blue;
+      }
+    }
+
+    &.otpInput.error {
+      border: 1px solid @state-danger-bg;
+    }
   }
 }

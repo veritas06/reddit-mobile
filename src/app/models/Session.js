@@ -4,10 +4,10 @@ import { btoa } from 'Base64';
 import ResponseError from 'apiClient/errors/ResponseError';
 import ValidationError from 'apiClient/errors/ValidationError';
 
-const fetchLogin = (username, password) => new Promise((resolve, reject) => {
+const fetchLogin = (username, password, otp) => new Promise((resolve, reject) => {
   superagent
     .post('/loginproxy')
-    .send({ username, password })
+    .send({ username, password, otp })
     .end((err, res) => {
       // NOTE: this isn't the best way to handle this but validation errors
       // seem to fail with a response key whereas api failures don't
@@ -32,9 +32,13 @@ const refreshSession = refreshToken => new Promise((resolve, reject) => {
 });
 
 export default class Session {
-  static async fromLogin(username, password) {
-    const data = await fetchLogin(username, password);
-    return new Session(data.session);
+  static async fromLogin(username, password, otp) {
+    const data = await fetchLogin(username, password, otp);
+    if (data.session) {
+      return { session: new Session(data.session) };
+    }
+
+    return data;
   }
 
   constructor({ accessToken, tokenType, expires, refreshToken, scope }) {

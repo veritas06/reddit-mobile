@@ -225,6 +225,17 @@ export const loginErrors = {
   WRONG_PASSWORD: 'WRONG_PASSWORD',
   BAD_USERNAME: 'BAD_USERNAME',
   INCORRECT_USERNAME_PASSWORD: 'INCORRECT_USERNAME_PASSWORD',
+  WRONG_OTP: 'WRONG_OTP',
+};
+
+export const loginInfo = {
+  TWO_FA_REQUIRED: 'TWO_FA_REQUIRED',
+};
+
+export const loginForms = {
+  AUTH: 'AUTH',
+  APP_CODE: 'APP_CODE',
+  BACKUP_CODE: 'BACKUP_CODE',
 };
 
 export const genericErrors = {

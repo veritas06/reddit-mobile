@@ -17,13 +17,15 @@ function LoginInput(props) {
     value,
     children,
     shouldAutocomplete,
+    otpInput,
   } = props;
 
   const inputClasses = cx('LoginInput__input', {
     'error': !!error,
     'show-top': showTopBorder,
+    'otpInput': otpInput,
   });
-  const errorMessage = isString(error) ? <p className='LoginInput__error-text'>{ error }</p> : null;
+  const errorMessage = type !== 'hidden' && isString(error) ? <p className='LoginInput__error-text'>{ error }</p> : null;
 
   return (
     <div>
