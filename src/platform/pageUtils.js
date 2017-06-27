@@ -36,3 +36,14 @@ export const urlFromPage = (page, mergePage) => {
   const hashString = Object.keys(hashParams).length ? createHash(hashParams) : '';
   return `${url}${queryString}${hashString}`;
 };
+
+
+export const isCommentsPage = (currentPage) => {
+  if (currentPage !== null &&
+    currentPage.urlParams !== null &&
+    currentPage.urlParams.postTitle !== null &&
+    currentPage.urlParams.postId !== null) {
+    return true;
+  }
+  return false;
+};

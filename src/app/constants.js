@@ -250,3 +250,17 @@ export const LOCAL_STORAGE_KEYS = {
   XPROMO_LAST_MODAL_CLICK: 'lastModalListingClick',
   BANNER_PERSIST_SHOWED : 'lastPersistBannerShowed',
 };
+
+export const VIDEO_EVENT = {
+  PLAY : 'videoplayer__click_play',
+  PAUSE : 'videoplayer__click_pause',
+  SEEK : 'videoplayer__click_seek',
+  MUTE : 'videoplayer__click_mute',
+  UNMUTE : 'videoplayer__click_unmute',
+  FULLSCREEN : 'videoplayer__click_fullscreen',
+  REPLAY : 'videoplayer__click_replay',
+  SCROLL_PAUSE : 'videoplayer__scroll_pause',
+  SCROLL_AUTOPLAY : 'videoplayer__scroll_autoplay',
+  SERVED_VIDEO : 'videoplayer__served_video',
+  CHANGED_PAGETYPE : 'videoplayer__change_pagetype',
+};

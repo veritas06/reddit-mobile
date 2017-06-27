@@ -4,6 +4,7 @@ import SavedEndpoint from 'apiClient/apis/SavedEndpoint';
 import HiddenEndpoint from 'apiClient/apis/HiddenEndpoint';
 import EditUserTextEndpoint from 'apiClient/apis/EditUserTextEndpoint';
 import PostModel from 'apiClient/models/PostModel';
+import { trackVideoPlayerEvent } from 'lib/eventUtils';
 
 import { apiOptionsFromState } from 'lib/apiOptionsFromState';
 
@@ -116,6 +117,10 @@ export const updatePostPlaytime = (postId, newPlaytime) => async (dispatch, getS
   } catch (e) {
     console.error(e);
   }
+};
+
+export const trackVideoEvent = (eventType, payload) => async (dispatch, getState) => {
+  trackVideoPlayerEvent(getState(), eventType, payload);
 };
 
 export const TOGGLE_EDIT = 'POSTS__TOGGLE_EDIT';

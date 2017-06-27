@@ -169,6 +169,29 @@ function trackScreenViewEvent(state, additionalEventData) {
   getEventTracker().track('screenview_events', 'cs.screenview_mweb', payload);
 }
 
+function getSourceVerbNoun(eventString) {
+  const strArr = eventString.split('_');
+  const payload = {
+    source: strArr[0],
+    verb: strArr[2],
+    noun: strArr[3],
+  };
+
+  return payload;
+}
+
+export function trackVideoPlayerEvent(state, eventType, additionalEventData,) {
+  const payload = {
+    ...getBasePayload(state),
+    ...buildSubredditData(state),
+    ...additionalEventData,
+    ...getListingName(state),
+    ...getSourceVerbNoun(eventType),
+  };
+
+  getEventTracker().track('videoplayer_events', eventType, payload);
+}
+
 export function xPromoExtraScreenViewData(state) {
   // ensure that we get all of the extra screen view events data that's
   // present on comments and listings pages

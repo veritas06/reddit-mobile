@@ -2,8 +2,12 @@ import React from 'react';
 import dashjs from 'dashjs';
 import { debounce } from 'lodash';
 import './styles.less';
-
 import PostModel from 'apiClient/models/PostModel';
+import { trackVideoEvent } from 'app/actions/posts';
+import { connect } from 'react-redux';
+import { VIDEO_EVENT } from 'app/constants';
+import { createSelector } from 'reselect';
+import { isCommentsPage } from 'platform/pageUtils';
 
 const T = React.PropTypes;
 
@@ -38,6 +42,8 @@ class HTML5StreamPlayer extends React.Component {
       mediaPlayer: null,
       videoLoaded: false,
       autoPlay: true,
+      lastUpdate: null,
+      totalServedTime: 0,
     };
   }
 
@@ -92,10 +98,12 @@ class HTML5StreamPlayer extends React.Component {
       if (videoIsInView) {
         if (video.paused && !window.fullScreen) {
           video.play();
+          this.sendTrackVideoEvent(VIDEO_EVENT.SCROLL_AUTOPLAY);
         }
       } else {
         if (!video.paused) {
           video.pause();
+          this.sendTrackVideoEvent(VIDEO_EVENT.SCROLL_PAUSE);
         }
       }
 
@@ -117,6 +125,12 @@ class HTML5StreamPlayer extends React.Component {
     if (this) {
       this.setState({videoLoaded: true});
       this.isScrolledIntoView();
+
+      const video = this.refs.HTML5StreamPlayerVideo;
+      if ((this.props.postData.videoPlaytime > 0) && (video.paused === false)) {
+        this.setState({totalServedTime: this.props.postData.videoPlaytime * 1000.0});
+        this.sendTrackVideoEvent(VIDEO_EVENT.CHANGED_PAGETYPE, this.getPercentServed());
+      }
     }
   }
 
@@ -156,6 +170,10 @@ class HTML5StreamPlayer extends React.Component {
   }
 
   componentWillUnmount() {
+    if (this.state.totalServedTime > 0) {
+      //Video has been watched and we are now removing it.
+      this.sendTrackVideoEvent(VIDEO_EVENT.SERVED_VIDEO, this.getPercentServed());
+    }
     const video = this.refs.HTML5StreamPlayerVideo;
     video.removeEventListener('canplay', this.videoDidLoad, false);
     window.removeEventListener('scroll', this.state.debounceFunc);
@@ -166,11 +184,23 @@ class HTML5StreamPlayer extends React.Component {
     document.removeEventListener('MSFullscreenChange', this.exitHandler, false);
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.videoFullScreen !== this.state.videoFullScreen) {
+      //Entered or exited fullscreen, send page type event
+      this.sendTrackVideoEvent(VIDEO_EVENT.CHANGED_PAGETYPE, this.getPercentServed());
+    }
+  }
+
   playPauseVideo = () => {
     const video = this.refs.HTML5StreamPlayerVideo;
 
     if (video.paused) {
       video.play();
+      if (this.state.videoEnded) {
+        this.sendTrackVideoEvent(VIDEO_EVENT.REPLAY);
+      } else {
+        this.sendTrackVideoEvent(VIDEO_EVENT.PLAY);
+      }
       this.setState({videoPaused: false, videoScrollPaused: true, videoEnded:false});
     } else if (this.props.isGif) {
       //is gif
@@ -182,6 +212,7 @@ class HTML5StreamPlayer extends React.Component {
     } else {
       video.pause();
       this.setState({videoPaused: true, videoScrollPaused: false});
+      this.sendTrackVideoEvent(VIDEO_EVENT.PAUSE);
     }
   }
 
@@ -230,10 +261,19 @@ class HTML5StreamPlayer extends React.Component {
     if (this.state.videoMuted) {
       this.muteVideo();
     }
+
+    this.sendTrackVideoEvent(VIDEO_EVENT.FULLSCREEN);
   }
 
   muteVideo = () => {
     const video = this.refs.HTML5StreamPlayerVideo;
+
+    if (video.muted) {
+      this.sendTrackVideoEvent(VIDEO_EVENT.UNMUTE);
+    } else {
+      this.sendTrackVideoEvent(VIDEO_EVENT.MUTE);
+    }
+
     video.muted = !video.muted;
     this.setState({videoMuted: video.muted});
   }
@@ -339,6 +379,11 @@ class HTML5StreamPlayer extends React.Component {
     const video = this.refs.HTML5StreamPlayerVideo;
     this.drawBufferBar(video);
 
+    let newTime = this.state.totalServedTime;
+    if ((this.state.lastUpdate !== null) && (video.paused === false) && (this.state.wasPlaying === true)) {
+      newTime += performance.now() - this.state.lastUpdate;
+    }
+
     if (video.currentTime && video.duration) {
       let isVideoEnded = false;
       if (video.currentTime >= video.duration) {
@@ -351,6 +396,9 @@ class HTML5StreamPlayer extends React.Component {
         videoEnded:isVideoEnded,
         currentTime: this.secondsToMinutes(video.currentTime),
         totalTime: this.secondsToMinutes(video.duration),
+        lastUpdate: performance.now(),
+        totalServedTime: newTime,
+        wasPlaying: !video.paused,
       });
       this.props.onUpdatePostPlaytime(video.currentTime);
     }
@@ -385,6 +433,7 @@ class HTML5StreamPlayer extends React.Component {
     const video = this.refs.HTML5StreamPlayerVideo;
     video.currentTime = (video.duration/100) * this.state.scrubPosition;
     this.setState({currentlyScrubbing: false, videoPosition: this.state.scrubPosition});
+    this.sendTrackVideoEvent(VIDEO_EVENT.SEEK);
   }
 
   scrubStart = () => {
@@ -502,6 +551,93 @@ class HTML5StreamPlayer extends React.Component {
     );
   }
 
+  buildBaseEventData() {
+    const video = this.refs.HTML5StreamPlayerVideo;
+    const { postData } = this.props;
+
+    let currentTime = 0;
+    let durationTime = 0;
+    let isVertical = false;
+    let pageType = this.state.videoFullScreen ? 'full_screen' : 'listing';
+
+    if (video) {
+      currentTime = parseInt(video.currentTime * 1000);
+      durationTime = parseInt(video.duration * 1000);
+      isVertical = (video.height > video.width);
+
+      if (isCommentsPage(this.props.currentPage) === true) {
+        pageType = 'comments';
+      }
+    }
+
+    const currentUTC = new Date();
+    const currentUTCSeconds = Math.round(currentUTC.getTime() / 1000);
+    const msSinceCreation = parseInt((currentUTCSeconds - postData.createdUTC) * 1000);
+
+    let subredditShortID = postData.subredditId;
+    //Should always be greater than 3 but just incase.
+    if (subredditShortID.length > 3) {
+      subredditShortID = subredditShortID.substring(3,(subredditShortID.length - 3));
+    }
+
+    const payload = {
+      video_time: currentTime,
+      video_duration: durationTime,
+      vertical: isVertical,
+      nsfw: postData.over18,
+      spoiler: postData.spoiler,
+      app_name: 'mweb',
+      target_fullname: postData.uuid,
+      target_author_id: parseInt(postData.author, 36),
+      target_author_name: postData.author,
+      target_created_ts: msSinceCreation,
+      target_id: parseInt(postData.id, 36),
+      target_url: postData.cleanUrl,
+      target_url_domain: postData.domain,
+      target_type: (this.state.isGif ? 'gif':'video'),
+      sr_name: postData.subreddit,
+      sr_fullname: postData.subredditId,
+      sr_id: parseInt(subredditShortID, 36),
+      page_type: pageType,
+    };
+
+    return payload;
+  }
+
+  sendTrackVideoEvent(eventType, optionalParams={}) {
+    const payload = {
+      ...this.buildBaseEventData(),
+      ...optionalParams,
+    };
+    this.props.dispatch(trackVideoEvent(eventType,payload));
+  }
+
+  getPercentServed() {
+    const video = this.refs.HTML5StreamPlayerVideo;
+    let pctServed = 0;
+    if (video) {
+      let servedTime = this.state.totalServedTime;
+
+      //If we have no served time, video has just loaded (page change etc.) take currentTime as backup.
+      if (servedTime === 0) {
+        servedTime = video.currentTime;
+      }
+      pctServed = servedTime / parseInt(video.duration * 1000);
+    }
+    const payload = {
+      max_timestamp_served: parseInt(this.state.totalServedTime),
+      percent_served: pctServed,
+    };
+
+    return payload;
+  }
 }
 
-export default HTML5StreamPlayer;
+const mapStateToProps = createSelector(
+  state => state.platform.currentPage,
+  (currentPage) => {
+    return { currentPage };
+  },
+);
+
+export default connect(mapStateToProps)(HTML5StreamPlayer);
