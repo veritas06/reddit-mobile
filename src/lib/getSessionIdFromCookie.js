@@ -8,12 +8,12 @@
 
 import cookies from 'js-cookie';
 
-export const SESSION_COOKIE_KEY = 'session_tracker';
+export const SESSION_TRACKER = 'session_tracker';
 
 export const parseServerSideCookies = (ctxCookie) => {
   if (Array.isArray(ctxCookie) && process.env.ENV === 'server') {
     const ctxCookieStr = ctxCookie.join();
-    const regexp = new RegExp(`${SESSION_COOKIE_KEY}=(.+?);`, 'g');
+    const regexp = new RegExp(`${SESSION_TRACKER}=(.+?);`, 'g');
     const result = regexp.exec(ctxCookieStr);
     if (result) {
       return result[1];
@@ -21,7 +21,7 @@ export const parseServerSideCookies = (ctxCookie) => {
   }
 };
 
-export const extractSessionID = (cookieStr) => {
+export const extractSessionId = (cookieStr) => {
   if (cookieStr) {
     const [sessionId] = cookieStr.split('.');
     return sessionId;
@@ -30,8 +30,8 @@ export const extractSessionID = (cookieStr) => {
 
 export default (ctxCookie) => {
   const sessionTrackerStr = (
-    cookies.get(SESSION_COOKIE_KEY) ||
+    cookies.get(SESSION_TRACKER) ||
     parseServerSideCookies(ctxCookie)
   );
-  return (extractSessionID(sessionTrackerStr) || null);
+  return (extractSessionId(sessionTrackerStr) || null);
 };

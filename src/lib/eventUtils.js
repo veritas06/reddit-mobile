@@ -124,8 +124,13 @@ function getDomain(referrer, meta) {
 }
 
 export function getBasePayload(state) {
-  // NOTE: this is only for usage on the client since it has references to window
-  const { platform, meta, compact, preferences } = state;
+  const {
+    meta,
+    compact,
+    platform,
+    preferences,
+  } = state;
+
   const referrer = platform.currentPage.referrer;
 
   const payload = {
@@ -146,23 +151,12 @@ export function getBasePayload(state) {
   return payload;
 }
 
-// Currently, this userCtxCookie
-// (which comes from state.accountRequest.meta.set-cookie) helps
-// to get the correct SessionId from the server-side cookie, but
-// we can use it on both sides (on the client and server side).
-export function getUserCtxCookie(state) {
-  const user = state.user;
-  const usertRequests = state.accountRequests[user.name];
-  if (usertRequests) {
-    if (usertRequests.meta) {
-      return usertRequests.meta['set-cookie'];
-    }
-  }
-  return null;
-}
-
-function getSessionId(state) {
-  const userCtxCookie = getUserCtxCookie(state);
+// SessionTracker (in state) is pretty stable, but we need to be sure that
+// this is the last session_tracker we have. So, we must first check the
+// cookie, and then fallback to redux state (e.g. on the server)
+export function getSessionId(state) {
+  const ctxCookiePath = ['accountRequests', state.user.name, 'meta', 'set-cookie'];
+  const userCtxCookie = get(state, ctxCookiePath, null);
   return getSessionIdFromCookie(userCtxCookie);
 }
 

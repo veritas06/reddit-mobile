@@ -37,6 +37,7 @@ import savedRequests from './savedRequests';
 import searchRequests from './searchRequests';
 import session from './session';
 import sessionRefresing from './sessionRefreshing';
+import sessionTracker from './sessionTracker';
 import scrollPositions from './scrollPositions';
 import subredditRequests from './subredditRequests';
 import subredditRules from './subredditRules';
@@ -94,6 +95,7 @@ export default {
   searchRequests,
   session,
   sessionRefresing,
+  sessionTracker,
   scrollPositions,
   subredditRules,
   subredditRulesRequests,
