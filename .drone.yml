@@ -8,7 +8,7 @@ pipeline:
       - npm run test
       - npm run build
     environment:
-      DOCKER_LAUNCH_DEBUG: true
+      DOCKER_LAUNCH_DEBUG: "true"
 
   publish:
     docker:
