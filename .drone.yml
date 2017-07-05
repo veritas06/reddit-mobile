@@ -1,31 +1,28 @@
-cache:
-  mount:
-    - node_modules
+pipeline:
+  build:
+    image: quay.io/reddit/reddit-nodejs:latest
+    pull: true
+    commands:
+      - npm install
+      - npm run lint
+      - npm run test
+      - npm run build
 
-build:
-  image: quay.io/reddit/reddit-nodejs:latest
-  pull: true
-  commands:
-    - npm install
-    - npm run lint
-    - npm run test
-    - npm run build
+  publish:
+    docker:
+      username: $$QUAY_USERNAME
+      password: $$QUAY_PASSWORD
+      email: sysops@reddit.com
+      registry: quay.io
+      repo: reddit/reddit-mobile
+      tag: $$BRANCH
+      file: Dockerfile.staging
 
-publish:
-  docker:
-    username: $$QUAY_USERNAME
-    password: $$QUAY_PASSWORD
-    email: sysops@reddit.com
-    registry: quay.io
-    repo: reddit/reddit-mobile
-    tag: $$BRANCH
-    file: Dockerfile.staging
-
-notify:
-  slack:
-    webhook_url: $$CI_SLACK_WEBHOOK_URL
-    channel: ci-notifications
-  slack:
-    webhook_url: $$CI_SLACK_WEBHOOK_URL
-    repo: reddit/reddit-mobile
-    channel: mobile-web
+  notify:
+    slack:
+      webhook_url: $$CI_SLACK_WEBHOOK_URL
+      channel: ci-notifications
+    slack:
+      webhook_url: $$CI_SLACK_WEBHOOK_URL
+      repo: reddit/reddit-mobile
+      channel: mobile-web
