@@ -19,8 +19,7 @@ pipeline:
       repo: reddit/reddit-mobile
       tag: $$BRANCH
       file: Dockerfile.staging
-      environment:
-        DOCKER_LAUNCH_DEBUG: true
+      debug: true
 
   notify:
     slack:
