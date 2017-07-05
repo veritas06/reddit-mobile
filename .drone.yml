@@ -7,6 +7,8 @@ pipeline:
       - npm run lint
       - npm run test
       - npm run build
+    environment:
+      DOCKER_LAUNCH_DEBUG: true
 
   publish:
     docker:
@@ -17,6 +19,8 @@ pipeline:
       repo: reddit/reddit-mobile
       tag: $$BRANCH
       file: Dockerfile.staging
+      environment:
+        DOCKER_LAUNCH_DEBUG: true
 
   notify:
     slack:
