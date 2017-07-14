@@ -54,20 +54,24 @@ const selector = createSelector(
   }
 );
 
-const FramedPage = props => {
-  const { component } = props;
+const makeFramed = Component => props => (
+  <NavFrame>
+    <Component { ...props } />
+  </NavFrame>
+);
 
-  const wrappedComponent = props => {
-    return (
-      <NavFrame>
-        { React.createElement(component, props) }
-      </NavFrame>
-    );
-  };
-
-  return <Page { ...{...props, component: wrappedComponent } } />;
-};
-
+const FramedPostsFromSubredditPage = makeFramed(PostsFromSubredditPage);
+const FramedPlace = makeFramed(Place);
+const FramedCommentsPage = makeFramed(CommentsPage);
+const FramedSearchPage = makeFramed(SearchPage);
+const FramedSubredditAboutPage = makeFramed(SubredditAboutPage);
+const FramedSubredditRulesPage = makeFramed(SubredditRulesPage);
+const FramedWikiPage = makeFramed(WikiPage);
+const FramedUserActivityPage = makeFramed(UserActivityPage);
+const FramedUserProfilePage = makeFramed(UserProfilePage);
+const FramedSavedAndHiddenPage = makeFramed(SavedAndHiddenPage);
+const FramedDirectMessage = makeFramed(DirectMessage);
+const FramedMessages = makeFramed(Messages);
 
 const AppMain = props => {
 
@@ -99,61 +103,61 @@ const AppMain = props => {
         <Page url='/r/:subredditName/submit' component={ PostSubmitModal } />
         <Page url='/submit' component={ PostSubmitModal } />
         <Page url='/submit/to_community' component={ PostSubmitCommunityModal } />
-        <FramedPage url='/' component={ PostsFromSubredditPage } />
-        <FramedPage url='/place' component={ Place } />
-        <FramedPage url='/r/:subredditName(place)' component={ Place } />
-        <FramedPage url='/r/:subredditName' component={ PostsFromSubredditPage } />
-        <FramedPage
+        <Page url='/' component={ FramedPostsFromSubredditPage } />
+        <Page url='/place' component={ FramedPlace } />
+        <Page url='/r/:subredditName(place)' component={ FramedPlace } />
+        <Page url='/r/:subredditName' component={ FramedPostsFromSubredditPage } />
+        <Page
           url={ `/r/:subredditName(place)/:sort(${SORTS})` }
-          component={ Place }
+          component={ FramedPlace }
         />
-        <FramedPage
+        <Page
           url={ `/r/:subredditName/:sort(${SORTS})` }
-          component={ PostsFromSubredditPage }
+          component={ FramedPostsFromSubredditPage }
         />
-        <FramedPage
+        <Page
           url='/r/:subredditName/comments/:postId/comment/:commentId'
-          component={ CommentsPage }
+          component={ FramedCommentsPage }
         />
-        <FramedPage
+        <Page
           url='/r/:subredditName/comments/:postId/:postTitle/:commentId'
-          component={ CommentsPage }
+          component={ FramedCommentsPage }
         />
-        <FramedPage
+        <Page
           url='/r/:subredditName/comments/:postId/:postTitle?'
-          component={ CommentsPage }
+          component={ FramedCommentsPage }
         />
-        <FramedPage url='/search' component={ SearchPage } />
-        <FramedPage url='/r/:subredditName/search' component={ SearchPage } />
-        <FramedPage url='/r/:subredditName/about' component={ SubredditAboutPage } />
-        <FramedPage url='/r/:subredditName/about/rules' component={ SubredditRulesPage } />
-        <FramedPage url='/r/:subredditName/(w|wiki)/:path(.*)?' component={ WikiPage } />
-        <FramedPage url='/(help|w|wiki)/:path(.*)?' component={ WikiPage } />
-        <FramedPage
+        <Page url='/search' component={ FramedSearchPage } />
+        <Page url='/r/:subredditName/search' component={ FramedSearchPage } />
+        <Page url='/r/:subredditName/about' component={ FramedSubredditAboutPage } />
+        <Page url='/r/:subredditName/about/rules' component={ FramedSubredditRulesPage } />
+        <Page url='/r/:subredditName/(w|wiki)/:path(.*)?' component={ FramedWikiPage } />
+        <Page url='/(help|w|wiki)/:path(.*)?' component={ FramedWikiPage } />
+        <Page
           url='/comments/:postId/:postTitle/:commentId'
-          component={ CommentsPage }
+          component={ FramedCommentsPage }
         />
-        <FramedPage url='/comments/:postId/:postTitle?' component={ CommentsPage } />
-        <FramedPage url='/user/:userName/activity' component={ UserActivityPage } />
-        <FramedPage url='/user/:userName/comments' component={ UserActivityPage } />
-        <FramedPage url='/user/:userName/submitted' component={ UserActivityPage } />
-        <FramedPage url='/user/:userName' component={ UserActivityPage } />
-        <FramedPage url='/user/:userName/gild' component={ UserProfilePage } />
-        <FramedPage
+        <Page url='/comments/:postId/:postTitle?' component={ FramedCommentsPage } />
+        <Page url='/user/:userName/activity' component={ FramedUserActivityPage } />
+        <Page url='/user/:userName/comments' component={ FramedUserActivityPage } />
+        <Page url='/user/:userName/submitted' component={ FramedUserActivityPage } />
+        <Page url='/user/:userName' component={ FramedUserActivityPage } />
+        <Page url='/user/:userName/gild' component={ FramedUserProfilePage } />
+        <Page
           url='/user/:userName/:savedOrHidden(saved|hidden)'
-          component={ SavedAndHiddenPage }
+          component={ FramedSavedAndHiddenPage }
         />
-        <FramedPage url='/user/:userName/about' component={ UserProfilePage } />
-        <FramedPage
+        <Page url='/user/:userName/about' component={ FramedUserProfilePage } />
+        <Page
           url='/user/:userName/comments/:postId/:postTitle/:commentId'
-          component={ CommentsPage }
+          component={ FramedCommentsPage }
         />
-        <FramedPage
+        <Page
           url='/user/:userName/comments/:postId/:postTitle?'
-          component={ CommentsPage }
+          component={ FramedCommentsPage }
         />
-        <FramedPage url='/message/compose' component={ DirectMessage } />
-        <FramedPage url='/message/:mailType' component={ Messages } />
+        <Page url='/message/compose' component={ FramedDirectMessage } />
+        <Page url='/message/:mailType' component={ FramedMessages } />
       </UrlSwitch>
       { showDropdownCover ? <DropdownCover /> : null }
       { isToasterOpen ? <Toaster /> : null }
