@@ -7,8 +7,8 @@ pipeline:
       - ls /root/.kube/
       - ls /root/.kube/config 
       - cat /root/.kube/config
-      - echo '$QUAY_USERNAME'
-      - echo '$QUAY_USERNAME'
+      - echo '${QUAY_USERNAME}'
+      - echo '${QUAY_USERNAME}'
     volumes:
       - /root/.kube/config:/root/.kube/config
 
