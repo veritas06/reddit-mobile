@@ -15,12 +15,8 @@ pipeline:
   build:
     image: quay.io/reddit/reddit-nodejs:latest
     pull: true
-    dry_run: true
     commands:
-      - npm install
-      - npm run lint
-      - npm run test
-      - npm run build
+      - echo "done"
     environment:
       DOCKER_LAUNCH_DEBUG: "true"
 
