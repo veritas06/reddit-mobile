@@ -30,6 +30,6 @@ pipeline:
     email: sysops@reddit.com
     registry: quay.io
     repo: reddit/reddit-mobile
-    tag: $$BRANCH
+    tag: ${DRONE_BRANCH}
     dockerfile: Dockerfile.staging
     debug: true
