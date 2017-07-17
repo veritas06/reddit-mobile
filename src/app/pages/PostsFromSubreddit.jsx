@@ -4,6 +4,7 @@ import { createSelector } from 'reselect';
 
 import CommunityHeader from 'app/components/CommunityHeader';
 import LoadingXpromo from 'app/components/LoadingXpromo';
+import SuspensionBanner from 'app/components/SuspensionBanner';
 import PostsList from 'app/components/PostsList';
 import NSFWInterstitial from 'app/components/NSFWInterstitial';
 import SortAndTimeSelector from 'app/components/SortAndTimeSelector';
@@ -33,7 +34,18 @@ const mapStateToProps = createSelector(
 
     return isFrontPage && !hasSubscribed;
   },
-  (pageProps, postsLists, subreddits, preferences, modalId, shouldShowTutorial) => {
+  state => state.accounts,
+  state => state.user,
+  (
+    pageProps,
+    postsLists,
+    subreddits,
+    preferences,
+    modalId,
+    shouldShowTutorial,
+    accounts,
+    user,
+  ) => {
     const postsListParams = PostsFromSubredditHandler.pageParamsToSubredditPostsParams(pageProps);
     const postsListId = paramsToPostsListsId(postsListParams);
     const { subredditName } = postsListParams;
@@ -46,6 +58,8 @@ const mapStateToProps = createSelector(
       postsList: postsLists[postsListId],
       subreddit: subreddits[subredditName],
       shouldShowTutorial,
+      accounts: accounts,
+      username: user.name,
     };
   },
 );
@@ -59,6 +73,8 @@ export const PostsFromSubredditPage = connect(mapStateToProps)(props => {
     subreddit,
     preferences,
     shouldShowTutorial,
+    accounts,
+    username,
   } = props;
 
   const showSubnav = !!postsList && !postsList.loading;
@@ -67,6 +83,7 @@ export const PostsFromSubredditPage = connect(mapStateToProps)(props => {
     href: `/r/${subredditName}/about`,
     text: 'About this community',
   };
+  const accountSuspended = accounts[username] && accounts[username].isSuspended;
 
   const className = 'PostsFromSubredditPage';
 
@@ -99,6 +116,7 @@ export const PostsFromSubredditPage = connect(mapStateToProps)(props => {
     <div className={ className }>
       { !forFakeSubreddit ? <CommunityHeader subredditName={ subredditName } /> : null }
       { showSubnav ? renderSubNav(subnavLink) : null }
+      { accountSuspended ? <SuspensionBanner /> : null }
       { shouldShowTutorial
         ? <Tutorial />
         : <PostsList
