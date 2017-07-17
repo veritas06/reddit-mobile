@@ -25,11 +25,11 @@ pipeline:
 
   publish:
     image: plugins/docker 
-      username: $$QUAY_USERNAME
-      password: $$QUAY_PASSWORD
-      email: sysops@reddit.com
-      registry: quay.io
-      repo: reddit/reddit-mobile
-      tag: $$BRANCH
-      file: Dockerfile.staging
-      debug: true
+    username: $$QUAY_USERNAME
+    password: $$QUAY_PASSWORD
+    email: sysops@reddit.com
+    registry: quay.io
+    repo: reddit/reddit-mobile
+    tag: $$BRANCH
+    file: Dockerfile.staging
+    debug: true
