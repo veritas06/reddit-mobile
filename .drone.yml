@@ -24,7 +24,7 @@ pipeline:
       DOCKER_LAUNCH_DEBUG: "true"
 
   publish:
-    docker:
+    image: plugins/docker
       username: $$QUAY_USERNAME
       password: $$QUAY_PASSWORD
       email: sysops@reddit.com
@@ -33,12 +33,3 @@ pipeline:
       tag: $$BRANCH
       file: Dockerfile.staging
       debug: true
-
-  notify:
-    slack:
-      webhook_url: $$CI_SLACK_WEBHOOK_URL
-      channel: ci-notifications
-    slack:
-      webhook_url: $$CI_SLACK_WEBHOOK_URL
-      repo: reddit/reddit-mobile
-      channel: mobile-web
