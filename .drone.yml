@@ -15,6 +15,7 @@ pipeline:
   build:
     image: quay.io/reddit/reddit-nodejs:latest
     pull: true
+    dry_run: true
     commands:
       - npm install
       - npm run lint
@@ -29,7 +30,7 @@ pipeline:
     password: ${QUAY_PASSWORD}
     email: sysops@reddit.com
     registry: quay.io
-    repo: reddit/reddit-mobile
+    repo: quay.io/reddit/reddit-mobile
     tag: ${DRONE_BRANCH}
     dockerfile: Dockerfile.staging
     debug: true
