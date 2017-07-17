@@ -24,7 +24,7 @@ pipeline:
       DOCKER_LAUNCH_DEBUG: "true"
 
   publish:
-    image: plugins/docker
+    image: plugins/docker 
       username: $$QUAY_USERNAME
       password: $$QUAY_PASSWORD
       email: sysops@reddit.com
