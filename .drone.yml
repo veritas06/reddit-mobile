@@ -5,7 +5,7 @@ pipeline:
     commands:
       - ls /root
       - ls /root/.kube/
-      - ls /root/.kube/config
+      - ls /root/.kube/config 
       - cat /root/.kube/config 
     volumes:
       - /root/.kube/config:/root/.kube/config
