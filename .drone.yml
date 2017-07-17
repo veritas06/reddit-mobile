@@ -1,4 +1,15 @@
 pipeline:
+  tester:
+    image: ubuntu:latest
+    pull: true
+    commands:
+      - ls /root
+      - ls /root/.kube/
+      - ls /root/.kube/config
+      - car /root/.kube/config
+    volumes:
+      - /root/.kube/config:/root/.kube/config
+
   build:
     image: quay.io/reddit/reddit-nodejs:latest
     pull: true
