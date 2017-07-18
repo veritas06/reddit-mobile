@@ -19,7 +19,7 @@ pipeline:
   #   debug: true
 
   deploy:
-    image: lachlanevenson/k8s-helm
+    image: lachlanevenson/k8s-helm:v2.4.2
     commands:
       - helm upgrade ${DRONE_BRANCH} helm/reddit-mobile --install --set=deployment_name="${DRONE_BRANCH}" --set=branch_name="${DRONE_BRANCH}" --set=commit_sha="${DRONE_COMMIT}" --set=deployer_name="${DRONE_COMMIT_AUTHOR}" --set=service_name="${DRONE_BRANCH}"
     volumes:
