@@ -19,6 +19,13 @@ pipeline:
     tag: ${DRONE_BRANCH}
     dockerfile: Dockerfile.staging
 
+  add-deployment:
+    image: ruby
+    pull: true
+    commands:
+      - GITHUB_ACCESS_TOKEN=${GITHUB_ACCESS_TOKEN} GITHUB_REPO=drone-test-org/reddit-mobile GITHUB_PULL_REQUEST_NUMBER=${DRONE_PULL_REQUEST} GIT_BRANCH=${DRONE_BRANCH} GIT_REF=${DRONE_COMMIT} ruby github-release.rb
+
+
   deploy:
     image: lachlanevenson/k8s-helm:v2.4.2
     commands:
