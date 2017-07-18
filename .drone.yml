@@ -4,6 +4,7 @@ pipeline:
     pull: true
     commands:
       - echo "true"
+      - env
       # - npm install
       # - npm run lint
       # - npm run test
