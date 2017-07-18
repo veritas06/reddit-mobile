@@ -6,7 +6,7 @@ pipeline:
       - echo "true"
       - env
     when:
-      event: [ push, deployment ]
+      event: [ pull_request, push, deployment ]
 
 
   # publish:
@@ -19,7 +19,7 @@ pipeline:
   #   tag: ${DRONE_BRANCH}
   #   dockerfile: Dockerfile.staging
   #   when:
-  #     event: [ push ]
+  #     event: [ pull_request, push ]
 
   add-deployment:
     image: ruby
@@ -28,7 +28,7 @@ pipeline:
       - gem install octokit
       - GITHUB_ACCESS_TOKEN=${GITHUB_ACCESS_TOKEN} GITHUB_REPO=${DRONE_REPO} GIT_REF=${DRONE_BRANCH} ruby github-deployment.rb
     when:
-      event: [ push ]
+      event: [ pull_request, push ]
 
   deploy-staging:
     image: lachlanevenson/k8s-helm:v2.4.2
