@@ -1,15 +1,4 @@
 pipeline:
-  clone:
-    image: plugins/git
-    recursive: true
-    commands:
-      - git init
-      - git remote add origin https://github.com/drone-test-org/reddit-mobile.git
-      - git fetch --no-tags --depth=1 origin
-      - git reset --hard -q ${DRONE_COMMIT}
-    when:
-      event: [ pull_request, deployment ]
-
   build:
     image: quay.io/reddit/reddit-nodejs:latest
     pull: true
