@@ -5,7 +5,7 @@ pipeline:
     commands:
       - echo "true"
       - env
-      - echo "DRONE: ${DRONE}"
+      - echo "DRONE_BRANCH: " ${DRONE_BRANCH}
     when:
       event: [ push, deployment ]
 
