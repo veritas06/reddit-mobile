@@ -22,7 +22,8 @@ pipeline:
     image: linkyard/helm
     commands:
       - |
-        helm upgrade --install ${DRONE_BRANCH} helm/reddit-mobile \
+        helm upgrade ${DRONE_BRANCH} helm/reddit-mobile \
+          --install \
           --set=deployment_name="${DRONE_BRANCH}" \
           --set=branch_name="${DRONE_BRANCH}" \
           --set=commit_sha="${DRONE_COMMIT}" \
