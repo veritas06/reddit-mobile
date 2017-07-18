@@ -28,7 +28,7 @@ pipeline:
     pull: true
     commands:
       - gem install octokit
-      - GITHUB_ACCESS_TOKEN=${GITHUB_ACCESS_TOKEN} GITHUB_REPO=drone-test-org/reddit-mobile GITHUB_PULL_REQUEST_NUMBER=${DRONE_PULL_REQUEST} GIT_BRANCH=${DRONE_BRANCH} GIT_REF=${DRONE_COMMIT} ruby github-release.rb
+      - GITHUB_ACCESS_TOKEN=${GITHUB_ACCESS_TOKEN} GITHUB_REPO=drone-test-org/reddit-mobile GITHUB_PULL_REQUEST_NUMBER=${DRONE_PULL_REQUEST} GIT_BRANCH=${DRONE_BRANCH} GIT_REF=${DRONE_COMMIT_REF} ruby github-release.rb
 
   deploy-staging:
     image: lachlanevenson/k8s-helm:v2.4.2
