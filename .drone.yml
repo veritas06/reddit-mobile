@@ -9,6 +9,8 @@ pipeline:
       # - npm run lint
       # - npm run test
       # - npm run build
+    when:
+      event: [ pull_request ]
 
 
   publish:
@@ -21,14 +23,16 @@ pipeline:
     tag: ${DRONE_BRANCH}
     dockerfile: Dockerfile.staging
     when:
-      event: [ push, tag, deployment, pull_request ]
+      event: [ pull_request ]
 
   add-deployment:
     image: ruby
     pull: true
     commands:
       - gem install octokit
-      - GITHUB_ACCESS_TOKEN=${GITHUB_ACCESS_TOKEN} GITHUB_REPO=drone-test-org/reddit-mobile GITHUB_PULL_REQUEST_NUMBER=${DRONE_PULL_REQUEST} GIT_BRANCH=${DRONE_BRANCH} GIT_REF=${DRONE_COMMIT_REF} ruby github-release.rb
+      - GITHUB_ACCESS_TOKEN=${GITHUB_ACCESS_TOKEN} GITHUB_REPO=${DRONE_REPO} GITHUB_PULL_REQUEST_NUMBER=${DRONE_PULL_REQUEST} GIT_BRANCH=${DRONE_BRANCH} GIT_REF=${DRONE_BRANCH} ruby github-deployment.rb
+    when:
+      event: [ pull_request ]
 
   deploy-staging:
     image: lachlanevenson/k8s-helm:v2.4.2
@@ -37,5 +41,15 @@ pipeline:
     volumes:
       - /root/.kube/config:/root/.kube/config
     when:
-      event: deployment
+      event: [ deployment ]
+      environment: staging
+
+  comment-deployment-success:
+    image: ruby
+    pull: true
+    commands:
+      - gem install octokit
+      - GITHUB_ACCESS_TOKEN=${GITHUB_ACCESS_TOKEN} GITHUB_REPO=${DRONE_REPO} DEPLOYMENT_URL=${DRONE_COMMIT_LINK} GIT_BRANCH=${DRONE_BRANCH} ruby github-comment.rb
+    when:
+      event: [ deployment ]
       environment: staging
