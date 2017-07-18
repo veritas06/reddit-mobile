@@ -21,13 +21,6 @@ pipeline:
   deploy:
     image: linkyard/helm
     commands:
-      - |
-        helm upgrade ${DRONE_BRANCH} helm/reddit-mobile \
-          --install \
-          --set=deployment_name="${DRONE_BRANCH}" \
-          --set=branch_name="${DRONE_BRANCH}" \
-          --set=commit_sha="${DRONE_COMMIT}" \
-          --set=deployer_name="${DRONE_COMMIT_AUTHOR}" \
-          --set=service_name="${DRONE_BRANCH}" \
+      - helm upgrade ${DRONE_BRANCH} helm/reddit-mobile --install --set=deployment_name="${DRONE_BRANCH}" --set=branch_name="${DRONE_BRANCH}" --set=commit_sha="${DRONE_COMMIT}" --set=deployer_name="${DRONE_COMMIT_AUTHOR}" --set=service_name="${DRONE_BRANCH}"
     volumes:
       - /root/.kube/config:/root/.kube/config
