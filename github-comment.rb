@@ -1,5 +1,6 @@
 require 'octokit'
 client = Octokit::Client.new(:access_token => ENV["GITHUB_ACCESS_TOKEN"])
+repo = ENV["GITHUB_REPO"]
 deployment_url = ENV["DEPLOYMENT_URL"]
 branch_name = ENV["GIT_BRANCH"]
 pr_number = client.get(deployment_url)[:payload][:pull_request_number]
