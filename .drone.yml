@@ -5,7 +5,7 @@ pipeline:
     commands:
       - echo "true"
       - env
-      - echo ${DRONE_BRANCH}
+      - echo ${2X##DRONE_COMMIT_REFSPEC}
     when:
       event: [ pull_request, push, deployment ]
 
