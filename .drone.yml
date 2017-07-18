@@ -41,14 +41,14 @@ pipeline:
     pull: true
     commands:
       - gem install octokit
-      - GITHUB_ACCESS_TOKEN=${GITHUB_ACCESS_TOKEN} GITHUB_REPO=${DRONE_REPO} GIT_REF=${DRONE_COMMIT_REF} ruby github-deployment.rb
+      - GITHUB_ACCESS_TOKEN=${GITHUB_ACCESS_TOKEN} GITHUB_REPO=${DRONE_REPO} GIT_REF=${DRONE_BRANCH} ruby github-deployment.rb
     when:
       event: [ push ]
 
   deploy-staging:
     image: lachlanevenson/k8s-helm:v2.4.2
     commands:
-      - helm upgrade ${DRONE_BRANCH##refs/heads/} helm/reddit-mobile --install --set=deployment_name="${DRONE_BRANCH##refs/heads/}" --set=branch_name="${DRONE_BRANCH##refs/heads/}" --set=commit_sha="${DRONE_COMMIT}" --set=deployer_name="${DRONE_COMMIT_AUTHOR}" --set=service_name="${DRONE_BRANCH##refs/heads/}"
+      - helm upgrade ${DRONE_BRANCH} helm/reddit-mobile --install --set=deployment_name="${DRONE_BRANCH}" --set=branch_name="${DRONE_BRANCH}" --set=commit_sha="${DRONE_COMMIT}" --set=deployer_name="${DRONE_COMMIT_AUTHOR}" --set=service_name="${DRONE_BRANCH}"
     volumes:
       - /root/.kube/config:/root/.kube/config
     when:
@@ -60,7 +60,7 @@ pipeline:
     pull: true
     commands:
       - gem install octokit
-      - GITHUB_ACCESS_TOKEN=${GITHUB_ACCESS_TOKEN} GITHUB_REPO=${DRONE_REPO} GITHUB_REPO=${DRONE_REPO} DEPLOYMENT_URL=${DRONE_COMMIT_LINK} GIT_BRANCH=${DRONE_BRANCH##refs/heads/} ruby github-comment.rb
+      - GITHUB_ACCESS_TOKEN=${GITHUB_ACCESS_TOKEN} GITHUB_REPO=${DRONE_REPO} GITHUB_REPO=${DRONE_REPO} DEPLOYMENT_URL=${DRONE_COMMIT_LINK} GIT_BRANCH=${DRONE_BRANCH} ruby github-comment.rb
     when:
       event: [ deployment ]
       environment: staging
