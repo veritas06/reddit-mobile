@@ -3,20 +3,21 @@ pipeline:
     image: quay.io/reddit/reddit-nodejs:latest
     pull: true
     commands:
-      - echo "done"
-    environment:
-      DOCKER_LAUNCH_DEBUG: "true"
+      - npm install
+      - npm run lint
+      - npm run test
+      - npm run build
 
-  # publish:
-  #   image: plugins/docker
-  #   username: ${QUAY_USERNAME}
-  #   password: ${QUAY_PASSWORD}
-  #   email: sysops@reddit.com
-  #   registry: quay.io
-  #   repo: quay.io/reddit/reddit-mobile
-  #   tag: ${DRONE_BRANCH}
-  #   dockerfile: Dockerfile.staging
-  #   debug: true
+
+  publish:
+    image: plugins/docker
+    username: ${QUAY_USERNAME}
+    password: ${QUAY_PASSWORD}
+    email: sysops@reddit.com
+    registry: quay.io
+    repo: quay.io/reddit/reddit-mobile
+    tag: ${DRONE_BRANCH}
+    dockerfile: Dockerfile.staging
 
   deploy:
     image: lachlanevenson/k8s-helm:v2.4.2
