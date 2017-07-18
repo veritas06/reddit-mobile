@@ -1,21 +1,19 @@
 pipeline:
-  clone:
-    image: plugins/git
-    recursive: true
-    commands:
-      - git init
-      - git remote add origin https://github.com/drone-test-org/reddit-mobile.git
-      - git fetch --no-tags --depth=1 origin
-      - git reset --hard -q ${DRONE_COMMIT}
-    when:
-      event: [ push, deployment ]
-
   build:
     image: quay.io/reddit/reddit-nodejs:latest
     pull: true
     commands:
       - echo "true"
       - env
+      - echo "DRONE: ${DRONE}
+      - echo "DRONE_REPO: ${DRONE_REPO}
+      - echo "DRONE_BRANCH: ${DRONE_BRANCH}
+      - echo "DRONE_COMMIT: ${DRONE_COMMIT}
+      - echo "DRONE_DIR: ${DRONE_DIR}
+      - echo "DRONE_BUILD_NUMBER: ${DRONE_BUILD_NUMBER}
+      - echo "DRONE_PULL_REQUEST: ${DRONE_PULL_REQUEST}
+      - echo "DRONE_JOB_NUMBER: ${DRONE_JOB_NUMBER}
+      - echo "DRONE_TAG: ${DRONE_TAG}
       # - npm install
       # - npm run lint
       # - npm run test
