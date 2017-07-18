@@ -4,4 +4,4 @@ repo = ENV["GITHUB_REPO"]
 pr_number = ENV["GITHUB_PULL_REQUEST_NUMBER"]
 branch_name = ENV["GIT_BRANCH"]
 ref = ENV["GIT_REF"]
-deployment = client.create_deployment(repo, ref, {environment: "staging", required_contexts:[]})
+deployment = client.create_deployment(repo, ref, {environment: "staging", required_contexts:[], payload: { pull_request_number: pr_number}})

@@ -16,7 +16,7 @@ pipeline:
   #   email: sysops@reddit.com
   #   registry: quay.io
   #   repo: quay.io/reddit/reddit-mobile
-  #   tag: ${DRONE_COMMIT_REFSPEC%%:2x}
+  #   tag: $${DRONE_COMMIT_REFSPEC%%:2x}
   #   dockerfile: Dockerfile.staging
   #   when:
   #     event: [ pull_request, push ]
@@ -26,7 +26,7 @@ pipeline:
     pull: true
     commands:
       - gem install octokit
-      - GITHUB_ACCESS_TOKEN=${GITHUB_ACCESS_TOKEN} GITHUB_REPO=${DRONE_REPO} GIT_REF=${DRONE_COMMIT_REFSPEC%%:2X} ruby github-deployment.rb
+      - GITHUB_ACCESS_TOKEN=${GITHUB_ACCESS_TOKEN} GITHUB_REPO=${DRONE_REPO} GIT_REF=${DRONE_COMMIT_REFSPEC%%:2X} GITHUB_PULL_REQUEST_NUMBER=${DRONE_PULL_REQUEST} ruby github-deployment.rb
     when:
       event: [ pull_request, push ]
 
