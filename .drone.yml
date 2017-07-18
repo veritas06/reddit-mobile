@@ -5,6 +5,7 @@ pipeline:
     commands:
       - echo "true"
       - env
+      - echo ${DRONE_BRANCH}
     when:
       event: [ pull_request, push, deployment ]
 
