@@ -1,4 +1,9 @@
 pipeline:
+  clone:
+    image: plugins/git
+    depth: 50
+    recursive: true
+
   build:
     image: quay.io/reddit/reddit-nodejs:latest
     pull: true
