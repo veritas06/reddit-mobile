@@ -19,6 +19,9 @@ pipeline:
     repo: quay.io/reddit/reddit-mobile
     tag: ${DRONE_BRANCH}
     dockerfile: Dockerfile.staging
+    when:
+     event: pull_request
+     environment: staging
 
   add-deployment:
     image: ruby
@@ -27,10 +30,12 @@ pipeline:
       - gem install octokit
       - GITHUB_ACCESS_TOKEN=${GITHUB_ACCESS_TOKEN} GITHUB_REPO=drone-test-org/reddit-mobile GITHUB_PULL_REQUEST_NUMBER=${DRONE_PULL_REQUEST} GIT_BRANCH=${DRONE_BRANCH} GIT_REF=${DRONE_COMMIT} ruby github-release.rb
 
-
-  deploy:
+  deploy-staging:
     image: lachlanevenson/k8s-helm:v2.4.2
     commands:
       - helm upgrade ${DRONE_BRANCH} helm/reddit-mobile --install --set=deployment_name="${DRONE_BRANCH}" --set=branch_name="${DRONE_BRANCH}" --set=commit_sha="${DRONE_COMMIT}" --set=deployer_name="${DRONE_COMMIT_AUTHOR}" --set=service_name="${DRONE_BRANCH}"
     volumes:
       - /root/.kube/config:/root/.kube/config
+    when:
+      event: deployment
+      environment: staging
