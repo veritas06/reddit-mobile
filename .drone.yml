@@ -13,17 +13,17 @@ pipeline:
       event: [ pull_request ]
 
 
-  publish:
-    image: plugins/docker
-    username: ${QUAY_USERNAME}
-    password: ${QUAY_PASSWORD}
-    email: sysops@reddit.com
-    registry: quay.io
-    repo: quay.io/reddit/reddit-mobile
-    tag: ${DRONE_BRANCH}
-    dockerfile: Dockerfile.staging
-    when:
-      event: [ pull_request ]
+  # publish:
+  #   image: plugins/docker
+  #   username: ${QUAY_USERNAME}
+  #   password: ${QUAY_PASSWORD}
+  #   email: sysops@reddit.com
+  #   registry: quay.io
+  #   repo: quay.io/reddit/reddit-mobile
+  #   tag: ${DRONE_BRANCH}
+  #   dockerfile: Dockerfile.staging
+  #   when:
+  #     event: [ pull_request ]
 
   add-deployment:
     image: ruby
