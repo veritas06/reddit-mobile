@@ -6,10 +6,6 @@ pipeline:
       - echo "true"
       - env
       - echo "DRONE: ${DRONE}"
-      - echo "DRONE_REPO: ${DRONE_REPO}"
-      - echo "DRONE_BRANCH: ${DRONE_BRANCH}"
-      - echo "DRONE_COMMIT: ${DRONE_COMMIT}"
-      - echo "DRONE_PULL_REQUEST: ${DRONE_PULL_REQUEST}"
     when:
       event: [ push, deployment ]
 
