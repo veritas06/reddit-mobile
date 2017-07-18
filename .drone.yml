@@ -9,7 +9,6 @@ pipeline:
       - echo "DRONE_REPO: ${DRONE_REPO}"
       - echo "DRONE_BRANCH: ${DRONE_BRANCH}"
       - echo "DRONE_COMMIT: ${DRONE_COMMIT}"
-      - echo "DRONE_DIR: ${DRONE_DIR}"
       - echo "DRONE_BUILD_NUMBER: ${DRONE_BUILD_NUMBER}"
       - echo "DRONE_PULL_REQUEST: ${DRONE_PULL_REQUEST}"
       - echo "DRONE_JOB_NUMBER: ${DRONE_JOB_NUMBER}"
