@@ -5,7 +5,6 @@ pipeline:
     commands:
       - echo "true"
       - env
-      - echo ${2X##DRONE_COMMIT_REFSPEC}
     when:
       event: [ pull_request, push, deployment ]
 
@@ -17,7 +16,7 @@ pipeline:
   #   email: sysops@reddit.com
   #   registry: quay.io
   #   repo: quay.io/reddit/reddit-mobile
-  #   tag: ${DRONE_BRANCH}
+  #   tag: ${DRONE_COMMIT_REFSPEC%%2x}
   #   dockerfile: Dockerfile.staging
   #   when:
   #     event: [ pull_request, push ]
@@ -27,7 +26,7 @@ pipeline:
     pull: true
     commands:
       - gem install octokit
-      - GITHUB_ACCESS_TOKEN=${GITHUB_ACCESS_TOKEN} GITHUB_REPO=${DRONE_REPO} GIT_REF=${DRONE_BRANCH} ruby github-deployment.rb
+      - GITHUB_ACCESS_TOKEN=${GITHUB_ACCESS_TOKEN} GITHUB_REPO=${DRONE_REPO} GIT_REF=${DRONE_COMMIT_REFSPEC%%2X} ruby github-deployment.rb
     when:
       event: [ pull_request, push ]
 
