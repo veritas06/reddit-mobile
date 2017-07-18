@@ -1,5 +1,5 @@
 pipeline:
-  clone:
+  cloneer:
     image: plugins/git
     depth: 50
     recursive: true
