@@ -8,7 +8,7 @@ pipeline:
       - git fetch --no-tags --depth=1 origin
       - git reset --hard -q ${DRONE_COMMIT}
     when:
-      event: [ pull_request, deployment ]
+      event: [ push, deployment ]
 
   build:
     image: quay.io/reddit/reddit-nodejs:latest
@@ -21,7 +21,7 @@ pipeline:
       # - npm run test
       # - npm run build
     when:
-      event: [ pull_request, deployment ]
+      event: [ push, deployment ]
 
 
   # publish:
@@ -34,7 +34,7 @@ pipeline:
   #   tag: ${DRONE_BRANCH}
   #   dockerfile: Dockerfile.staging
   #   when:
-  #     event: [ pull_request ]
+  #     event: [ push ]
 
   add-deployment:
     image: ruby
@@ -43,7 +43,7 @@ pipeline:
       - gem install octokit
       - GITHUB_ACCESS_TOKEN=${GITHUB_ACCESS_TOKEN} GITHUB_REPO=${DRONE_REPO} GIT_REF=${DRONE_COMMIT_REF} ruby github-deployment.rb
     when:
-      event: [ pull_request ]
+      event: [ push ]
 
   deploy-staging:
     image: lachlanevenson/k8s-helm:v2.4.2
