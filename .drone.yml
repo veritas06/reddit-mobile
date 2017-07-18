@@ -60,7 +60,7 @@ pipeline:
     pull: true
     commands:
       - gem install octokit
-      - GITHUB_ACCESS_TOKEN=${GITHUB_ACCESS_TOKEN} GITHUB_REPO=${DRONE_REPO} DEPLOYMENT_URL=${DRONE_COMMIT_LINK} GIT_BRANCH=${DRONE_BRANCH##refs/heads/} ruby github-comment.rb
+      - GITHUB_ACCESS_TOKEN=${GITHUB_ACCESS_TOKEN} GITHUB_REPO=${DRONE_REPO} GITHUB_REPO=${DRONE_REPO} DEPLOYMENT_URL=${DRONE_COMMIT_LINK} GIT_BRANCH=${DRONE_BRANCH##refs/heads/} ruby github-comment.rb
     when:
       event: [ deployment ]
       environment: staging
