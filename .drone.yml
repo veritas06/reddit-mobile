@@ -1,8 +1,10 @@
 pipeline:
   cloneer:
     image: plugins/git
-    depth: 50
+    depth: 1
     recursive: true
+    when:
+      event: [ pull_request ]
 
   build:
     image: quay.io/reddit/reddit-nodejs:latest
