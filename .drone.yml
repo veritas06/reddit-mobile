@@ -20,8 +20,7 @@ pipeline:
     tag: ${DRONE_BRANCH}
     dockerfile: Dockerfile.staging
     when:
-     event: pull_request
-     environment: staging
+      event: [ push, tag, deployment, pull_request ]
 
   add-deployment:
     image: ruby
