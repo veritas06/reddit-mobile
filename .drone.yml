@@ -30,7 +30,7 @@ pipeline:
     pull: true
     commands:
       - gem install octokit
-      - GITHUB_ACCESS_TOKEN=${GITHUB_ACCESS_TOKEN} GITHUB_REPO=${DRONE_REPO} GITHUB_PULL_REQUEST_NUMBER=${DRONE_PULL_REQUEST} GIT_BRANCH=${DRONE_BRANCH} GIT_REF=${DRONE_BRANCH} ruby github-deployment.rb
+      - GITHUB_ACCESS_TOKEN=${GITHUB_ACCESS_TOKEN} GITHUB_REPO=${DRONE_REPO} GITHUB_PULL_REQUEST_NUMBER=${DRONE_PULL_REQUEST} GIT_REF=${DRONE_COMMIT_REF} ruby github-deployment.rb
     when:
       event: [ pull_request ]
 
