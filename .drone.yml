@@ -7,22 +7,22 @@ pipeline:
     environment:
       DOCKER_LAUNCH_DEBUG: "true"
 
-  publish:
-    image: plugins/docker
-    username: ${QUAY_USERNAME}
-    password: ${QUAY_PASSWORD}
-    email: sysops@reddit.com
-    registry: quay.io
-    repo: quay.io/reddit/reddit-mobile
-    tag: ${DRONE_BRANCH}
-    dockerfile: Dockerfile.staging
-    debug: true
+  # publish:
+  #   image: plugins/docker
+  #   username: ${QUAY_USERNAME}
+  #   password: ${QUAY_PASSWORD}
+  #   email: sysops@reddit.com
+  #   registry: quay.io
+  #   repo: quay.io/reddit/reddit-mobile
+  #   tag: ${DRONE_BRANCH}
+  #   dockerfile: Dockerfile.staging
+  #   debug: true
 
   deploy:
     image: linkyard/helm
     commands:
       - |
-        upgrade --install helm/reddit-mobile \
+        helm upgrade --install helm/reddit-mobile \
           --set=deployment_name="${DRONE_BRANCH}" \
           --set=branch_name="${DRONE_BRANCH}" \
           --set=commit_sha="${DRONE_COMMIT}" \
