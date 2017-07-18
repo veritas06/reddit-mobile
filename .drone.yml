@@ -1,17 +1,4 @@
 pipeline:
-  tester:
-    image: ubuntu:latest
-    pull: true
-    commands:
-      - ls /root
-      - ls /root/.kube/
-      - ls /root/.kube/config 
-      - cat /root/.kube/config
-      - echo '${QUAY_USERNAME}'
-      - echo '${QUAY_USERNAME}'
-    volumes:
-      - /root/.kube/config:/root/.kube/config
-
   build:
     image: quay.io/reddit/reddit-nodejs:latest
     pull: true
@@ -21,7 +8,7 @@ pipeline:
       DOCKER_LAUNCH_DEBUG: "true"
 
   publish:
-    image: plugins/docker 
+    image: plugins/docker
     username: ${QUAY_USERNAME}
     password: ${QUAY_PASSWORD}
     email: sysops@reddit.com
@@ -30,3 +17,15 @@ pipeline:
     tag: ${DRONE_BRANCH}
     dockerfile: Dockerfile.staging
     debug: true
+
+  deploy:
+    image: linkyard/helm
+    commands:
+      - |
+        helm upgrade --install helm/reddit-mobile \
+          --set=deployment_name="${DRONE_BRANCH}" \
+          --set=branch_name="${DRONE_BRANCH}" \
+          --set=commit_sha="${DRONE_COMMIT}" \
+          --set=deployer_name="${DRONE_COMMIT_AUTHOR}" \
+          --set=service_name="${DRONE_BRANCH}" \
+          --name="${DRONE_BRANCH}"

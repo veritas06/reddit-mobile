@@ -1,0 +1,4 @@
+apiVersion: v1
+description: A Helm chart for reddit-mobile service
+name: reddit-mobile
+version: 0.1.0

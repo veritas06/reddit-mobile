@@ -1,0 +1,7 @@
+deployment_name: ""
+namespace_name: "staging-reddit-mobile"
+branch_name: ""
+commit_sha: ""
+deployer_name: ""
+repo_name: "reddit-mobile"
+service_name: ""
