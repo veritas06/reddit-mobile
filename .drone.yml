@@ -48,7 +48,7 @@ pipeline:
   deploy-staging:
     image: lachlanevenson/k8s-helm:v2.4.2
     commands:
-      - helm upgrade $${DRONE_BRANCH##refs/heads/} helm/reddit-mobile --install --set=deployment_name="$${DRONE_BRANCH##refs/heads/}" --set=branch_name="$${DRONE_BRANCH##refs/heads/}" --set=commit_sha="${DRONE_COMMIT}" --set=deployer_name="${DRONE_COMMIT_AUTHOR}" --set=service_name="$${DRONE_BRANCH##refs/heads/}"
+      - helm upgrade ${DRONE_BRANCH##refs/heads/} helm/reddit-mobile --install --set=deployment_name="${DRONE_BRANCH##refs/heads/}" --set=branch_name="${DRONE_BRANCH##refs/heads/}" --set=commit_sha="${DRONE_COMMIT}" --set=deployer_name="${DRONE_COMMIT_AUTHOR}" --set=service_name="${DRONE_BRANCH##refs/heads/}"
     volumes:
       - /root/.kube/config:/root/.kube/config
     when:
