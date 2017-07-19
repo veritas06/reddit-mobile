@@ -16,7 +16,7 @@ pipeline:
     email: sysops@reddit.com
     registry: quay.io
     repo: quay.io/reddit/reddit-mobile
-    tag: $${DRONE_COMMIT_REFSPEC%%:2x}
+    tag: ${DRONE_COMMIT_REFSPEC%%:2x}
     dockerfile: Dockerfile.staging
     when:
       event: [ pull_request, push ]
