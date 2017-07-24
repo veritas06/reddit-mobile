@@ -58,8 +58,8 @@ class BannerAd extends React.Component {
   }
 
   render() {
-    const { id, slot } = this.props;
-    if (!slot) {
+    const { id, slot, hideAds } = this.props;
+    if (!slot || hideAds) {
       return null;
     }
 
@@ -91,6 +91,7 @@ const subredditSelector = (state) => {
 };
 
 const selector = createStructuredSelector({
+  hideAds: state => state.preferences.hideAds,
   properties: (state, ownProps) => {
     const currentPage = state.platform.currentPage;
     if (!currentPage) {
