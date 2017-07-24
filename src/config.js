@@ -68,6 +68,7 @@ const config = () => ({
   googleTagManagerId: process.env.GOOGLE_TAG_MANAGER_ID,
 
   adblockTestClassName: process.env.ADBLOCK_TEST_CLASSNAME || 'ad adsense-ad googad gemini-ad openx',
+  dfpSlotPrefix: process.env.DFP_SLOT_PREFIX || '/32173961/mweb',
 
   localStorageAvailable: localStorageAvailable(),
 

@@ -2,12 +2,14 @@ import './styles.less';
 import React from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
+import get from 'lodash/get';
 
 import Ad from 'app/components/Ad';
+import BannerAd from 'app/components/BannerAd';
 import PaginationButtons from 'app/components/PaginationButtons';
 import Post from 'app/components/Post';
 import LoadingXpromo from 'app/components/LoadingXpromo';
-import adLocationForPostRecords from 'lib/adLocationForPostRecords';
+import adLocationForPostRecords, { dfpAdLocationFromPosts } from 'lib/adLocationForPostRecords';
 import { addXPromoToPostsList } from 'app/components/XPromoAdFeed';
 import { isXPromoInFeedEnabled } from 'app/selectors/xpromo';
 
@@ -53,17 +55,20 @@ PostsList.defaultProps = {
   shouldPage: true,
 };
 
+
 const renderPostsList = props => {
   const {
     postRecords,
     ad, adId,
+    shouldAdFallback,
     forceCompact,
     subredditIsNSFW,
     subredditShowSpoilers,
     onPostClick,
     isXPromoEnabled,
+    dfpAdLocation,
+    isEmployee,
   } = props;
-
   const records = ad ? recordsWithAd(postRecords, ad) : postRecords;
   const postsList = records.map((postRecord, index) => {
     const postId = postRecord.uuid;
@@ -83,10 +88,29 @@ const renderPostsList = props => {
     return <Post { ...postProps } />;
   });
 
+  // eslint-disable-next-line eqeqeq
+  if (isEmployee && shouldAdFallback && dfpAdLocation != null) {
+    injectDfp(postsList, dfpAdLocation);
+  }
+
   if (isXPromoEnabled) {
     addXPromoToPostsList(postsList, 5);
   }
+
   return postsList;
+};
+
+const injectDfp = (postsList = [], dfpAdLocation) => {
+  postsList.splice(
+    dfpAdLocation,
+    0,
+    <BannerAd
+      sizes={ ['fluid'] }
+      key='dfp-banner-ad'
+      id='in-feed-banner'
+      listingName='listing'
+    />,
+  );
 };
 
 const recordsWithAd = (postRecords, ad) => {
@@ -120,14 +144,18 @@ const selector = createSelector(
   (_, props) => props.nextUrl,
   (_, props) => props.prevUrl,
   isXPromoInFeedEnabled,
-  (postsList, posts, adRequest, nextUrl, prevUrl, isXPromoEnabled) => ({
+  state => get(state, 'accounts.me.isEmployee'),
+  (postsList, posts, adRequest, nextUrl, prevUrl, isXPromoEnabled, isEmployee) => ({
     loading: !!postsList && postsList.loading,
     postRecords: postsList ? postsList.results.filter(p => !posts[p.uuid].hidden) : [],
+    dfpAdLocation: !!postsList && dfpAdLocationFromPosts(postsList.results.map(result => posts[result.uuid])),
     ad: isAdLoaded(adRequest) ? adRequest.ad : '',
     adId: isAdLoaded(adRequest) ? adRequest.adId : '',
+    shouldAdFallback: adRequest && adRequest.fallback,
     prevUrl,
     nextUrl,
     isXPromoEnabled,
+    isEmployee,
   }),
 );
 

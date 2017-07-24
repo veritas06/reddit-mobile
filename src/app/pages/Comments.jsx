@@ -18,6 +18,7 @@ import LoadingXpromo from 'app/components/LoadingXpromo';
 import RecommendedPosts from 'app/components/RecommendedPosts';
 import RecommendedSubreddits from 'app/components/RecommendedSubreddits';
 import SubNav from 'app/components/SubNav';
+import BannerAd from 'app/components/BannerAd';
 import getSubreddit from 'lib/getSubredditFromState';
 
 import CommentsPageHandler from 'app/router/handlers/CommentsPage';
@@ -56,6 +57,11 @@ function CommentsPage(props) {
         single={ true }
         subredditShowSpoilers={ spoilersEnabled }
         key='post'
+      />
+      <BannerAd
+        id='comments-banner'
+        shouldCollapse
+        listingName='comments'
       />
       <RecommendedPosts
         postId={ pageParams.id }

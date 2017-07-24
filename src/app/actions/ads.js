@@ -32,6 +32,13 @@ export const noAd = adId => ({
   adId,
 });
 
+
+export const FALLBACK_AD = 'FALLBACK_AD';
+export const fallbackAd = adId => ({
+  type: FALLBACK_AD,
+  adId,
+});
+
 export const FAILED = 'FAILED_AD_FETCH';
 export const failed = (adId, error) => ({
   type: FAILED,
@@ -172,7 +179,7 @@ const fetchAddBasedOnResults = async (dispatch, state, adId, postsList, pagePara
   try {
     const ad = await getAd(apiOptionsFromState(state), data);
     if (ad === null) {
-      return dispatch(noAd(adId));
+      return dispatch(fallbackAd(adId));
     }
 
     dispatch(received(adId, ad));

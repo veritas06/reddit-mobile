@@ -14,6 +14,7 @@ import App from 'app';
 import config from 'config';
 import errorLog from 'lib/errorLog';
 import { initGoogleTagManager } from 'lib/gtm';
+import { setupGoogleTag } from 'lib/dfp';
 import routes from 'app/router';
 import reducers from 'app/reducers';
 import reduxMiddleware from 'app/reduxMiddleware';
@@ -39,6 +40,7 @@ window.onload = () => {
   const endMount = Date.now();
   sendTimings(beginMount, endMount, isShell);
   initGoogleTagManager();
+  setupGoogleTag();
 };
 
 const ERROR_ENDPOINTS = {
