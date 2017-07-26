@@ -144,7 +144,11 @@ const selector = createSelector(
   (_, props) => props.nextUrl,
   (_, props) => props.prevUrl,
   isXPromoInFeedEnabled,
-  state => get(state, 'accounts.me.isEmployee'),
+  (state) => {
+    const username = get(state, 'user.name');
+    const isEmployee = get(state, `accounts.${username}.isEmployee`);
+    return isEmployee;
+  },
   (postsList, posts, adRequest, nextUrl, prevUrl, isXPromoEnabled, isEmployee) => ({
     loading: !!postsList && postsList.loading,
     postRecords: postsList ? postsList.results.filter(p => !posts[p.uuid].hidden) : [],
