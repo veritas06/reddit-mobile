@@ -89,7 +89,7 @@ const renderPostsList = props => {
   });
 
   // eslint-disable-next-line eqeqeq
-  if (isEmployee && shouldAdFallback && dfpAdLocation != null) {
+  if (isEmployee && dfpAdLocation != null) {
     injectDfp(postsList, dfpAdLocation);
   }
 
