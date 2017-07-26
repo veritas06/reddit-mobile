@@ -60,7 +60,7 @@ const renderPostsList = props => {
   const {
     postRecords,
     ad, adId,
-    shouldAdFallback,
+    // shouldAdFallback,
     forceCompact,
     subredditIsNSFW,
     subredditShowSpoilers,
