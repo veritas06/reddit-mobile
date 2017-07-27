@@ -58,11 +58,13 @@ function CommentsPage(props) {
         subredditShowSpoilers={ spoilersEnabled }
         key='post'
       />
-      <BannerAd
-        id='comments-banner'
-        shouldCollapse
-        listingName='comments'
-      />
+      { !post.promoted &&
+        <BannerAd
+          id='comments-banner'
+          shouldCollapse
+          listingName='comments'
+        />
+      }
       <RecommendedPosts
         postId={ pageParams.id }
         postLoaded={ postLoaded }
