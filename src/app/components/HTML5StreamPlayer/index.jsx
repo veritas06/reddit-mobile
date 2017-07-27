@@ -21,19 +21,18 @@ class HTML5StreamPlayer extends React.Component {
     onUpdatePostPlaytime: T.func.isRequired,
     scrubberThumbSource: T.string.isRequired,
     isGif: T.bool.isRequired,
+    posterImage: T.string.isRequired,
   };
 
   constructor(props) {
     super(props);
     this.state = {
-      videoPaused: false,
-      videoScrollPaused: true,
+      videoScrollPaused: false,
       videoMuted: true,
       videoPosition: 0,
-      videoEnded: false,
       videoFullScreen: false,
       debounceFunc: null,
-      videoInView: false,
+      videoWasInView: false,
       currentTime: '00:00',
       totalTime: '00:00',
       currentlyScrubbing: false,
@@ -44,6 +43,7 @@ class HTML5StreamPlayer extends React.Component {
       autoPlay: true,
       lastUpdate: null,
       totalServedTime: 0,
+      isLoading: false,
     };
   }
 
@@ -69,10 +69,10 @@ class HTML5StreamPlayer extends React.Component {
   }
 
   isScrolledIntoView = () => {
-    if (!this.state.videoScrollPaused || this.state.videoFullScreen) {
+    if (this.state.videoFullScreen) {
       return;
     }
-
+    const video = this.refs.HTML5StreamPlayerVideo;
     const videoContainer = this.refs.HTML5StreamPlayerContainer;
 
     const elemTop = videoContainer.getBoundingClientRect().top;
@@ -80,6 +80,7 @@ class HTML5StreamPlayer extends React.Component {
 
     const totalVideoHeight = elemBottom - elemTop;
     let videoHeight;
+
     if (elemTop < 0) {
       videoHeight = elemBottom;
     } else if (elemBottom > window.innerHeight) {
@@ -89,26 +90,31 @@ class HTML5StreamPlayer extends React.Component {
     }
 
     let videoIsInView = false;
-    if ((videoHeight / totalVideoHeight) > 0.5) {
+    if ((videoHeight / totalVideoHeight) > 0.8) {
       videoIsInView = true;
-    }
-
-    if (this.state.videoInView !== videoIsInView) {
-      const video = this.refs.HTML5StreamPlayerVideo;
-      if (videoIsInView) {
-        if (video.paused && !window.fullScreen) {
-          video.play();
-          this.sendTrackVideoEvent(VIDEO_EVENT.SCROLL_AUTOPLAY);
-        }
-      } else {
-        if (!video.paused) {
-          video.pause();
-          this.sendTrackVideoEvent(VIDEO_EVENT.SCROLL_PAUSE);
-        }
+      //Sometimes loading videos fails if the component is out of our view, ensure load
+      if (video.readyState === 0
+        && this.state.isLoading === false
+        && this.state.videoLoaded === false) {
+        video.load();
+        this.setState({isLoading: true});
       }
-
-      this.setState({videoInView: videoIsInView, videoScrollPaused: true});
     }
+
+    if (this.state.videoWasInView !== videoIsInView
+      && videoIsInView === true
+      && this.videoIsPaused() === true
+      && this.state.videoScrollPaused === false) {
+      video.play();
+      this.sendTrackVideoEvent(VIDEO_EVENT.SCROLL_AUTOPLAY);
+    }
+
+    if (this.videoIsPaused() === false && videoIsInView === false) {
+      video.pause();
+      this.sendTrackVideoEvent(VIDEO_EVENT.SCROLL_PAUSE);
+    }
+
+    this.setState({videoWasInView: videoIsInView, videoScrollPaused: false});
   }
 
   secondsToMinutes(seconds) {
@@ -123,19 +129,37 @@ class HTML5StreamPlayer extends React.Component {
 
   videoDidLoad = () => {
     if (this) {
-      this.setState({videoLoaded: true});
-      this.isScrolledIntoView();
+      if (this.state.videoLoaded === true) {
+        return;
+      }
 
       const video = this.refs.HTML5StreamPlayerVideo;
-      if ((this.props.postData.videoPlaytime > 0) && (video.paused === false)) {
-        this.setState({totalServedTime: this.props.postData.videoPlaytime * 1000.0});
+      if (this.props.postData.videoPlaytime > 0) {
+        this.setState({videoLoaded: true,
+          totalServedTime: this.props.postData.videoPlaytime * 1000.0,
+          totalTime: this.secondsToMinutes(video.duration),
+          videoWasInView: false,
+        });
         this.sendTrackVideoEvent(VIDEO_EVENT.CHANGED_PAGETYPE, this.getPercentServed());
+        video.currentTime = this.props.postData.videoPlaytime;
+      } else {
+        this.setState({videoLoaded: true,
+          totalTime: this.secondsToMinutes(video.duration),
+          videoWasInView: false,
+        });
+      }
+
+      if (this.state.autoPlay === true
+        || this.props.postData.videoPlaytime > 0
+        && this.videoIsPaused() === true) {
+        this.isScrolledIntoView();
       }
     }
   }
 
   componentDidMount() {
-    //if non-hls compatible browser, initialize dashjs media player (dash.js handles this check automatically).
+    /*if non-hls compatible browser, initialize dashjs media player
+    (dash.js handles this check automatically).*/
     const video = this.refs.HTML5StreamPlayerVideo;
     const player = dashjs.MediaPlayerFactory.create(video);
 
@@ -145,6 +169,15 @@ class HTML5StreamPlayer extends React.Component {
     document.addEventListener('MSFullscreenChange', this.exitHandler, false);
 
     video.addEventListener('canplay', this.videoDidLoad, false);
+    video.addEventListener('ended', this.updateTime, false);
+
+    //sometimes the video will be ready before didMount, in this case, submit 'canplay' manually
+    if (video.readyState >= 3) {
+      this.videoDidLoad();
+    } else if (video.readyState === 0) {
+      this.isScrolledIntoView();
+    }
+
     //draw initial buffer background (null video);
     this.drawBufferBar();
 
@@ -153,20 +186,15 @@ class HTML5StreamPlayer extends React.Component {
 
     //store function handler for removal
     this.setState({debounceFunc, mediaPlayer: player});
-
-    if (this.props.postData.videoPlaytime) {
-      video.currentTime = this.props.postData.videoPlaytime;
-      if (this.state.autoPlay && this.state.paused) {
-        this.playPauseVideo();
-      }
-    }
   }
 
   componentWillMount() {
-    //if video has a previous time position, prevent autoplay, this stops the video from continuing unintentionally on report modal open/close
+    /*if video has a previous time position, prevent autoplay,
+    this stops the video from continuing unintentionally on report modal open/close*/
     if (this.props.postData.videoPlaytime) {
       this.setState({autoPlay: false});
     }
+
   }
 
   componentWillUnmount() {
@@ -176,6 +204,7 @@ class HTML5StreamPlayer extends React.Component {
     }
     const video = this.refs.HTML5StreamPlayerVideo;
     video.removeEventListener('canplay', this.videoDidLoad, false);
+    video.removeEventListener('ended', this.updateTime, false);
     window.removeEventListener('scroll', this.state.debounceFunc);
 
     document.removeEventListener('webkitfullscreenchange', this.exitHandler, false);
@@ -191,17 +220,32 @@ class HTML5StreamPlayer extends React.Component {
     }
   }
 
-  playPauseVideo = () => {
+  //paused attribute and 'currently paused' are two different states, must check for additional conditions
+  videoIsPaused() {
     const video = this.refs.HTML5StreamPlayerVideo;
 
-    if (video.paused) {
-      video.play();
-      if (this.state.videoEnded) {
+    if (!video) {
+      return true;
+    }
+
+    const videoIsReady = (video.readyState === 3 || video.readyState === 4);
+    const videoLoadedSuccessfully = video.error === null;
+
+    const videoIsPlaying = !video.paused && !video.ended && videoIsReady && videoLoadedSuccessfully;
+    return !videoIsPlaying;
+  }
+
+  playPauseVideo = () => {
+    const video = this.refs.HTML5StreamPlayerVideo;
+    if (this.videoIsPaused()) {
+      if (video.ended) {
+        this.resetVideo();
         this.sendTrackVideoEvent(VIDEO_EVENT.REPLAY);
       } else {
         this.sendTrackVideoEvent(VIDEO_EVENT.PLAY);
       }
-      this.setState({videoPaused: false, videoScrollPaused: true, videoEnded:false});
+      video.play();
+      this.setState({videoScrollPaused: false, wasPlaying:true});
     } else if (this.props.isGif) {
       //is gif
       if (this.state.videoFullScreen) {
@@ -211,14 +255,15 @@ class HTML5StreamPlayer extends React.Component {
       }
     } else {
       video.pause();
-      this.setState({videoPaused: true, videoScrollPaused: false});
+      this.setState({videoScrollPaused: true, wasPlaying:false});
       this.sendTrackVideoEvent(VIDEO_EVENT.PAUSE);
     }
   }
 
   resetVideo = () => {
     const video = this.refs.HTML5StreamPlayerVideo;
-    video.currentTime = 0.1;
+    video.currentTime = 0.01;
+    this.updateTime();
   }
 
   exitHandler = () => {
@@ -293,13 +338,13 @@ class HTML5StreamPlayer extends React.Component {
   }
 
   renderPlaybackIcon() {
-    if (!this.state.videoLoaded) {
+    if (this.state.videoLoaded === false) {
       return null;
     }
 
     const video = this.refs.HTML5StreamPlayerVideo;
-
-    if (this.state.videoEnded && !this.props.isGif) {
+    if (video.ended === true
+      && this.props.isGif === false) {
       return (
         <div className={ 'HTML5StreamPlayer__playback-action-circle regular' }>
           <div className={ 'HTML5StreamPlayer__replay-icon-container' }>
@@ -307,18 +352,17 @@ class HTML5StreamPlayer extends React.Component {
           </div>
         </div>
       );
-    } else if (video.paused) {
-      return (
-        <div className={ 'HTML5StreamPlayer__playback-action-circle regular' }>
-          <div className={ 'HTML5StreamPlayer__play-icon-container' }>
-            <span
-              className={ 'HTML5StreamPlayer__playback-action-icon white icon icon-play_triangle' }
-            />
-          </div>
-        </div>
-      );
     }
-    return null;
+    //else show play button
+    return (
+      <div className={ 'HTML5StreamPlayer__playback-action-circle regular' }>
+        <div className={ 'HTML5StreamPlayer__play-icon-container' }>
+          <span
+            className={ 'HTML5StreamPlayer__playback-action-icon white icon icon-play_triangle' }
+          />
+        </div>
+      </div>
+    );
   }
 
   setVideoPos = (event) => {
@@ -331,7 +375,7 @@ class HTML5StreamPlayer extends React.Component {
     this.setState({
       scrubPosition: value,
       thumbPosition: ((bufferBar.clientWidth-16) * value/100 + 2),
-    }); //(bufferWidth - thumb width) //2 == border width
+    });
   }
 
   drawBufferBar(video = null) {
@@ -379,26 +423,26 @@ class HTML5StreamPlayer extends React.Component {
     const video = this.refs.HTML5StreamPlayerVideo;
     this.drawBufferBar(video);
 
+    if (this.state.currentlyScrubbing === true) {
+      return;
+    }
+
     let newTime = this.state.totalServedTime;
-    if ((this.state.lastUpdate !== null) && (video.paused === false) && (this.state.wasPlaying === true)) {
+    if ((this.state.lastUpdate !== null)
+      && (this.videoIsPaused() === false)
+      && (this.state.wasPlaying === true)) {
       newTime += performance.now() - this.state.lastUpdate;
     }
 
     if (video.currentTime && video.duration) {
-      let isVideoEnded = false;
-      if (video.currentTime >= video.duration) {
-        if (!this.props.isGif) {
-          isVideoEnded = true;
-        }
-      }
       this.setState({
         videoPosition: ((video.currentTime/video.duration) * 100),
-        videoEnded:isVideoEnded,
         currentTime: this.secondsToMinutes(video.currentTime),
         totalTime: this.secondsToMinutes(video.duration),
         lastUpdate: performance.now(),
         totalServedTime: newTime,
-        wasPlaying: !video.paused,
+        wasPlaying: !this.videoIsPaused(),
+        scrubPosition: ((video.currentTime/video.duration) * 100),
       });
       this.props.onUpdatePostPlaytime(video.currentTime);
     }
@@ -431,13 +475,32 @@ class HTML5StreamPlayer extends React.Component {
 
   scrubEnd = () => {
     const video = this.refs.HTML5StreamPlayerVideo;
+    const videoThumb = this.refs.scrubberThumbnail;
+    videoThumb.pause();
+
     video.currentTime = (video.duration/100) * this.state.scrubPosition;
-    this.setState({currentlyScrubbing: false, videoPosition: this.state.scrubPosition});
     this.sendTrackVideoEvent(VIDEO_EVENT.SEEK);
+
+    if (this.state.wasPlaying) {
+      video.play();
+    }
+
+    this.setState({
+      wasPlaying: false,
+      currentlyScrubbing: false,
+      videoPosition: this.state.scrubPosition,
+    });
+    this.updateTime();
   }
 
   scrubStart = () => {
-    this.setState({currentlyScrubbing: true});
+    const bufferBar = this.refs.scrubBuffer;
+    this.setState({
+      currentlyScrubbing: true,
+      thumbPosition: ((bufferBar.clientWidth-16) * this.state.videoPosition/100 + 2),
+    });
+    const video = this.refs.HTML5StreamPlayerVideo;
+    video.pause();
   }
 
   render() {
@@ -461,6 +524,7 @@ class HTML5StreamPlayer extends React.Component {
               autoPlay={ false }
               muted={ this.state.videoMuted }
               onTimeUpdate={ this.updateTime }
+              poster={ this.props.posterImage }
               preload='metadata'
               playsInline={ true }
               className = { this.state.videoFullScreen ?
@@ -473,13 +537,13 @@ class HTML5StreamPlayer extends React.Component {
             </video>
           </div>
           
-          <div className = 'HTML5StreamPlayer__controlPanel' id="html5-video-stream-controls">
+          <div className = 'HTML5StreamPlayer__controlPanel' id='html5-video-stream-controls'>
             <div className = 'HTML5StreamPlayer__control__play'>
               <button
                 className = { 'HTML5StreamPlayer__control__play' }
                 onClick = { this.playPauseVideo }
               >
-                { this.renderPlaybackIcon() }
+                { this.videoIsPaused() && this.state.videoLoaded && this.renderPlaybackIcon() }
               </button>
             </div>
 

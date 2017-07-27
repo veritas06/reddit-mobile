@@ -439,6 +439,7 @@ function renderVideo(videoSpec, posterImage, aspectRatio, props) {
         hlsSource = { videoSpec.hls }
         mpegDashSource = { videoSpec.dash }
         isGif = { videoSpec.isGif }
+        posterImage = { posterImage.url }
         scrubberThumbSource = { videoSpec.scrubberThumbSource }
       />
     );
