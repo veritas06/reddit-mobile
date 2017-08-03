@@ -67,6 +67,7 @@ createTest({ reducers: { adRequests }}, ({ getStore, expect }) => {
         ad: undefined,
         impressionTracked: false,
         failed: false,
+        fallback: false,
       });
     });
   });
@@ -84,6 +85,7 @@ createTest({ reducers: { adRequests }}, ({ getStore, expect }) => {
       expect(adRequest).to.eql({
         pending: false,
         ad: adPost.toRecord(),
+        fallback: false,
       });
     });
   });

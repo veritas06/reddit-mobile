@@ -4,7 +4,11 @@ import { createStructuredSelector } from 'reselect';
 import classNames from 'lib/classNames';
 import getSubreddit from 'lib/getSubredditFromState';
 import createBannerProperties from 'lib/createBannerProperties';
-import { defineSlot, destroySlot, getSlotId } from 'lib/dfp';
+import {
+  defineSlot,
+  destroySlot,
+  getSlotId,
+} from 'lib/dfp';
 import deferUntilMount from 'lib/deferUntilMount';
 import './style.less';
 
@@ -49,12 +53,24 @@ class BannerAd extends React.Component {
     this.defineSlot();
   }
 
+  componentDidUpdate() {
+    this.defineSlot();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const compactChanged = nextProps.compact !== this.props.compact;
+    const themeChanged = nextProps.theme !== this.props.theme;
+    if (this.adSlot && (compactChanged || themeChanged)) {
+      this.destroySlot();
+    }
+  }
+
   componentWillUnmount() {
     this.destroySlot(this.adSlot);
   }
 
   shouldComponentUpdate(nextProps) {
-    return this.props.slot !== nextProps.slot;
+    return (this.props.slot !== nextProps.slot || !this.adSlot);
   }
 
   render() {
@@ -92,6 +108,8 @@ const subredditSelector = (state) => {
 
 const selector = createStructuredSelector({
   hideAds: state => state.preferences.hideAds,
+  theme: state => state.theme,
+  compact: state => state.compact,
   properties: (state, ownProps) => {
     const currentPage = state.platform.currentPage;
     if (!currentPage) {

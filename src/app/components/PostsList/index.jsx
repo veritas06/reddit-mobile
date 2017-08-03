@@ -2,7 +2,6 @@ import './styles.less';
 import React from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import get from 'lodash/get';
 
 import Ad from 'app/components/Ad';
 import BannerAd from 'app/components/BannerAd';
@@ -60,14 +59,13 @@ const renderPostsList = props => {
   const {
     postRecords,
     ad, adId,
-    // shouldAdFallback,
+    shouldAdFallback,
     forceCompact,
     subredditIsNSFW,
     subredditShowSpoilers,
     onPostClick,
     isXPromoEnabled,
-    dfpAdLocation,
-    isEmployee,
+    posts,
   } = props;
   const records = ad ? recordsWithAd(postRecords, ad) : postRecords;
   const postsList = records.map((postRecord, index) => {
@@ -88,8 +86,10 @@ const renderPostsList = props => {
     return <Post { ...postProps } />;
   });
 
+  const dfpAdLocation = dfpAdLocationFromPosts(records.map(result => posts[result.uuid] || {}));
+
   // eslint-disable-next-line eqeqeq
-  if (isEmployee && dfpAdLocation != null) {
+  if (shouldAdFallback && dfpAdLocation != null) {
     injectDfp(postsList, dfpAdLocation);
   }
 
@@ -144,22 +144,16 @@ const selector = createSelector(
   (_, props) => props.nextUrl,
   (_, props) => props.prevUrl,
   isXPromoInFeedEnabled,
-  (state) => {
-    const username = get(state, 'user.name');
-    const isEmployee = get(state, `accounts.${username}.isEmployee`);
-    return isEmployee;
-  },
-  (postsList, posts, adRequest, nextUrl, prevUrl, isXPromoEnabled, isEmployee) => ({
+  (postsList, posts, adRequest, nextUrl, prevUrl, isXPromoEnabled) => ({
     loading: !!postsList && postsList.loading,
     postRecords: postsList ? postsList.results.filter(p => !posts[p.uuid].hidden) : [],
-    dfpAdLocation: !!postsList && dfpAdLocationFromPosts(postsList.results.map(result => posts[result.uuid])),
     ad: isAdLoaded(adRequest) ? adRequest.ad : '',
     adId: isAdLoaded(adRequest) ? adRequest.adId : '',
     shouldAdFallback: adRequest && adRequest.fallback,
     prevUrl,
     nextUrl,
     isXPromoEnabled,
-    isEmployee,
+    posts,
   }),
 );
 

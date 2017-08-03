@@ -39,10 +39,4 @@ describe('lib: getSubredditFromState', () => {
     set(sampleState, 'comments.data.t3_foobar', undefined);
     expect(getSubreddit(sampleState)).to.equal(null);
   });
-
-  it('null on commentsPages.current.results being null', () => {
-    set(sampleState, 'comments.data.t3_foobar.subreddit', 'gifs');
-    expect(getSubreddit(sampleState)).to.equal('gifs');
-  });
-
 });
