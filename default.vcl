@@ -29,6 +29,7 @@ sub vcl_recv {
       || req.url ~ "^/comments/?"
       || req.url ~ "^/login/?$"
       || req.url ~ "^/message/"
+      || req.url ~ "^/notification/"
       || req.url ~ "^/r/"
       || req.url ~ "^/register/?$"
       || req.url ~ "/search/?$"
