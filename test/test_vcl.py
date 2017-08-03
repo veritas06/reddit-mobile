@@ -100,6 +100,7 @@ WHITELISTED_ROUTES = [
     '/comments/',
     '/login',
     '/message/',
+    '/notification/',
     '/r/nba',
     '/register/',
     '/report',

@@ -120,6 +120,7 @@ export default (router, apiOptions) => {
       Disallow: /search
       Disallow: /r/*/search
       Disallow: /u/*
+      Disallow: /notification/*
       Disallow: /message/*
       Disallow: /submit*
       Disallow: /r/*/submit/*

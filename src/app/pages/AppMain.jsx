@@ -158,6 +158,7 @@ const AppMain = props => {
         />
         <Page url='/message/compose' component={ FramedDirectMessage } />
         <Page url='/message/:mailType' component={ FramedMessages } />
+        <Page url='/notification/:mailType' component={ FramedMessages } />
       </UrlSwitch>
       { showDropdownCover ? <DropdownCover /> : null }
       { isToasterOpen ? <Toaster /> : null }
