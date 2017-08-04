@@ -28,6 +28,9 @@ Raven
   .config(process.env.SENTRY_CLIENT_PUBLIC_URL, {
     release: __GLOBALS__.release,
     environment: process.env.NODE_ENV,
+    ignoreErrors: [
+      'a.o.postMessage',
+    ],
   })
   .install();
 
