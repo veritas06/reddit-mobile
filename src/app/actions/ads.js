@@ -9,7 +9,12 @@ import config from 'config';
 import { hasAdblock } from 'lib/adblock';
 import { apiOptionsFromState } from 'lib/apiOptionsFromState';
 import isFakeSubreddit from 'lib/isFakeSubreddit';
-import adLocationForPostRecords from 'lib/adLocationForPostRecords';
+import {
+  adLocationForSubreddit,
+  adLocationForDefaultListing,
+  whitelistStatusForDefaultListing,
+  canRequestAds,
+} from 'lib/ads';
 import { logClientAdblock } from 'lib/eventUtils';
 
 export const FETCHING = 'FETCHING_AD';
@@ -114,6 +119,12 @@ export const fetchNewAdForPostsList = (postsListId, pageParams) =>
     if (adRequest && adRequest.loading) { return; }
 
     const adId = nextAdId();
+    const { subredditName } = pageParams.urlParams;
+    const subreddit = state.subreddits[subredditName];
+
+    if (subreddit && !canRequestAds(subreddit.whitelistStatus)) {
+      dispatch(noAd(adId));
+    }
 
     dispatch(fetching(adId, postsListId));
 
@@ -157,8 +168,14 @@ const fetchAddBasedOnResults = async (dispatch, state, adId, postsList, pagePara
   // I don't know what dt stands for but its the thingId's of all the posts
   // on the page.
   const dt = postsList.results.map(record => record.uuid);
+  const { subredditName } = pageParams.urlParams;
+  const subreddit = state.subreddits[subredditName];
   const site = getSite(pageParams);
-  const placementIndex = adLocationForPostRecords(postsList.results);
+  const posts = postsList.results.map(p => state.posts[p.uuid]);
+  const placementIndex = (subreddit ? adLocationForSubreddit : adLocationForDefaultListing)({
+    posts,
+    whitelistStatus: subreddit && subreddit.whitelistStatus,
+  });
 
   const data = {
     site,
@@ -166,6 +183,10 @@ const fetchAddBasedOnResults = async (dispatch, state, adId, postsList, pagePara
     dt: dt.join(','),
     platform: 'mobile_web',
     placement: `feed-${placementIndex}`,
+    whitelist_status: subreddit ? subreddit.whitelistStatus : whitelistStatusForDefaultListing({
+      posts,
+      index: placementIndex,
+    }),
     raw_json: 1,
   };
 

@@ -51,6 +51,7 @@ export default class PostModel extends RedditModel {
     removed: T.bool,
     approved: T.bool,
     spam: T.bool,
+    whitelistStatus: T.nop,
 
     // aliases
     approvedBy: T.string,
@@ -130,6 +131,7 @@ export default class PostModel extends RedditModel {
     third_party_trackers: 'thirdPartyTrackers',
     url: 'cleanUrl',
     user_reports: 'userReports',
+    whitelist_status: 'whitelistStatus',
   };
 
   // Note: derived properties operate on the json passed to

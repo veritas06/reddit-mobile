@@ -64,6 +64,7 @@ function CommentsPage(props) {
           shouldCollapse
           listingName='comments'
           a9
+          whitelistStatus={ post.whitelistStatus }
         />
       }
       <RecommendedPosts

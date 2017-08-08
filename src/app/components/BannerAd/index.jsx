@@ -15,7 +15,6 @@ import './style.less';
 
 
 class BannerAd extends React.Component {
-  adSlot = null;
   frame = null
 
   static defaultProps = {
@@ -30,14 +29,20 @@ class BannerAd extends React.Component {
       sizes,
       shouldCollapse,
       a9,
+      whitelistStatus,
     } = this.props;
+
+    const requestProperties = {
+      ...properties,
+      whitelist_status: whitelistStatus,
+    };
 
     this.destroySlot();
 
     defineSlot(this.frame, {
       id,
       slot,
-      properties,
+      properties: requestProperties,
       shouldCollapse,
       sizes,
       a9,

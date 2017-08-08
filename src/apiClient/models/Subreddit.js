@@ -90,7 +90,7 @@ export default class Subreddit extends RedditModel {
     userIsMuted: T.bool,
     userIsSubscriber: T.bool,
     userSrThemeEnabled: T.bool,
-    whitelistStatus: T.string,
+    whitelistStatus: T.nop,
     wikiEnabled: T.bool,
   };
 

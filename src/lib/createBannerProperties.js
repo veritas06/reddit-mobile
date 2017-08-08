@@ -1,5 +1,4 @@
 const ONE_HOUR_IN_MS = 1000 * 60 * 60;
-const FRONTPAGE_WHITELIST_STATUS = 'all_ads';
 // Calculate this once per user so that it doesnt change on every
 // call to `createBannerProperties`.
 const PERCENTAGE = Math.floor(Math.random() * 100);
@@ -33,10 +32,6 @@ const createBannerProperties = (placement, user, subreddit, theme, compact) => {
 
   if (subreddit) {
     properties.subreddit = subreddit.name;
-    properties.whitelist_status = subreddit.whitelistStatus;
-  } else {
-    // TODO: re-evaluate this. Probably want it to always come from the api.
-    properties.whitelist_status = FRONTPAGE_WHITELIST_STATUS;
   }
 
   properties.theme = theme;
