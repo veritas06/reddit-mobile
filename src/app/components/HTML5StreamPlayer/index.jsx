@@ -621,7 +621,7 @@ class HTML5StreamPlayer extends React.Component {
   buildBaseEventData() {
     const video = this.refs.HTML5StreamPlayerVideo;
     const { postData, isVertical, isGif } = this.props;
-
+    
     let currentTime = 0;
     let durationTime = 0;
     let pageType = this.state.videoFullScreen ? 'full_screen' : 'listing';
@@ -635,15 +635,13 @@ class HTML5StreamPlayer extends React.Component {
       }
     }
 
-    const currentUTC = new Date();
-    const currentUTCSeconds = Math.round(currentUTC.getTime() / 1000);
-    const msSinceCreation = parseInt((currentUTCSeconds - postData.createdUTC) * 1000);
-
     let subredditShortID = postData.subredditId;
     //Should always be greater than 3 but just incase.
     if (subredditShortID.length > 3) {
       subredditShortID = subredditShortID.substring(3,(subredditShortID.length - 3));
     }
+
+    let mediaId = postData.cleanUrl.split("/").slice(-1)[0];
 
     const payload = {
       video_time: currentTime,
@@ -655,8 +653,9 @@ class HTML5StreamPlayer extends React.Component {
       target_fullname: postData.uuid,
       target_author_id: parseInt(postData.author, 36),
       target_author_name: postData.author,
-      target_created_ts: msSinceCreation,
+      target_created_ts: postData.createdUTC * 1000,
       target_id: parseInt(postData.id, 36),
+      media_id: mediaId,
       target_url: postData.cleanUrl,
       target_url_domain: postData.domain,
       target_type: (isGif ? 'gif':'video'),
