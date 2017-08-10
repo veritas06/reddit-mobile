@@ -430,7 +430,7 @@ function renderVideo(videoSpec, posterImage, aspectRatio, props) {
     } else {
       aspectRatio = getAspectRatio(false, videoSpec.width, videoSpec.height);
     }
-
+    
     return (
       <HTML5StreamPlayer
         postData = { post }
@@ -439,6 +439,7 @@ function renderVideo(videoSpec, posterImage, aspectRatio, props) {
         hlsSource = { videoSpec.hls }
         mpegDashSource = { videoSpec.dash }
         isGif = { videoSpec.isGif }
+        isVertical = { (videoSpec.height > videoSpec.width) }
         posterImage = { posterImage.url }
         scrubberThumbSource = { videoSpec.scrubberThumbSource }
       />

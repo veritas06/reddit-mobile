@@ -21,6 +21,7 @@ class HTML5StreamPlayer extends React.Component {
     onUpdatePostPlaytime: T.func.isRequired,
     scrubberThumbSource: T.string.isRequired,
     isGif: T.bool.isRequired,
+    isVertical: T.bool.isRequired,
     posterImage: T.string.isRequired,
   };
 
@@ -617,17 +618,15 @@ class HTML5StreamPlayer extends React.Component {
 
   buildBaseEventData() {
     const video = this.refs.HTML5StreamPlayerVideo;
-    const { postData } = this.props;
+    const { postData, isVertical, isGif } = this.props;
 
     let currentTime = 0;
     let durationTime = 0;
-    let isVertical = false;
     let pageType = this.state.videoFullScreen ? 'full_screen' : 'listing';
 
     if (video) {
       currentTime = parseInt(video.currentTime * 1000);
       durationTime = parseInt(video.duration * 1000);
-      isVertical = (video.height > video.width);
 
       if (isCommentsPage(this.props.currentPage) === true) {
         pageType = 'comments';
@@ -658,7 +657,7 @@ class HTML5StreamPlayer extends React.Component {
       target_id: parseInt(postData.id, 36),
       target_url: postData.cleanUrl,
       target_url_domain: postData.domain,
-      target_type: (this.state.isGif ? 'gif':'video'),
+      target_type: (isGif ? 'gif':'video'),
       sr_name: postData.subreddit,
       sr_fullname: postData.subredditId,
       sr_id: parseInt(subredditShortID, 36),
