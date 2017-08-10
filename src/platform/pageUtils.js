@@ -41,8 +41,8 @@ export const urlFromPage = (page, mergePage) => {
 export const isCommentsPage = (currentPage) => {
   if (currentPage !== null &&
     currentPage.urlParams !== null &&
-    currentPage.urlParams.postTitle !== null &&
-    currentPage.urlParams.postId !== null) {
+    currentPage.urlParams.postTitle &&
+    currentPage.urlParams.postId) {
     return true;
   }
   return false;

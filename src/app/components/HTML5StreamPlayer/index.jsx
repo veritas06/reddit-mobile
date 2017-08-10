@@ -307,7 +307,8 @@ class HTML5StreamPlayer extends React.Component {
     }
 
     if (this.state.videoMuted) {
-      this.muteVideo();
+      video.muted = !video.muted;
+      this.setState({videoMuted: video.muted});
     }
 
     this.sendTrackVideoEvent(VIDEO_EVENT.FULLSCREEN);
@@ -621,7 +622,7 @@ class HTML5StreamPlayer extends React.Component {
   buildBaseEventData() {
     const video = this.refs.HTML5StreamPlayerVideo;
     const { postData, isVertical, isGif } = this.props;
-    
+
     let currentTime = 0;
     let durationTime = 0;
     let pageType = this.state.videoFullScreen ? 'full_screen' : 'listing';
@@ -653,7 +654,7 @@ class HTML5StreamPlayer extends React.Component {
       target_fullname: postData.uuid,
       target_author_id: parseInt(postData.author, 36),
       target_author_name: postData.author,
-      target_created_ts: postData.createdUTC * 1000,
+      target_created_ts: postData.createdUTC,
       target_id: parseInt(postData.id, 36),
       media_id: mediaId,
       target_url: postData.cleanUrl,

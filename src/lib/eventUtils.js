@@ -184,11 +184,10 @@ export function trackVideoPlayerEvent(state, eventType, additionalEventData,) {
   const payload = {
     ...getBasePayload(state),
     ...buildSubredditData(state),
-    ...additionalEventData,
     ...getListingName(state),
     ...getSourceVerbNoun(eventType),
+    ...additionalEventData,
   };
-
   getEventTracker().track('videoplayer_events', eventType, payload);
 }
 
