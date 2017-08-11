@@ -30,7 +30,6 @@ class HTML5StreamPlayer extends React.Component {
     this.state = {
       videoScrollPaused: false,
       videoMuted: true,
-      videoPosition: 0,
       videoFullScreen: false,
       debounceFunc: null,
       videoWasInView: false,
@@ -165,11 +164,19 @@ class HTML5StreamPlayer extends React.Component {
     (dash.js handles this check automatically).*/
     const video = this.refs.HTML5StreamPlayerVideo;
     const player = dashjs.MediaPlayerFactory.create(video);
+    const seekThumb = this.refs.seekThumb;
 
     document.addEventListener('webkitfullscreenchange', this.exitHandler, false);
     document.addEventListener('mozfullscreenchange', this.exitHandler, false);
     document.addEventListener('fullscreenchange', this.exitHandler, false);
     document.addEventListener('MSFullscreenChange', this.exitHandler, false);
+
+     
+    // Add an event handler for seek events
+    seekThumb.addEventListener("touchstart", this.scrubStart, false);
+    seekThumb.addEventListener("touchend", this.scrubEnd, false);
+    seekThumb.addEventListener("touchcancel", this.scrubEnd, false);
+    seekThumb.addEventListener("touchmove", this.setVideoPos, false);
 
     video.addEventListener('canplay', this.videoDidLoad, false);
     video.addEventListener('ended', this.updateTime, false);
@@ -206,9 +213,17 @@ class HTML5StreamPlayer extends React.Component {
       this.sendTrackVideoEvent(VIDEO_EVENT.SERVED_VIDEO, this.getPercentServed());
     }
     const video = this.refs.HTML5StreamPlayerVideo;
+    const seekThumb = this.refs.seekThumb;
+
     video.removeEventListener('canplay', this.videoDidLoad, false);
     video.removeEventListener('ended', this.updateTime, false);
-    window.removeEventListener('scroll', this.state.debounceFunc);
+    window.removeEventListener('scroll', this.state.debounceFunc, false);
+
+    // Add an event handler for seek events
+    seekThumb.removeEventListener("touchstart", this.scrubStart, false);
+    seekThumb.removeEventListener("touchend", this.scrubEnd, false);
+    seekThumb.removeEventListener("touchcancel", this.scrubEnd, false);
+    seekThumb.removeEventListener("touchmove", this.setVideoPos, false);
 
     document.removeEventListener('webkitfullscreenchange', this.exitHandler, false);
     document.removeEventListener('mozfullscreenchange', this.exitHandler, false);
@@ -347,7 +362,8 @@ class HTML5StreamPlayer extends React.Component {
     }
 
     const video = this.refs.HTML5StreamPlayerVideo;
-    if (video.ended === true
+    console.log("THINKING: " + video.currentTime + " : " + video.duration);
+    if ((video.currentTime >= video.duration || video.ended)
       && this.props.isGif === false) {
       return (
         <div className={ 'HTML5StreamPlayer__playback-action-circle regular' }>
@@ -372,13 +388,18 @@ class HTML5StreamPlayer extends React.Component {
   setVideoPos = (event) => {
     const video = this.refs.scrubberThumbnail;
     const bufferBar = this.refs.scrubBuffer;
-    const value = event.target.value;
+    // const value = event.target.value;
+    let tapPosition = this.calculateTapPosition(event.touches[0].pageX);
+
     if (video) {
-      video.currentTime = ((video.duration/100) * value).toFixed(1);
+      video.currentTime = ((video.duration) * tapPosition).toFixed(1);
     }
+
+    console.log("TAP POSITION: " + tapPosition);
     this.setState({
-      scrubPosition: value,
-      thumbPosition: ((bufferBar.clientWidth-16) * value/100 + 2),
+      scrubPosition: tapPosition,
+      thumbPosition: ((bufferBar.clientWidth-16) * tapPosition + 2),
+      currentTime: this.secondsToMinutes(video.duration * tapPosition),
     });
   }
 
@@ -440,19 +461,19 @@ class HTML5StreamPlayer extends React.Component {
 
     if (video.currentTime && video.duration) {
       this.setState({
-        videoPosition: ((video.currentTime/video.duration) * 100),
         currentTime: this.secondsToMinutes(video.currentTime),
         totalTime: this.secondsToMinutes(video.duration),
         lastUpdate: performance.now(),
         totalServedTime: newTime,
         wasPlaying: !this.videoIsPaused(),
-        scrubPosition: ((video.currentTime/video.duration) * 100),
+        scrubPosition: ((video.currentTime/video.duration)),
       });
       this.props.onUpdatePostPlaytime(video.currentTime);
     }
   }
 
   renderThumbnail() {
+
     return (
       <div className = { this.state.currentlyScrubbing ?
         'HTML5StreamPlayer__control__thumbContainer'
@@ -482,29 +503,74 @@ class HTML5StreamPlayer extends React.Component {
     const videoThumb = this.refs.scrubberThumbnail;
     videoThumb.pause();
 
-    video.currentTime = (video.duration/100) * this.state.scrubPosition;
+    video.currentTime = (video.duration) * this.state.scrubPosition;
     this.sendTrackVideoEvent(VIDEO_EVENT.SEEK);
 
-    if (this.state.wasPlaying) {
+    if (this.state.wasPlaying && video.currentTime < video.duration) {
       video.play();
     }
 
-    this.setState({
-      wasPlaying: false,
-      currentlyScrubbing: false,
-      videoPosition: this.state.scrubPosition,
-    });
-    this.updateTime();
+    if (video.currentTime && video.duration) {
+      this.setState({
+        // currentTime: this.secondsToMinutes(video.currentTime),
+        // totalTime: this.secondsToMinutes(video.duration),
+        currentlyScrubbing: false,
+      });
+    }
+
+    //Create buffer bar for data
+    // this.drawBufferBar(video);
   }
 
-  scrubStart = () => {
+  calculateTapPosition(value) {
     const bufferBar = this.refs.scrubBuffer;
-    this.setState({
-      currentlyScrubbing: true,
-      thumbPosition: ((bufferBar.clientWidth-16) * this.state.videoPosition/100 + 2),
-    });
+
+    let tapPosition = ((value - (bufferBar.getBoundingClientRect().left)) / (bufferBar.clientWidth));
+    tapPosition = Math.min(Math.max(tapPosition, 0.0), 1.0);
+
+    return tapPosition;
+  }
+
+  scrubStart = (event) => {
+    const videoThumb = this.refs.scrubberThumbnail;
+    const bufferBar = this.refs.scrubBuffer;
     const video = this.refs.HTML5StreamPlayerVideo;
+
+    let tapPosition = this.calculateTapPosition(event.touches[0].pageX);
+
     video.pause();
+
+    if (videoThumb) {
+      videoThumb.currentTime = ((videoThumb.duration) * tapPosition).toFixed(1);
+    }
+    
+    this.setState({
+      scrubPosition: tapPosition,
+      thumbPosition: ((bufferBar.clientWidth-16) * tapPosition + 2),
+      currentlyScrubbing: true,
+      currentTime: this.secondsToMinutes(video.duration * tapPosition),
+    });
+  }
+
+  renderSeekThumb = () => {
+    const video = this.refs.HTML5StreamPlayerVideo;
+    const bufferBar = this.refs.scrubBuffer;
+
+    let videoPos = 0;
+    if (bufferBar && this.state.currentlyScrubbing === false) {
+      videoPos = ((bufferBar.clientWidth - 16.0) * (video.currentTime/video.duration));
+    } else if (bufferBar) {
+      videoPos = (this.state.scrubPosition * (bufferBar.clientWidth - 16.0));
+    }
+
+    return (
+      <div
+        style = { { left: videoPos } }
+        ref = 'seekThumb'
+        className = 'HTML5StreamPlayer__control__seekThumb'
+      > 
+      </div>
+    );  
   }
 
   render() {
@@ -589,24 +655,14 @@ class HTML5StreamPlayer extends React.Component {
                     { this.state.currentTime }
                   </div>
 
-                  <canvas
-                    ref = 'scrubBuffer'
-                    className = { 'HTML5StreamPlayer__control__scrubBar__buffer' }
-                  >
-                  </canvas>
-                  
-                  <input
-                    type='range'
-                    step='any'
-                    value = { this.state.currentlyScrubbing ?
-                      this.state.scrubPosition
-                      : this.state.videoPosition
-                    }
-                    className = 'HTML5StreamPlayer__control__scrubBar'
-                    onChange={ this.setVideoPos }
-                    onTouchEnd={ this.scrubEnd }
-                    onTouchStart={ this.scrubStart }
-                  />
+                  <div className = 'HTML5StreamPlayer__control__scrubBar__buffer__container'>
+                    <canvas
+                      ref = 'scrubBuffer'
+                      className = { 'HTML5StreamPlayer__control__scrubBar__buffer' }
+                    >
+                    </canvas>
+                    { this.renderSeekThumb() }
+                  </div>
 
                   { this.renderThumbnail() }
                 </div>
@@ -615,6 +671,9 @@ class HTML5StreamPlayer extends React.Component {
             </div>
           </div>
         </div>
+        <text>
+          {this.state.scrubPosition}
+        </text>
       </div>
     );
   }
