@@ -430,7 +430,7 @@ function renderVideo(videoSpec, posterImage, aspectRatio, props) {
     } else {
       aspectRatio = getAspectRatio(false, videoSpec.width, videoSpec.height);
     }
-    
+
     return (
       <HTML5StreamPlayer
         postData = { post }

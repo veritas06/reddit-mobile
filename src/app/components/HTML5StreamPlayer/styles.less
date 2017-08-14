@@ -126,6 +126,16 @@
       width:100%;
     }
 
+    &__button {
+      outline: none;
+      padding-top: 0px;
+      padding-bottom: 0px;
+      height: 100%;
+      width: 100%;
+      padding-left: 5vw;
+      padding-right: 5vw;
+    }
+
     &__play:hover .HTML5StreamPlayer__playback-action-circle{
       opacity: 0.8;
       background-color: #0DD3BB;
@@ -136,11 +146,8 @@
       height: 45px;
       left: 0;
       bottom: 0;
-      max-width: 100vw;
-      width: 100vw;
-      padding-top: 20px;
-      padding-left: @track-button-spacing;
-      padding-right: @track-button-spacing;
+      right: 0;
+      width: auto;
       background: -moz-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.65) 100%); /* FF3.6-15 */
       background: -webkit-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 100%); /* Chrome10-25,Safari5.1-6 */
       background: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
@@ -150,22 +157,15 @@
     &__fullscreen {
       outline: none;
       float: right;
-      margin-right: @track-button-spacing;
-      height: 25px;
-      width: 25px;
-      font-size: 25px;
     }
 
     &__mute {
       outline: none;
-      position: absolute;
-      left: 0;
-      height: 25px;
-      width: 25px;
-      font-size: 25px;
+      float: left;
     }
 
     &__barMargin {
+      margin-top: 20px;
       margin-left: @track-margin-width;
       margin-right: @track-margin-width;
     }
@@ -220,11 +220,11 @@
       position: relative;
       justify-content: center;
       align-items: center;
-      height: 25px;
       width: auto;
+      height: 45px;
       margin-top: @track-height;
-      margin-left: 35px;
-      margin-right: 35px;
+      margin-left: 15vw;
+      margin-right: 15vw;
     }
 
     &__scrubBar {
@@ -319,30 +319,29 @@
       outline: none;
       width: 25px;
       height: 25px;
+      font-size: 25px;
       color: #0DD3BB;
     }
   }
 
   &__playback-full-screen-collapse {
     outline: none;
-    width: 25px;
-    height: 25px;
+    width: auto;
+    height: auto;
     &.icon-full-screen-collapse {
       outline: none;
-      width: 25px;
-      height: 25px;
+      font-size: 25px;
       color: #0DD3BB;
     }
   }
 
   &__playback-mute {
     outline: none;
-    width: 25px;
-    height: 25px;
+    width: auto;
+    height: auto;
     &.icon-mute {
       outline: none;
-      width: 25px;
-      height: 25px;
+      font-size: 25px;
       color: #0DD3BB;
     }
   }
@@ -350,12 +349,11 @@
 
   &__playback-unmute {
     outline: none;
-    width: 25px;
-    height: 25px;
+    width: auto;
+    height: auto;
     &.icon-unmute {
       outline: none;
-      width: 25px;
-      height: 25px;
+      font-size: 25px;
       color: #0DD3BB;
     }
   }

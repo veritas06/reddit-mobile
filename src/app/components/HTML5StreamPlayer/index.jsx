@@ -136,7 +136,8 @@ class HTML5StreamPlayer extends React.Component {
 
       const video = this.refs.HTML5StreamPlayerVideo;
       if (this.props.postData.videoPlaytime > 0) {
-        this.setState({videoLoaded: true,
+        this.setState({
+          videoLoaded: true,
           totalServedTime: this.props.postData.videoPlaytime * 1000.0,
           totalTime: this.secondsToMinutes(video.duration),
           videoWasInView: false,
@@ -144,7 +145,8 @@ class HTML5StreamPlayer extends React.Component {
         this.sendTrackVideoEvent(VIDEO_EVENT.CHANGED_PAGETYPE, this.getPercentServed());
         video.currentTime = this.props.postData.videoPlaytime;
       } else {
-        this.setState({videoLoaded: true,
+        this.setState({
+          videoLoaded: true,
           totalTime: this.secondsToMinutes(video.duration),
           videoWasInView: false,
         });
@@ -553,7 +555,7 @@ class HTML5StreamPlayer extends React.Component {
               { !this.props.isGif &&
                 <div className = 'HTML5StreamPlayer__control__fullscreen'>
                   <button
-                    className = 'HTML5StreamPlayer__control'
+                    className = 'HTML5StreamPlayer__control__button'
                     onClick={ this.state.videoFullScreen ?
                       this.exitFullscreen
                       : this.enterFullScreen
@@ -570,7 +572,7 @@ class HTML5StreamPlayer extends React.Component {
               }
 
               <div className = 'HTML5StreamPlayer__control__mute'>
-                <button className = 'HTML5StreamPlayer__control' onClick = { this.muteVideo }>
+                <button className = 'HTML5StreamPlayer__control__button' onClick = { this.muteVideo }>
                   { this.renderMute() }
                 </button>
               </div>
