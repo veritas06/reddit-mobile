@@ -14,7 +14,7 @@
 @thumb-shadow-blur: 1px;
 @thumb-shadow-color: #111;
 @thumb-border-width: 1px;
-@thumb-border-color: white;
+@thumb-border-color: #0DD3BB;
 
 //Must be 100% total
 @track-width: 70%;
@@ -152,11 +152,6 @@
       display:inline-block;
     }
 
-    &__play:hover .HTML5StreamPlayer__playback-action-circle{
-      opacity: 0.8;
-      background-color: #0DD3BB;
-    }
-
     &__bar {
       position: absolute;
       height: 45px;
@@ -193,7 +188,7 @@
       width: 35px;
       margin-left: -35px;
       margin-top: -5px;
-      color: #0DD3BB;
+      color: #FFFFFF;
       font-size: 12px;
       font-weight: bold;
       text-align: left;
@@ -228,7 +223,7 @@
       width: 35px;
       margin-right: -35px;
       margin-top: -5px;
-      color: #0DD3BB;
+      color: #FFFFFF;
       font-size: 12px;
       font-weight: bold;
       text-align: right;
@@ -348,7 +343,7 @@
       width: 25px;
       height: 25px;
       font-size: 25px;
-      color: #0DD3BB;
+      color: #FFFFFF;
     }
   }
 
@@ -359,7 +354,7 @@
     &.icon-full-screen-collapse {
       outline: none;
       font-size: 25px;
-      color: #0DD3BB;
+      color: #FFFFFF;
     }
   }
 
@@ -370,7 +365,7 @@
     &.icon-mute {
       outline: none;
       font-size: 25px;
-      color: #0DD3BB;
+      color: #FFFFFF;
     }
   }
 
@@ -382,7 +377,7 @@
     &.icon-unmute {
       outline: none;
       font-size: 25px;
-      color: #0DD3BB;
+      color: #FFFFFF;
     }
   }
 
@@ -396,18 +391,13 @@
   }
 
   &__playback-action-circle {
-    opacity: 0.9;
-    background-color: #0DD3BB;
 
     position: absolute;
     top: 50%;
     left: 50%;
     text-align: center;
-
-    &:hover {
-      opacity: 0.8;
-      background-color: #0DD3BB;
-    }
+    background-color: rgba(255,255,255,0.6);
+    
 
     .icon-size(@icon-size) {
       width: @icon-size;
