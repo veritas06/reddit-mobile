@@ -33,7 +33,7 @@
     "branch-sdk": "^2.22.1",
     "cluster": "^0.7.7",
     "crypto-js": "3.1.8",
-    "dashjs": "^2.4.1",
+    "dashjs": "^2.5.0",
     "event-tracker": "git://github.com/reddit/event-tracker.git#28bc2dd9ce3b80540fdf189e1b003f8264cd0d08",
     "js-cookie": "^2.1.1",
     "json-stable-stringify": "^1.0.1",

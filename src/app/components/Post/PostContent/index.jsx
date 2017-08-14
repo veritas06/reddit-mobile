@@ -439,7 +439,7 @@ function renderVideo(videoSpec, posterImage, aspectRatio, props) {
         mpegDashSource = { videoSpec.dash }
         isGif = { videoSpec.isGif }
         isVertical = { (videoSpec.height > videoSpec.width) }
-        posterImage = { posterImage.url }
+        posterImage = { posterImage != null ? posterImage.url : null}
         scrubberThumbSource = { videoSpec.scrubberThumbSource }
       />
     );
