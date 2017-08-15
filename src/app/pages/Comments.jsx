@@ -63,6 +63,7 @@ function CommentsPage(props) {
           id='comments-banner'
           shouldCollapse
           listingName='comments'
+          a9
         />
       }
       <RecommendedPosts

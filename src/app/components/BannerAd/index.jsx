@@ -28,6 +28,7 @@ class BannerAd extends React.Component {
       properties,
       sizes,
       shouldCollapse,
+      a9,
     } = this.props;
 
     this.destroySlot();
@@ -38,15 +39,12 @@ class BannerAd extends React.Component {
       properties,
       shouldCollapse,
       sizes,
-    }).then((adSlot) => { this.adSlot = adSlot; });
+      a9,
+    });
   }
 
   destroySlot() {
-    if (this.adSlot) {
-      destroySlot(this.adSlot);
-
-      this.adSlot = null;
-    }
+    destroySlot(this.props.slot);
   }
 
   componentDidMount() {
@@ -60,13 +58,13 @@ class BannerAd extends React.Component {
   componentWillReceiveProps(nextProps) {
     const compactChanged = nextProps.compact !== this.props.compact;
     const themeChanged = nextProps.theme !== this.props.theme;
-    if (this.adSlot && (compactChanged || themeChanged)) {
+    if (compactChanged || themeChanged) {
       this.destroySlot();
     }
   }
 
   componentWillUnmount() {
-    this.destroySlot(this.adSlot);
+    this.destroySlot();
   }
 
   shouldComponentUpdate(nextProps) {
@@ -99,6 +97,7 @@ BannerAd.propTypes = {
   shouldCollapse: T.bool,
   sizes: T.array,
   slot: T.string,
+  a9: T.bool,
 };
 
 const subredditSelector = (state) => {
