@@ -256,12 +256,12 @@ function buildImagePreview(previewImage, imageURL, linkDescriptor, callback,
     if (post.media && post.media.reddit_video) {
       const { width, height } = post.media.reddit_video;
       const aspectRatio = getAspectRatio(single, width, height);
-
       const generatedSrc = {
         dash: post.media.reddit_video.dash_url,
         hls: post.media.reddit_video.hls_url,
         scrubberThumbSource: post.media.reddit_video.scrubber_media_url,
         isGif: post.media.reddit_video.is_gif,
+        kDuration: post.media.reddit_video.duration,
         width: width,
         height: height,
       };
@@ -439,6 +439,7 @@ function renderVideo(videoSpec, posterImage, aspectRatio, props) {
         mpegDashSource = { videoSpec.dash }
         isGif = { videoSpec.isGif }
         isVertical = { (videoSpec.height > videoSpec.width) }
+        kDuration = { videoSpec.kDuration }
         posterImage = { posterImage != null ? posterImage.url : null}
         scrubberThumbSource = { videoSpec.scrubberThumbSource }
       />
