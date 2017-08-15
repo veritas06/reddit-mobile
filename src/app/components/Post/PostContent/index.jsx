@@ -440,7 +440,7 @@ function renderVideo(videoSpec, posterImage, aspectRatio, props) {
         isGif = { videoSpec.isGif }
         isVertical = { (videoSpec.height > videoSpec.width) }
         kDuration = { videoSpec.kDuration }
-        posterImage = { posterImage != null ? posterImage.url : null}
+        posterImage = { posterImage !== null ? posterImage.url : null }
         scrubberThumbSource = { videoSpec.scrubberThumbSource }
       />
     );
