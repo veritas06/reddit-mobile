@@ -21,6 +21,7 @@ export default class PostModel extends RedditModel {
     brandSafe: T.bool,
     cleanPermalink: T.link,
     cleanUrl: T.link,
+    crosspostParent: T.string,
     distinguished: T.string,
     domain: T.string,
     downs: T.number,
@@ -83,6 +84,8 @@ export default class PostModel extends RedditModel {
     videoPlaytime: T.number,
 
     // derived
+    crosspostIds: T.nop,
+    crosspostParentObj: T.nop,
     expandable: T.bool,
     expandedContent: T.html,
     preview: T.nop, // it's in data as well but we want to transform it
@@ -96,6 +99,7 @@ export default class PostModel extends RedditModel {
     banned_by: 'bannedBy',
     brand_safe: 'brandSafe',
     created_utc: 'createdUTC',
+    crosspost_parent: 'crosspostParent',
     disable_comments: 'disableComments',
     hide_score: 'hideScore',
     imp_pixel: 'impPixel',
@@ -200,6 +204,28 @@ export default class PostModel extends RedditModel {
 
     thumbnail(data) {
       return cleanThumbnail(data.thumbnail);
+    },
+
+    crosspostParentObj(data) {
+      // Note: ultimately we'll want to store this as a top level post in
+      // the redux store and reference via crosspostIds.
+      if (data.crosspostParentObj) {
+        return data.crosspostParentObj;
+      }
+      if (data.crosspost_parent_list && data.crosspost_parent_list.length) {
+        return data.crosspost_parent_list[0];
+      }
+      return null;
+    },
+
+    crosspostIds(data) {
+      if (data.crosspostIds) {
+        return data.crosspostIds;
+      }
+      if (data.crosspost_parent_list && data.crosspost_parent_list.length) {
+        return data.crosspost_parent_list.map(post => post.name);
+      }
+      return null;
     },
   };
 

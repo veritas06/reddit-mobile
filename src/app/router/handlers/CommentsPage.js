@@ -163,16 +163,33 @@ export function buildAdditionalEventData(state) {
     return null;
   }
 
+  let target_type;
+  let crosspost_info = {};
+  if (post.crosspostParent) {
+    target_type = 'crosspost';
+    // Note: info in post.crosspostParentObj is not processed
+    const target_root_type = post.crosspostParentObj.is_self ? 'self' : 'link';
+    crosspost_info = {
+      target_root_fullname: post.crosspostParent,
+      target_parent_fullname: post.crosspostParent,
+      target_crosspost_depth: post.crosspostIds.length,
+      target_root_type,
+    };
+  } else {
+    target_type = post.isSelf ? 'self' : 'link';
+  }
+
   return cleanObject({
     target_fullname: fullName,
     nsfw: post.over18,
     post_fullname: fullName,
     spoiler: post.spoiler,
     target_id: convertId(post.id),
-    target_type: post.isSelf ? 'self' : 'link',
+    target_type,
     target_sort: queryParams.sort || 'confidence',
     target_url: post.cleanUrl,
     target_filter_time: queryParams.sort === 'top' ? (queryParams.time || 'all') : null,
     target_created_ts: post.createdUTC * 1000,
+    ...crosspost_info,
   });
 }
