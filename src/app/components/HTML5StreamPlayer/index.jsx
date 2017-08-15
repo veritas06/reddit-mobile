@@ -526,7 +526,8 @@ class HTML5StreamPlayer extends React.Component {
     videoThumb.pause();
     video.currentTime = Math.min(this.videoRound(videoThumb.currentTime), video.duration);
 
-    if (this.state.wasPlaying && (this.videoRound(video.currentTime) < this.videoRound(video.duration))) {
+    if (this.state.scrubPosition == 1.0
+      || (this.state.wasPlaying && (this.videoRound(video.currentTime) < this.videoRound(video.duration)))) {
       video.play();
     }
 
