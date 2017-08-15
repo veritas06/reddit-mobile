@@ -148,7 +148,7 @@ export function Post(props, context) {
   const displayCompact = compact || mixedExpActive;
   if (post.isBlankAd) {
     // Return an empty div if it's a blank ad
-    return <div class='blankAd'/>;
+    return <div className='blankAd'/>;
   }
 
   const hasExpandedCompact = compact && expanded;
