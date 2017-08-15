@@ -5,8 +5,13 @@ export default function getSubreddit(state) {
     return state.platform.currentPage.urlParams.subredditName;
   }
 
-  if (!state.platform.currentPage.urlParams.postId) {
+  const { postId } = state.platform.currentPage.urlParams;
+  if (!postId) {
     return null;
+  }
+
+  if (state.posts[`t3_${postId}`]) {
+    return state.posts[`t3_${postId}`].subreddit;
   }
 
   const current = state.commentsPages.data.current;
