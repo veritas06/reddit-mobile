@@ -23,7 +23,7 @@ const createBannerProperties = (placement, user, subreddit, theme, compact) => {
   // use both `percentage` and `random_number` for backwards compatibility
   properties.percentage = properties.random_number = Math.floor(Math.random() * 100);
   properties.placement = placement;
-  properties.full_url = window && window.location && window.location.href;
+  properties.full_url = typeof window !== 'undefined' && window.location && window.location.href;
 
   properties.nsfw = subreddit && subreddit.over18;
 
