@@ -1,6 +1,7 @@
 import React, { PropTypes as T } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
+import isEqual from 'lodash/isEqual';
 import classNames from 'lib/classNames';
 import getSubreddit from 'lib/getSubredditFromState';
 import createBannerProperties from 'lib/createBannerProperties';
@@ -55,20 +56,13 @@ class BannerAd extends React.Component {
     this.defineSlot();
   }
 
-  componentWillReceiveProps(nextProps) {
-    const compactChanged = nextProps.compact !== this.props.compact;
-    const themeChanged = nextProps.theme !== this.props.theme;
-    if (compactChanged || themeChanged) {
-      this.destroySlot();
-    }
-  }
-
   componentWillUnmount() {
     this.destroySlot();
   }
 
   shouldComponentUpdate(nextProps) {
-    return (this.props.slot !== nextProps.slot || !this.adSlot);
+    return nextProps.slot !== this.props.slot ||
+      !isEqual(nextProps.properties, this.props.properties);
   }
 
   render() {

@@ -1,5 +1,8 @@
 const ONE_HOUR_IN_MS = 1000 * 60 * 60;
 const FRONTPAGE_WHITELIST_STATUS = 'all_ads';
+// Calculate this once per user so that it doesnt change on every
+// call to `createBannerProperties`.
+const PERCENTAGE = Math.floor(Math.random() * 100);
 
 const createBannerProperties = (placement, user, subreddit, theme, compact) => {
   const properties = {};
@@ -21,7 +24,7 @@ const createBannerProperties = (placement, user, subreddit, theme, compact) => {
   properties.subreddit_screen = !!subreddit;
   properties.logged_in = !user.isLoggedOut;
   // use both `percentage` and `random_number` for backwards compatibility
-  properties.percentage = properties.random_number = Math.floor(Math.random() * 100);
+  properties.percentage = properties.random_number = PERCENTAGE;
   properties.placement = placement;
   properties.full_url = typeof window !== 'undefined' && window.location && window.location.href;
 
