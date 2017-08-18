@@ -113,10 +113,6 @@ export const setupGoogleTag = () => {
   const googletag = (window.googletag = window.googletag || {});
   googletag.cmd = googletag.cmd || [];
 
-  if (global.DO_NOT_TRACK) {
-    return;
-  }
-
   const gads = document.createElement('script');
   gads.async = true;
   gads.type = 'text/javascript';

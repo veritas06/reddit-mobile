@@ -9,10 +9,6 @@ import config from 'config';
 let PENDING_GTM_EVENTS = [];
 
 export const initGoogleTagManager = () => {
-  if (window.DO_NOT_TRACK) {
-    return;
-  }
-
   const { mediaDomain, googleTagManagerId } = config;
   if (!googleTagManagerId) {
     return;
