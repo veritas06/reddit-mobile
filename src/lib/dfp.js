@@ -80,7 +80,7 @@ export const defineSlot = (element, {
 
             // we only request a single bid.
             const bid = bids[0];
-            ['amznbid', 'amzniid'].forEach(function(key) {
+            window.apstag.targetingKeys().forEach((key) => {
               adSlots[slot].setTargeting(key, bid[key]);
             });
           });
