@@ -65,6 +65,7 @@ PostsList.propTypes = {
 
 PostsList.defaultProps = {
   nextUrl: '',
+  posts: [],
   prevUrl: '',
   forceCompact: false,
   isSubreddit: false,
