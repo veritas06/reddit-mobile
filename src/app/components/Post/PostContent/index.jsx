@@ -231,7 +231,7 @@ function buildMediaContent(post, linkDescriptor, props) {
     return buildMediaPreview(post, sourceURL, oembed, single);
   }
 
-  if (previewImage) {
+  if (previewImage || (post.media && post.media.reddit_video)) {
     const callback = (isNSFW || isSpoiler) ? e => {
       if (interceptListingClick(e, LISTING_CLICK_TYPES.CONTENT)) {
         return;
@@ -254,7 +254,7 @@ function buildImagePreview(previewImage, imageURL, linkDescriptor, callback,
   if (isPlaying || !needsObfuscating) {
     //locally hosted video
     if (post.media && post.media.reddit_video) {
-      const { width, height } = previewImage;
+      const { width, height } = post.media.reddit_video;
       const aspectRatio = getAspectRatio(single, width, height);
 
       const generatedSrc = {
@@ -262,10 +262,9 @@ function buildImagePreview(previewImage, imageURL, linkDescriptor, callback,
         hls: post.media.reddit_video.hls_url,
         scrubberThumbSource: post.media.reddit_video.scrubber_media_url,
         isGif: post.media.reddit_video.is_gif,
-        width: previewImage.width,
-        height: previewImage.height,
+        width: width,
+        height: height,
       };
-
       return renderVideo(generatedSrc, previewImage, aspectRatio, props);
     }
 
@@ -421,7 +420,6 @@ function renderIframe(src, aspectRatio) {
 
 function renderVideo(videoSpec, posterImage, aspectRatio, props) {
   const { post, onUpdatePostPlaytime } = props;
-
   if (videoSpec.hls || videoSpec.dash) {
     //video limited to 16:9 as specced, will be letterboxed if different reservation.
     let aspectRatio;
@@ -440,7 +438,7 @@ function renderVideo(videoSpec, posterImage, aspectRatio, props) {
         mpegDashSource = { videoSpec.dash }
         isGif = { videoSpec.isGif }
         isVertical = { (videoSpec.height > videoSpec.width) }
-        posterImage = { posterImage.url }
+        posterImage = { (posterImage !== null && posterImage !== undefined) ? posterImage.url : null }
         scrubberThumbSource = { videoSpec.scrubberThumbSource }
       />
     );
