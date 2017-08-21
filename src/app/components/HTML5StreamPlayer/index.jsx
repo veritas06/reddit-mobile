@@ -22,7 +22,6 @@ class HTML5StreamPlayer extends React.Component {
     scrubberThumbSource: T.string.isRequired,
     isGif: T.bool.isRequired,
     isVertical: T.bool.isRequired,
-    posterImage: T.string.isRequired,
   };
 
   constructor(props) {
@@ -291,7 +290,7 @@ class HTML5StreamPlayer extends React.Component {
   enterFullScreen = () => {
     //Default to standard video controls in fullscreen for iOS
     let video = this.refs.HTML5StreamPlayerVideo;
-    
+
     if (this.isAndroid()) {
       video = this.refs.HTML5StreamPlayerContainer;
     }
