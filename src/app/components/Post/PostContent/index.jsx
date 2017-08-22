@@ -328,9 +328,18 @@ function renderImage(previewImage, imageURL, linkDescriptor, onClick,
     obfuscatedNode = renderWarning(isThumbnail, post);
   }
 
+  const linkTarget = showLinksInNewTab ? '_blank' : null;
+
+  if ((previewImage === null || previewImage === undefined) && post.media && post.media.reddit_video) {
+    //Ensure reddit_videos receive a nsfw image even if no poster image available.
+    return renderImageWithAspectRatio(null, imageURL, linkDescriptor,
+                                    aspectRatio, onClick, isThumbnail,
+                                    playbackControlNode, obfuscatedNode, linkTarget,
+                                    post.outboundLink, forceHTTPS, isPlaying);
+  }
+
   const aspectRatio = getAspectRatio(single, previewImage.width,
                                      previewImage.height);
-  const linkTarget = showLinksInNewTab ? '_blank' : null;
 
   if (previewImage && previewImage.url && !aspectRatio) {
     return renderImageOfUnknownSize(
@@ -375,14 +384,14 @@ function renderImageWithAspectRatio(previewImage, imageURL, linkDescriptor,
 
   const style = {};
 
-  if (previewImage.url && !isPlaying) {
+  if (previewImage && previewImage.url && !isPlaying) {
     const giphyPosterHref = posterForHrefIfGiphyCat(imageURL);
     const backgroundImage = giphyPosterHref && !obfuscatedNode ?
       giphyPosterHref : previewImage.url;
     style.backgroundImage = `url("${forceProtocol(backgroundImage, forceHTTPS)}")`;
   }
 
-  let linkClass = baseImageLinkClass(previewImage.url, !!obfuscatedNode);
+  let linkClass = baseImageLinkClass(previewImage ? previewImage.url : null, !!obfuscatedNode);
   if (!isThumbnail) {
     linkClass += ` ${aspectRatioClass(aspectRatio)}`;
   }
