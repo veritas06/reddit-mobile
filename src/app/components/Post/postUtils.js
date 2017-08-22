@@ -12,7 +12,7 @@ export function postShouldRenderMediaFullbleed(post) {
   const postHint = post.postHint;
   const media = post.media;
   return !!(postHint && postHint !== 'link' && postHint !== 'self' ||
-    media && media.oembed && media.oembed.type !== 'rich' ||
+    media && ((media.oembed && media.oembed.type !== 'rich') || media.reddit_video) ||
     rootDomain(post.cleanUrl) === 'imgur.com' && post.preview);
 }
 
