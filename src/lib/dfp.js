@@ -25,7 +25,6 @@ export const defineSlot = (element, {
   properties,
   shouldCollapse,
   sizes,
-  // eslint-disable-next-line no-unused-vars
   a9 = false,
 }) => {
   const googletag = (window.googletag = window.googletag || {});
@@ -65,7 +64,32 @@ export const defineSlot = (element, {
         resolve();
       };
 
-      makeAdRequest();
+      if (a9) {
+        window.apstag.fetchBids({
+          slots: [{
+            slotID: id,
+            sizes,
+          }],
+          timeout: 2e3,
+        }, (bids) => {
+          googletag.cmd.push(function() {
+            // slot was destroyed already
+            if (!adSlots[slot]) {
+              return;
+            }
+
+            // we only request a single bid.
+            const bid = bids[0];
+            window.apstag.targetingKeys().forEach((key) => {
+              adSlots[slot].setTargeting(key, bid[key]);
+            });
+          });
+
+          makeAdRequest();
+        });
+      } else {
+        makeAdRequest();
+      }
     });
   });
 };
@@ -105,5 +129,16 @@ export const setupGoogleTag = () => {
   googletag.cmd.push(function() {
     googletag.pubads().disableInitialLoad();
     googletag.enableServices();
+  });
+
+  // amazon a9
+  // eslint-disable-next-line
+  !function(a9,a,p,s,t,A,g){if(a[a9])return;function q(c,r){a[a9]._Q.push([c,r])}a[a9]={init:function(){q('i',arguments)},fetchBids:function(){q('f',arguments)},_Q:[]};A=p.createElement(s);A.async=!0;A.src=t;g=p.getElementsByTagName(s)[0];g.parentNode.insertBefore(A,g)}('apstag',window,document,'script','//c.amazon-adsystem.com/aax2/apstag.js');
+
+  // this is defined in the above IIF
+  window.apstag.init({
+    pubID: '3379',
+    adServer: 'googletag',
+    bidTimeout: 2e3,
   });
 };
