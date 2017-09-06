@@ -41,3 +41,8 @@ Make sure to update the script with the appropriate secrets and other necessary 
 Instead of running the npm script that starts the server make sure to use your `start.sh` with the appropriate keys so you can log in.
 
 `./start.sh`
+
+### Forked on 20170906-1321EST
+
+Forking this since reddit is apparently closing it's repositories...
+Linux Magazine: [Reddit Closing Doors to Open Source](http://www.linux-magazine.com/Online/News/Reddit-Closing-Doors-to-Open-Source)
